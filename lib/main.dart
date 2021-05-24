@@ -1,21 +1,48 @@
 import 'package:flutter/material.dart';
-import 'package:generic_bloc_provider/generic_bloc_provider.dart';
-import 'User/bloc/bloc_user.dart';
-import 'User/ui/screens/sing_in_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'Home/pages/home_page.dart';
+import 'User/pages/pages.dart';
+import 'User/blocs/authentication/authentication_bloc.dart';
+import 'User/blocs/authentication/authentication_event.dart';
+import 'User/blocs/authentication/authentication_state.dart';
 
-void main() {
-  runApp(MyApp());
-}
+import 'User/services/authentication_service.dart';
+
+void main() => runApp(
+        // Injects the Authentication service
+        RepositoryProvider<AuthenticationService>(
+      create: (context) {
+        return IsAuthenticationService();
+      },
+      // Injects the Authentication BLoC
+      child: BlocProvider<AuthenticationBloc>(
+        create: (context) {
+          final authService =
+              RepositoryProvider.of<AuthenticationService>(context);
+          return AuthenticationBloc(authService)..add(AppLoaded());
+        },
+        child: MyApp(),
+      ),
+    ));
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-        child: MaterialApp(
-          title: 'Flutter Demo',
-          home: SignInScreen(),
-        ),
-        bloc: UserBloc());
+    return MaterialApp(
+      title: 'Universidad LG',
+      home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+        builder: (context, state) {
+          if (state is AuthenticationAuthenticated) {
+            // show home page
+
+            return HomePage(
+              user: state.user,
+            );
+          }
+          // otherwise show login page
+          return LoginPage();
+        },
+      ),
+    );
   }
 }
