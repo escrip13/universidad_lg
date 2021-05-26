@@ -1,2 +1,1 @@
-export 'carrucel.dart';
-export 'noticias.dart';
+export 'home_model.dart';
