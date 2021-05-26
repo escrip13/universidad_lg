@@ -1,1 +1,2 @@
-export 'home.dart';
+export 'carrucel.dart';
+export 'noticias.dart';

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:universidad_lg/User/pages/pages.dart';
 import 'package:universidad_lg/widgets/background_image.dart';
+import '../../constants.dart';
 import '../blocs/blocs.dart';
 import '../services/services.dart';
 import 'package:validators/validators.dart' as validator;
@@ -147,7 +149,6 @@ class __SignInFormState extends State<_SignInForm> {
 
     return BlocListener<LoginBloc, LoginState>(
       listener: (context, state) {
-        print(state);
         if (state is LoginFailure) {
           _showError(state.error);
         }
@@ -157,7 +158,7 @@ class __SignInFormState extends State<_SignInForm> {
           if (state is LoginLoading) {
             return Center(
               child: CircularProgressIndicator(
-                color: Colors.red,
+                color: mainColor,
               ),
             );
           }
@@ -182,7 +183,7 @@ class __SignInFormState extends State<_SignInForm> {
                       hintStyle: TextStyle(color: Colors.white),
                       focusedBorder: UnderlineInputBorder(
                         borderSide: BorderSide(
-                          color: Colors.red,
+                          color: mainColor,
                         ),
                       ),
                       enabledBorder: UnderlineInputBorder(
@@ -217,11 +218,11 @@ class __SignInFormState extends State<_SignInForm> {
                       hintStyle: TextStyle(color: Colors.white),
                       focusedBorder: UnderlineInputBorder(
                         borderSide: BorderSide(
-                          color: Colors.red,
+                          color: mainColor,
                         ),
                       ),
                       enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white)),
+                          borderSide: BorderSide(color: mainColor)),
                       icon: Icon(
                         Icons.security,
                         color: Colors.white,
@@ -239,11 +240,32 @@ class __SignInFormState extends State<_SignInForm> {
                   const SizedBox(
                     height: 16,
                   ),
+                  CheckboxFormField(
+                    initialValue: false,
+                    title: InkWell(
+                      child: Text('Polílicas de confidencialidad y privacidad',
+                          style: TextStyle(
+                            color: Colors.white,
+                          )),
+                      onTap: () {
+                        Navigator.of(context).push(_terminosRoute());
+                      },
+                    ),
+                    validator: (bool value) {
+                      if (value == false) {
+                        return '*Campo Requerido';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  ),
                   ElevatedButton(
                     onPressed:
                         state is LoginLoading ? () {} : _onLoginButtonPressed,
                     style: ElevatedButton.styleFrom(
-                      primary: Colors.red,
+                      primary: mainColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.zero,
                       ),
@@ -267,6 +289,57 @@ class __SignInFormState extends State<_SignInForm> {
       ),
     );
   }
+}
+
+class CheckboxFormField extends FormField<bool> {
+  CheckboxFormField(
+      {Widget title,
+      FormFieldSetter<bool> onSaved,
+      FormFieldValidator<bool> validator,
+      bool initialValue = false,
+      bool autovalidate = false})
+      : super(
+            onSaved: onSaved,
+            validator: validator,
+            initialValue: initialValue,
+            builder: (FormFieldState<bool> state) {
+              return CheckboxListTile(
+                dense: state.hasError,
+                title: title,
+                value: state.value,
+                onChanged: state.didChange,
+                checkColor: Colors.white,
+                activeColor: mainColor,
+                contentPadding: EdgeInsets.only(left: 0, right: 0),
+                subtitle: state.hasError
+                    ? Builder(
+                        builder: (BuildContext context) => Text(
+                          state.errorText,
+                          style: TextStyle(color: Theme.of(context).errorColor),
+                        ),
+                      )
+                    : null,
+                controlAffinity: ListTileControlAffinity.leading,
+              );
+            });
+}
+
+Route _terminosRoute() {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) => TerminosPage(),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      var begin = Offset(0.0, 1.0);
+      var end = Offset.zero;
+      var curve = Curves.ease;
+
+      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+      return SlideTransition(
+        position: animation.drive(tween),
+        child: child,
+      );
+    },
+  );
 }
 
 class _CodeForm extends StatefulWidget {
@@ -317,7 +390,7 @@ class __CodeForm extends State<_CodeForm> {
             if (state is LoginLoading) {
               return Center(
                 child: CircularProgressIndicator(
-                  color: Colors.red,
+                  color: mainColor,
                 ),
               );
             }
@@ -344,7 +417,7 @@ class __CodeForm extends State<_CodeForm> {
                         hintStyle: TextStyle(color: Colors.white),
                         focusedBorder: UnderlineInputBorder(
                           borderSide: BorderSide(
-                            color: Colors.red,
+                            color: mainColor,
                           ),
                         ),
                         enabledBorder: UnderlineInputBorder(
@@ -369,7 +442,7 @@ class __CodeForm extends State<_CodeForm> {
                           ? () {}
                           : _oncodigoButtonPressed,
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.red,
+                        primary: mainColor,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.zero,
                         ),

@@ -1,5 +1,4 @@
 import 'package:bloc/bloc.dart';
-
 import 'authentication_event.dart';
 import 'authentication_state.dart';
 import '../../services/services.dart';

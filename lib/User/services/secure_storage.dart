@@ -5,6 +5,8 @@ class UserSecureStorage {
 
   static const _keyUserId = 'userId';
   static const _keyToken = 'tokenLogin';
+  static const _keyCodigo = 'codigoLogin';
+
   static const _keyUsername = 'username';
   static const _keyNombre = 'nombre';
   static const _keyEmail = 'email';
@@ -34,10 +36,10 @@ class UserSecureStorage {
 // setLoginCodigo
 
   static Future setLoginCodigo(String login) async =>
-      await _storage.write(key: _keyToken, value: login);
+      await _storage.write(key: _keyCodigo, value: login);
 
   static Future<String> getLoginCodigo() async =>
-      await _storage.read(key: _keyToken);
+      await _storage.read(key: _keyCodigo);
 
 // username
 
