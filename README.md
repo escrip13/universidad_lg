@@ -1,6 +1,6 @@
-# universidad_lg
+# universidadlg
 
- Aplicacion Univerdidad LG
+A new Flutter application.
 
 ## Getting Started
 

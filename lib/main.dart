@@ -5,8 +5,8 @@ import 'User/pages/pages.dart';
 import 'User/blocs/authentication/authentication_bloc.dart';
 import 'User/blocs/authentication/authentication_event.dart';
 import 'User/blocs/authentication/authentication_state.dart';
-
 import 'User/services/authentication_service.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() => runApp(
         // Injects the Authentication service

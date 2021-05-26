@@ -35,6 +35,8 @@ dependencies:
   equatable: ^1.0.2
   validators: ^3.0.0
   flutter_html: ^2.0.0
+  carousel_slider: ^3.0.0
+  google_fonts: ^2.1.0
 
   
 
