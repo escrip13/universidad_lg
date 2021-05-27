@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/shims/dart_ui_real.dart';
-
 import 'package:universidad_lg/Home/blocs/home/home_bloc.dart';
 import 'package:universidad_lg/Home/models/models.dart';
 import 'package:universidad_lg/User/models/user.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:universidad_lg/widgets/background_image.dart';
+import 'package:universidad_lg/widgets/drawer_menu_left.dart';
+import 'package:universidad_lg/widgets/drawer_menu_right.dart';
 
 import '../../constants.dart';
 
@@ -15,15 +17,42 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        // backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          title: Text('Home Page'),
+      // backgroundColor: Colors.transparent,
+      appBar: AppBar(
+        backgroundColor: mainColor,
+        title: Center(
+          child: InkWell(
+            onTap: () => HomePage(),
+            child: Image(
+              image: AssetImage('assets/img/new_logo.png'),
+              height: 35,
+            ),
+          ),
         ),
-        body: Container(
+        actions: [
+          Builder(
+            builder: (context) => IconButton(
+              onPressed: () {
+                Scaffold.of(context).openEndDrawer();
+              },
+              icon: Icon(Icons.person),
+            ),
+          ),
+        ],
+      ),
+      backgroundColor: mainColor,
+      drawer: DrawerMenuLeft(user: user),
+      endDrawer: DrawerMenuRight(user: user),
+
+      body: Builder(
+        builder: (context) => Container(
+          color: Colors.white,
           child: _HomeContent(
             user: user,
           ),
-        ));
+        ),
+      ),
+    );
   }
 }
 
@@ -62,8 +91,9 @@ class __HomeContent extends State<_HomeContent> {
           child: Column(
             children: [
               _CarrucelHome(homeInfo.status.carrucel),
-              _CalendarioHome(),
+              // _CalendarioHome(),
               _NoticiasHome(homeInfo.status.noticias),
+              _ConoceMas(),
             ],
           ),
         ),
@@ -135,22 +165,22 @@ class __CarrucelHomeState extends State<_CarrucelHome> {
   }
 }
 
-class _CalendarioHome extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(color: mainColor),
-      child: TextButton(
-        child: Text(
-          'CALENDARIO',
-          style: TextStyle(color: Colors.white),
-        ),
-        onPressed: () => print('deberia abrir el calendario'),
-      ),
-    );
-  }
-}
+// class _CalendarioHome extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       width: double.infinity,
+//       decoration: BoxDecoration(color: mainColor),
+//       child: TextButton(
+//         child: Text(
+//           'CALENDARIO',
+//           style: TextStyle(color: Colors.white),
+//         ),
+//         onPressed: () => print('deberia abrir el calendario'),
+//       ),
+//     );
+//   }
+// }
 
 // ignore: must_be_immutable
 class _NoticiasHome extends StatefulWidget {
@@ -162,6 +192,7 @@ class _NoticiasHome extends StatefulWidget {
 }
 
 class __NoticiasHome extends State<_NoticiasHome> {
+  CarouselController buttonCarouselController = CarouselController();
   int _current = 0;
   @override
   Widget build(BuildContext context) {
@@ -178,70 +209,188 @@ class __NoticiasHome extends State<_NoticiasHome> {
           children: [
             CarouselSlider(
               options: CarouselOptions(
-                  height: 330,
-                  viewportFraction: 1.0,
-                  onPageChanged: (index, reason) {
-                    setState(() {
-                      _current = index;
-                    });
-                  }),
+                height: 340,
+                viewportFraction: 1.0,
+                aspectRatio: 2.0,
+              ),
+              carouselController: buttonCarouselController,
               items: widget.dataNoticias.map((i) {
                 return Builder(
                   builder: (BuildContext context) {
-                    return Column(
-                      children: [
-                        Image.network(
-                          i.imagen,
-                          width: 1000,
-                        ),
+                    return InkWell(
+                      onTap: () {
+                        print("tapped on container");
+                      },
+                      child: Column(
+                        children: [
+                          Image.network(
+                            i.imagen,
+                            width: 1000,
+                          ),
 
-                        Container(
-                          padding: EdgeInsets.only(
-                            top: 10,
-                            left: 20,
-                            right: 20,
+                          Container(
+                            padding: EdgeInsets.only(
+                              top: 10,
+                              left: 20,
+                              right: 20,
+                            ),
+                            child: Text(
+                              i.title,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 16,
+                                height: 1,
+                              ),
+                              maxLines: 3,
+                            ),
                           ),
-                          margin: EdgeInsets.only(bottom: 5),
-                          child: Text(
-                            i.title,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontWeight: FontWeight.w600),
+                          Container(
+                            child: Text(
+                              i.lead,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontSize: 13),
+                            ),
                           ),
-                        ),
-                        Container(
-                          child: Text(
-                            i.lead,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 10),
-                          ),
-                        )
+
+                          // Text(i.title),
+                        ],
                         // Text(i.title),
-                      ],
-
-                      // Text(i.title),
+                      ),
                     );
                   },
                 );
               }).toList(),
             ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: widget.dataNoticias.map((url) {
-                int index = widget.dataNoticias.indexOf(url);
-                return Container(
-                  width: 8.0,
-                  height: 8.0,
-                  margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: _current == index ? mainColor : Colors.black26,
-                  ),
-                );
-              }).toList(),
-            ),
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        primary: Colors.transparent,
+                        shadowColor: Colors.transparent),
+                    onPressed: () => buttonCarouselController.previousPage(
+                        duration: Duration(milliseconds: 300),
+                        curve: Curves.linear),
+                    child: Column(
+                      // crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(
+                          Icons.arrow_back,
+                          color: Colors.black,
+                        ),
+                        Text('ANTERIOR',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w300,
+                            ))
+                      ],
+                    )),
+                ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        primary: Colors.transparent,
+                        shadowColor: Colors.transparent),
+                    onPressed: () => buttonCarouselController.nextPage(
+                        duration: Duration(milliseconds: 300),
+                        curve: Curves.linear),
+                    child: Column(
+                      // crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Icon(
+                          Icons.arrow_forward,
+                          color: Colors.black,
+                        ),
+                        Text('SIGUIENTE',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w300,
+                            ))
+                      ],
+                    )),
+              ],
+            )
           ],
         ),
       ],
+    );
+  }
+}
+
+class _ConoceMas extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return Container(
+      margin: EdgeInsets.only(top: 40.0),
+      child: Column(
+        children: [
+          Container(
+            padding: EdgeInsets.only(left: 20.0, bottom: 20.0),
+            alignment: Alignment.topLeft,
+            child: Text(
+              'CONOCE MÁS DE LO \nQUE TENEMOS PARA TI',
+              style: TextStyle(
+                fontSize: 20.0,
+                fontWeight: FontWeight.w600,
+                height: 1,
+              ),
+              textAlign: TextAlign.left,
+            ),
+          ),
+          Container(
+            child: Column(
+              children: [
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    BacgroundImage(
+                      image: 'assets/img/biblioteca.png',
+                      height: 240.0,
+                    ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(horizontal: 30.0),
+                          primary: Colors.transparent,
+                          shadowColor: Colors.transparent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.zero,
+                          ),
+                          side: BorderSide(width: 1.0, color: Colors.white)),
+                      onPressed: () {
+                        print('aa');
+                      },
+                      child: Text('BIBLIOTECA'),
+                    ),
+                  ],
+                ),
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    BacgroundImage(
+                      image: 'assets/img/club.png',
+                      height: 240.0,
+                    ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(horizontal: 30.0),
+                          primary: Colors.transparent,
+                          shadowColor: Colors.transparent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.zero,
+                          ),
+                          side: BorderSide(width: 1.0, color: Colors.white)),
+                      onPressed: () {
+                        print('aa');
+                      },
+                      child: Text('CLUB LG'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
     );
   }
 }
