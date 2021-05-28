@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:universidad_lg/Home/pages/home_page.dart';
-import 'package:universidad_lg/User/models/user.dart';
+
 import 'package:universidad_lg/constants.dart';
 
 class DrawerMenuLeft extends StatelessWidget {
-  final User user;
   const DrawerMenuLeft({
-    this.user,
     Key key,
   }) : super(key: key);
   @override
@@ -32,7 +30,7 @@ class DrawerMenuLeft extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  user.name,
+                  'user',
                   style: TextStyle(color: Colors.white),
                 ),
               ],

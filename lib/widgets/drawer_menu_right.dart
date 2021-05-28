@@ -6,10 +6,7 @@ import 'package:universidad_lg/User/models/user.dart';
 import 'package:universidad_lg/constants.dart';
 
 class DrawerMenuRight extends StatelessWidget {
-  final User user;
-
   const DrawerMenuRight({
-    this.user,
     Key key,
   }) : super(key: key);
   @override
@@ -36,7 +33,7 @@ class DrawerMenuRight extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  user.name,
+                  'user',
                   style: TextStyle(color: Colors.white),
                 ),
               ],

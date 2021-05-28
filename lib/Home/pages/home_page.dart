@@ -16,6 +16,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(user.token);
     return Scaffold(
       // backgroundColor: Colors.transparent,
       appBar: AppBar(
@@ -41,8 +42,8 @@ class HomePage extends StatelessWidget {
         ],
       ),
       backgroundColor: mainColor,
-      drawer: DrawerMenuLeft(user: user),
-      endDrawer: DrawerMenuRight(user: user),
+      drawer: DrawerMenuLeft(),
+      endDrawer: DrawerMenuRight(),
 
       body: Builder(
         builder: (context) => Container(
