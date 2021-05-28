@@ -1,15 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:universidad_lg/Entrenamiento/pages/entrenamiento_page.dart';
 import 'package:universidad_lg/Home/pages/home_page.dart';
-
+import 'package:universidad_lg/User/models/user.dart';
 import 'package:universidad_lg/constants.dart';
 
+enum DrawerSections { home, profile, settings, about, logout }
+
 class DrawerMenuLeft extends StatelessWidget {
+  final User user;
+  final String currenPage;
   const DrawerMenuLeft({
     Key key,
+    @required this.user,
+    this.currenPage,
   }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
+
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -23,7 +32,14 @@ class DrawerMenuLeft extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 InkWell(
-                  onTap: () => HomePage(),
+                  onTap: () {
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => HomePage(
+                                  user: user,
+                                )));
+                  },
                   child: Image(
                     image: AssetImage('assets/img/new_logo.png'),
                     height: 40,
@@ -37,9 +53,18 @@ class DrawerMenuLeft extends StatelessWidget {
             ),
           ),
           ListTile(
-            leading: Icon(Icons.school),
-            title: Text('Entrenamiento'),
-          ),
+              leading: Icon(Icons.school),
+              title: Text('Entrenamiento'),
+              onTap: () {
+                if (currenPage != 'entrenamiento') {
+                  Navigator.of(context).pop();
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return EntrenamientoPage(user: user);
+                  }));
+                  // Navigator.pop(context);
+                }
+                return null;
+              }),
           ListTile(
             leading: Icon(Icons.history_edu),
             title: Text('Evaluación'),

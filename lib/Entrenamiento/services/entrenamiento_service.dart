@@ -19,13 +19,9 @@ class EntrenamientoService {
 
     if (response.statusCode == 200) {
       final _request = json.decode(response.body);
-
       if (_request['status']['type'] != 'error') {
         Entrenamiento entrenaminentoFJ =
             Entrenamiento.fromJson(json.decode(response.body));
-
-        print(entrenaminentoFJ);
-
         return entrenaminentoFJ;
       } else {
         throw null;

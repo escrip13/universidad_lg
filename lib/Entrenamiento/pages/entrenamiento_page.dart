@@ -2,15 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:universidad_lg/Entrenamiento/blocs/entrenamiento.dart';
 import 'package:universidad_lg/Entrenamiento/models/models.dart';
+import 'package:universidad_lg/Home/pages/home_page.dart';
 import 'package:universidad_lg/User/blocs/authentication/authentication.dart';
-import 'package:universidad_lg/User/models/user.dart';
+import 'package:universidad_lg/User/models/models.dart';
 import 'package:universidad_lg/User/pages/login_page.dart';
 import 'package:universidad_lg/widgets/drawer_menu_left.dart';
 import 'package:universidad_lg/widgets/drawer_menu_right.dart';
 import '../../constants.dart';
 
 class EntrenamientoPage extends StatelessWidget {
-  const EntrenamientoPage({Key key}) : super(key: key);
+  final User user;
+  const EntrenamientoPage({
+    Key key,
+    @required this.user,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +25,11 @@ class EntrenamientoPage extends StatelessWidget {
         backgroundColor: mainColor,
         title: Center(
           child: InkWell(
-            onTap: () => EntrenamientoPage(),
+            onTap: () {
+              return HomePage(
+                user: user,
+              );
+            },
             child: Image(
               image: AssetImage('assets/img/new_logo.png'),
               height: 35,
@@ -38,8 +47,11 @@ class EntrenamientoPage extends StatelessWidget {
           ),
         ],
       ),
-      backgroundColor: mainColor,
-      drawer: DrawerMenuLeft(),
+      backgroundColor: Colors.white,
+      drawer: DrawerMenuLeft(
+        user: user,
+        currenPage: 'entrenamiento',
+      ),
       endDrawer: DrawerMenuRight(),
 
       body: BlocBuilder<AuthenticationBloc, AuthenticationState>(
@@ -71,10 +83,12 @@ class __EntrenamientoContent extends State<_EntrenamientoContent> {
   bool load = false;
   EntrenamientoBloc entrenamientoBloc = EntrenamientoBloc();
 
-  void _incrementCounter() {
-    setState(() {
-      load = true;
-    });
+  void _onLoad() {
+    if (mounted) {
+      setState(() {
+        load = true;
+      });
+    }
   }
 
   @override
@@ -84,7 +98,7 @@ class __EntrenamientoContent extends State<_EntrenamientoContent> {
         .getEntrenamintoContent(
             token: widget.user.token, uid: widget.user.userId)
         .then((value) {
-      _incrementCounter();
+      _onLoad();
       entrenamientoInfo = value;
     });
 
@@ -93,15 +107,43 @@ class __EntrenamientoContent extends State<_EntrenamientoContent> {
         // padding: EdgeInsets.all(0),
         child: SingleChildScrollView(
           child: Column(
-            children: [],
+            children: [_ContentEntrenamiento()],
           ),
         ),
       );
     }
     return Center(
       child: CircularProgressIndicator(
-        color: mainColor,
+        color: Colors.white,
       ),
+    );
+  }
+}
+
+class _ContentEntrenamiento extends StatefulWidget {
+  @override
+  __ContentEntrenamientoState createState() => __ContentEntrenamientoState();
+}
+
+class __ContentEntrenamientoState extends State<_ContentEntrenamiento> {
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return Column(
+      children: [
+        DefaultTabController(
+            length: 3,
+            child: TabBar(
+              unselectedLabelColor: mainColor,
+              labelColor: Colors.black54,
+              indicatorColor: mainColor,
+              tabs: [
+                Tab(text: 'BÁSICO'),
+                Tab(text: 'INTERMEDIO'),
+                Tab(text: 'AVANZADO'),
+              ],
+            )),
+      ],
     );
   }
 }

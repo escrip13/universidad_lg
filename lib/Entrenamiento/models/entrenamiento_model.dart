@@ -11,48 +11,55 @@ String welcomeToJson(Entrenamiento data) => json.encode(data.toJson());
 
 class Entrenamiento {
   Entrenamiento({
-    this.cursosAgrupados,
-    this.cursosTerminado,
+    this.status,
+  });
+
+  Status status;
+
+  factory Entrenamiento.fromJson(Map<String, dynamic> json) => Entrenamiento(
+        status: Status.fromJson(json["status"]),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "status": status.toJson(),
+      };
+}
+
+class Status {
+  Status({
+    this.type,
+    this.code,
+    this.message,
+    this.cursos,
     this.filtros,
   });
 
-  CursosAgrupados cursosAgrupados;
-  dynamic cursosTerminado;
+  String type;
+  int code;
+  String message;
+  Cursos cursos;
   List<Filtro> filtros;
 
-  factory Entrenamiento.fromJson(Map<String, dynamic> json) => Entrenamiento(
-        cursosAgrupados: CursosAgrupados.fromJson(json["cursosAgrupados"]),
-        cursosTerminado: json["cursosTerminado"],
+  factory Status.fromJson(Map<String, dynamic> json) => Status(
+        type: json["type"],
+        code: json["code"],
+        message: json["message"],
+        cursos: Cursos.fromJson(json["cursos"]),
         filtros:
             List<Filtro>.from(json["filtros"].map((x) => Filtro.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
-        "cursosAgrupados": cursosAgrupados.toJson(),
-        "cursosTerminado": cursosTerminado,
+        "type": type,
+        "code": code,
+        "message": message,
+        "cursos": cursos.toJson(),
         "filtros": List<dynamic>.from(filtros.map((x) => x.toJson())),
       };
 }
 
-class CursosAgrupados {
-  CursosAgrupados({
-    this.type,
-  });
-
-  Type type;
-
-  factory CursosAgrupados.fromJson(Map<String, dynamic> json) =>
-      CursosAgrupados(
-        type: Type.fromJson(json["type"]),
-      );
-
-  Map<String, dynamic> toJson() => {
-        "type": type.toJson(),
-      };
-}
-
-class Type {
-  Type({
+class Cursos {
+  Cursos({
     this.avanzado,
     this.intermedio,
     this.basico,
@@ -62,7 +69,7 @@ class Type {
   Map<String, Avanzado> intermedio;
   Map<String, Avanzado> basico;
 
-  factory Type.fromJson(Map<String, dynamic> json) => Type(
+  factory Cursos.fromJson(Map<String, dynamic> json) => Cursos(
         avanzado: Map.from(json["avanzado"])
             .map((k, v) => MapEntry<String, Avanzado>(k, Avanzado.fromJson(v))),
         intermedio: Map.from(json["intermedio"])

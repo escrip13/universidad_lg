@@ -42,7 +42,9 @@ class HomePage extends StatelessWidget {
         ],
       ),
       backgroundColor: mainColor,
-      drawer: DrawerMenuLeft(),
+      drawer: DrawerMenuLeft(
+        user: user,
+      ),
       endDrawer: DrawerMenuRight(),
 
       body: Builder(
@@ -69,10 +71,12 @@ class __HomeContent extends State<_HomeContent> {
   bool load = false;
   HomeBloc homeBloc = HomeBloc();
 
-  void _incrementCounter() {
-    setState(() {
-      load = true;
-    });
+  void _onLoad() {
+    if (mounted) {
+      setState(() {
+        load = true;
+      });
+    }
   }
 
   @override
@@ -81,7 +85,7 @@ class __HomeContent extends State<_HomeContent> {
     homeBloc
         .getHomeContent(token: widget.user.token, uid: widget.user.userId)
         .then((value) {
-      _incrementCounter();
+      _onLoad();
       homeInfo = value;
     });
 
