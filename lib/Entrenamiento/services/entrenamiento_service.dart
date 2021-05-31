@@ -20,6 +20,8 @@ class EntrenamientoService {
     if (response.statusCode == 200) {
       final _request = json.decode(response.body);
       if (_request['status']['type'] != 'error') {
+        print('pide info');
+
         Entrenamiento entrenaminentoFJ =
             Entrenamiento.fromJson(json.decode(response.body));
         return entrenaminentoFJ;

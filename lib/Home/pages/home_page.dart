@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/shims/dart_ui_real.dart';
 import 'package:universidad_lg/Home/blocs/home/home_bloc.dart';
@@ -141,11 +142,20 @@ class __CarrucelHomeState extends State<_CarrucelHome> {
             return Builder(
               builder: (BuildContext context) {
                 return Container(
-                  // padding: EdgeInsets.all(0),
-                  width: MediaQuery.of(context).size.width,
-                  child:
-                      Image.network(i.imagen, fit: BoxFit.cover, width: 1000),
-                );
+                    // padding: EdgeInsets.all(0),
+                    width: MediaQuery.of(context).size.width,
+                    child: CachedNetworkImage(
+                      fit: BoxFit.cover,
+                      imageUrl: i.imagen,
+                      placeholder: (context, url) => Center(
+                        child: CircularProgressIndicator(
+                          color: mainColor,
+                        ),
+                      ),
+                      errorWidget: (context, url, error) => Icon(Icons.error),
+                    )
+                    // Image.network(i.imagen, fit: BoxFit.cover, width: 1000),
+                    );
               },
             );
           }).toList(),
@@ -169,23 +179,6 @@ class __CarrucelHomeState extends State<_CarrucelHome> {
     );
   }
 }
-
-// class _CalendarioHome extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       width: double.infinity,
-//       decoration: BoxDecoration(color: mainColor),
-//       child: TextButton(
-//         child: Text(
-//           'CALENDARIO',
-//           style: TextStyle(color: Colors.white),
-//         ),
-//         onPressed: () => print('deberia abrir el calendario'),
-//       ),
-//     );
-//   }
-// }
 
 // ignore: must_be_immutable
 class _NoticiasHome extends StatefulWidget {
@@ -228,11 +221,17 @@ class __NoticiasHome extends State<_NoticiasHome> {
                       },
                       child: Column(
                         children: [
-                          Image.network(
-                            i.imagen,
-                            width: 1000,
+                          CachedNetworkImage(
+                            fit: BoxFit.cover,
+                            imageUrl: i.imagen,
+                            placeholder: (context, url) => Center(
+                              child: CircularProgressIndicator(
+                                color: mainColor,
+                              ),
+                            ),
+                            errorWidget: (context, url, error) =>
+                                Icon(Icons.error),
                           ),
-
                           Container(
                             padding: EdgeInsets.only(
                               top: 10,

@@ -65,17 +65,17 @@ class Cursos {
     this.basico,
   });
 
-  Map<String, Avanzado> avanzado;
-  Map<String, Avanzado> intermedio;
-  Map<String, Avanzado> basico;
+  Map<String, TipoCurso> avanzado;
+  Map<String, TipoCurso> intermedio;
+  Map<String, TipoCurso> basico;
 
   factory Cursos.fromJson(Map<String, dynamic> json) => Cursos(
-        avanzado: Map.from(json["avanzado"])
-            .map((k, v) => MapEntry<String, Avanzado>(k, Avanzado.fromJson(v))),
-        intermedio: Map.from(json["intermedio"])
-            .map((k, v) => MapEntry<String, Avanzado>(k, Avanzado.fromJson(v))),
-        basico: Map.from(json["basico"])
-            .map((k, v) => MapEntry<String, Avanzado>(k, Avanzado.fromJson(v))),
+        avanzado: Map.from(json["avanzado"]).map(
+            (k, v) => MapEntry<String, TipoCurso>(k, TipoCurso.fromJson(v))),
+        intermedio: Map.from(json["intermedio"]).map(
+            (k, v) => MapEntry<String, TipoCurso>(k, TipoCurso.fromJson(v))),
+        basico: Map.from(json["basico"]).map(
+            (k, v) => MapEntry<String, TipoCurso>(k, TipoCurso.fromJson(v))),
       );
 
   Map<String, dynamic> toJson() => {
@@ -88,8 +88,8 @@ class Cursos {
       };
 }
 
-class Avanzado {
-  Avanzado({
+class TipoCurso {
+  TipoCurso({
     this.nid,
     this.title,
     this.tipo,
@@ -109,7 +109,7 @@ class Avanzado {
   String categoria;
   String body;
 
-  factory Avanzado.fromJson(Map<String, dynamic> json) => Avanzado(
+  factory TipoCurso.fromJson(Map<String, dynamic> json) => TipoCurso(
         nid: json["nid"],
         title: json["title"],
         tipo: json["tipo"],

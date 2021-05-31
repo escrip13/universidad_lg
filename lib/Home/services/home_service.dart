@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:universidad_lg/Home/models/home_model.dart';
+import 'package:universidad_lg/User/pages/login_page.dart';
 
 import '../../constants.dart';
 
@@ -24,12 +25,9 @@ class HomeService {
         Home homeFJ = Home.fromJson(json.decode(response.body));
         return homeFJ;
       } else {
-        throw null;
+        throw _request['status']['message'];
       }
-
       // throw AuthenticationException(message: 'Wrong username or password');
-    } else {
-      // throw HomeException(message: 'ocurrio un problema de conexion');
-    }
+    } else {}
   }
 }
