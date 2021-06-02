@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:universidad_lg/Evaluaciones/blocs/evaluacion_bloc.dart';
@@ -115,7 +117,8 @@ class __SingleEvaluacionContentState extends State<_SingleEvaluacionContent> {
       return Container(
         // padding: EdgeInsets.all(0),
         child: _ContentSingleEvaluacion(
-          evaluacionInfo: evaluacionInfo.status.preguntas,
+          evaluacionInfo: evaluacionInfo.status,
+          time: int.parse(evaluacionInfo.status.tiempo),
         ),
       );
     }
@@ -131,24 +134,42 @@ class __SingleEvaluacionContentState extends State<_SingleEvaluacionContent> {
 }
 
 class _ContentSingleEvaluacion extends StatefulWidget {
-  final List<Pregunta> evaluacionInfo;
-  _ContentSingleEvaluacion({this.evaluacionInfo});
+  final Status evaluacionInfo;
+  int time;
+  _ContentSingleEvaluacion({this.evaluacionInfo, this.time});
+
   @override
   __ContentSingleEvaluacionState createState() =>
       __ContentSingleEvaluacionState();
 }
 
 class __ContentSingleEvaluacionState extends State<_ContentSingleEvaluacion> {
-  String selectedRole = 'Writer';
+  String selectedRole = '';
+  Map preguntasList = {};
+
+  void _list() => print(preguntasList);
+
+  _setValue(pre, res) {
+    setState(() {
+      preguntasList[pre] = res;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    int cont = 1;
+    // startTimeout();
+    // print(totalTime);
+
+    _list();
 
     final List<CoolStep> steps = [];
-    for (var item in widget.evaluacionInfo) {
+
+    int cont = 1;
+    for (var item in widget.evaluacionInfo.preguntas) {
       // List<Respuesta> repustas = item.respuestas;
       List<Respuesta> respuesta = item.respuestas;
+
+      preguntasList[item.id] = '';
 
       steps.add(CoolStep(
         title: 'Pregunta $cont',
@@ -160,6 +181,7 @@ class __ContentSingleEvaluacionState extends State<_ContentSingleEvaluacion> {
                 _buildSelector(
                     name: rs.texto,
                     value: rs.delta.toString(),
+                    pregunta: item.id,
                     context: context),
             ],
           ),
@@ -171,32 +193,41 @@ class __ContentSingleEvaluacionState extends State<_ContentSingleEvaluacion> {
       cont++;
     }
 
+    // print(preguntasList);
+
     return Container(
-      child: CoolStepper(
-        showErrorSnackbar: false,
-        onCompleted: () {
-          print('Steps completed!');
-        },
-        steps: steps,
-        config: CoolStepperConfig(
-          backText: 'ANTERIOR',
-          nextText: 'SIGUIENTE',
-          stepText: '',
-          iconColor: mainColor,
-          ofText: 'DE',
-          headerColor: mainColor,
-          titleTextStyle: TextStyle(color: Colors.white, fontSize: 20.0),
-          subtitleTextStyle: TextStyle(color: Colors.white, fontSize: 16.0),
+      child: Stack(children: [
+        CoolStepper(
+          showErrorSnackbar: false,
+          onCompleted: () {
+            print('Steps completed!');
+          },
+          steps: steps,
+          config: CoolStepperConfig(
+            backText: 'ANTERIOR',
+            nextText: 'SIGUIENTE',
+            stepText: '',
+            iconColor: mainColor,
+            ofText: 'DE',
+            headerColor: mainColor,
+            titleTextStyle: TextStyle(color: Colors.white, fontSize: 20.0),
+            subtitleTextStyle: TextStyle(color: Colors.white, fontSize: 16.0),
+          ),
         ),
-      ),
+        Positioned(
+          child: Text('sss'),
+          top: 30.0,
+          right: 30.0,
+        )
+      ]),
     );
   }
 
-  Widget _buildSelector({
-    BuildContext context,
-    @required String name,
-    @required String value,
-  }) {
+  Widget _buildSelector(
+      {BuildContext context,
+      @required String name,
+      @required String value,
+      @required String pregunta}) {
     final isActive = name == selectedRole;
 
     return RadioListTile(
@@ -204,6 +235,7 @@ class __ContentSingleEvaluacionState extends State<_ContentSingleEvaluacion> {
       activeColor: mainColor,
       groupValue: selectedRole,
       onChanged: (v) {
+        _setValue(pregunta, v);
         setState(() {
           selectedRole = v;
         });
