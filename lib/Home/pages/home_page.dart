@@ -80,15 +80,18 @@ class __HomeContent extends State<_HomeContent> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    // final authBloc = BlocProvider.of<AuthenticationBloc>(context);
+  void _loader() {
     homeBloc
         .getHomeContent(token: widget.user.token, uid: widget.user.userId)
         .then((value) {
       _onLoad();
       homeInfo = value;
     });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // final authBloc = BlocProvider.of<AuthenticationBloc>(context);
 
     if (load) {
       return Container(
@@ -105,6 +108,7 @@ class __HomeContent extends State<_HomeContent> {
         ),
       );
     }
+    _loader();
     return Center(
       child: CircularProgressIndicator(
         color: mainColor,

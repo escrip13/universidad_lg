@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:universidad_lg/Entrenamiento/pages/entrenamiento_page.dart';
+import 'package:universidad_lg/Evaluaciones/pages/evaluacion_page.dart';
 import 'package:universidad_lg/Home/pages/home_page.dart';
 import 'package:universidad_lg/User/models/user.dart';
 import 'package:universidad_lg/constants.dart';
@@ -68,6 +69,16 @@ class DrawerMenuLeft extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.history_edu),
             title: Text('Evaluación'),
+            onTap: () {
+              if (currenPage != 'evaluaciones') {
+                Navigator.of(context).pop();
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return EvaluacionPage(user: user);
+                }));
+                // Navigator.pop(context);
+              }
+              return null;
+            },
           ),
           ListTile(
             leading: Icon(Icons.collections_bookmark),

@@ -6,7 +6,7 @@ import 'package:universidad_lg/Home/pages/home_page.dart';
 import 'package:universidad_lg/User/blocs/authentication/authentication.dart';
 import 'package:universidad_lg/User/models/models.dart';
 import 'package:universidad_lg/User/pages/login_page.dart';
-import 'package:universidad_lg/widgets/buttom_main.dart';
+import 'package:universidad_lg/widgets/buttom_main_navigator.dart';
 import 'package:universidad_lg/widgets/drawer_menu_left.dart';
 import 'package:universidad_lg/widgets/drawer_menu_right.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -28,9 +28,12 @@ class EntrenamientoPage extends StatelessWidget {
         title: Center(
           child: InkWell(
             onTap: () {
-              return HomePage(
-                user: user,
-              );
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => HomePage(
+                            user: user,
+                          )));
             },
             child: Image(
               image: AssetImage('assets/img/new_logo.png'),
@@ -147,6 +150,7 @@ class __EntrenamientoContent extends State<_EntrenamientoContent> {
             token: widget.user.token, uid: widget.user.userId)
         .then((value) {
       _onLoad();
+
       entrenamientoInfo = value;
     });
   }
@@ -311,7 +315,7 @@ class _ItemCurso extends StatelessWidget {
                   ),
                   ButtomMain(
                     text: 'VER CURSO',
-                    onpress: curso,
+                    onpress: () {},
                   )
                 ],
               ),
@@ -349,7 +353,7 @@ class _ItemCurso extends StatelessWidget {
                   ),
                   ButtomMain(
                     text: 'VER CURSO',
-                    onpress: curso,
+                    onpress: () {},
                   )
                 ],
               ),

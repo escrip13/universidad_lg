@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:universidad_lg/Entrenamiento/models/entrenamiento_model.dart';
 import 'package:universidad_lg/constants.dart';
 
 class ButtomMain extends StatelessWidget {
-  String text;
-  TipoCurso onpress;
+  final String text;
+  var onpress;
 
   ButtomMain({this.text, this.onpress});
 
@@ -21,7 +20,11 @@ class ButtomMain extends StatelessWidget {
       ),
       child: Text(text),
       onPressed: () {
-        print('ddd');
+        if (onpress != null) {
+          Navigator.push(context, MaterialPageRoute(builder: (context) {
+            return onpress;
+          }));
+        }
       },
     );
   }
