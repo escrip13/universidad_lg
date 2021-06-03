@@ -65,12 +65,13 @@ class _AuthForm extends StatelessWidget {
     final authBloc = BlocProvider.of<AuthenticationBloc>(context);
 
     final logo = Container(
+      width: 200,
       margin: EdgeInsets.only(bottom: 20.0),
       decoration: BoxDecoration(
           // border: Border
           ),
       child: Image(
-        image: AssetImage('assets/img/logolg.png'),
+        image: AssetImage('assets/img/logo.png'),
       ),
     );
 
@@ -96,7 +97,7 @@ class _AuthForm extends StatelessWidget {
           alignment: Alignment.center,
           children: [
             BacgroundImage(
-              image: 'assets/img/bg1.jpg',
+              image: 'assets/img/back-login.jpg',
               height: null,
             ),
             SingleChildScrollView(
