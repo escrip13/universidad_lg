@@ -126,15 +126,8 @@ class _SingleEvaluacionPageState extends State<SingleEvaluacionPage> {
               ),
               TextButton(
                 onPressed: () {
+                  print(preguntasList);
                   controllerTime.disposeTimer();
-
-                  EvaluacionBloc evalacionBloc = EvaluacionBloc();
-                  evalacionBloc.sendEvaluacion(
-                    uid: widget.user.userId,
-                    token: widget.user.token,
-                    data: preguntasList,
-                    nid: widget.nid,
-                  );
 
                   Navigator.pop(context);
                   Navigator.pop(context);
@@ -201,9 +194,11 @@ class __SingleEvaluacionContentState extends State<_SingleEvaluacionContent> {
         // padding: EdgeInsets.all(0),
         child: _ContentSingleEvaluacion(
           evaluacionInfo: evaluacionInfo.status,
-          time: int.parse(evaluacionInfo.status.tiempo),
-          user: widget.user,
+          time: int.parse(
+            evaluacionInfo.status.tiempo,
+          ),
           nid: widget.nid,
+          user: widget.user,
         ),
       );
     }
@@ -218,9 +213,10 @@ class __SingleEvaluacionContentState extends State<_SingleEvaluacionContent> {
 
 class _ContentSingleEvaluacion extends StatefulWidget {
   final Status evaluacionInfo;
-  final User user;
-  final String nid;
   int time;
+  User user;
+  String nid;
+
   _ContentSingleEvaluacion(
       {this.evaluacionInfo, this.time, this.user, this.nid});
 
@@ -246,14 +242,14 @@ class __ContentSingleEvaluacionState extends State<_ContentSingleEvaluacion>
     //crear los steps/////
     listSteps(context);
 
-    endTime = DateTime.now().millisecondsSinceEpoch + 1000 * (widget.time * 1);
+    endTime = DateTime.now().millisecondsSinceEpoch + 1000 * (widget.time * 60);
 
     controllerTime =
         CountdownTimerController(endTime: endTime, onEnd: _onFinishTime);
 
     controllerAnimation = AnimationController(
       vsync: this,
-      duration: Duration(seconds: widget.time),
+      duration: Duration(minutes: widget.time),
     )..addListener(() {
         setState(() {});
       });
@@ -308,7 +304,7 @@ class __ContentSingleEvaluacionState extends State<_ContentSingleEvaluacion>
                 ),
                 CountdownTimer(
                   controller: controllerTime,
-                  onEnd: _onFinishTime(),
+                  onEnd: _onFinishTime,
                   endTime: endTime,
                   widgetBuilder: (_, CurrentRemainingTime time) {
                     if (time == null) {
@@ -404,7 +400,7 @@ class __ContentSingleEvaluacionState extends State<_ContentSingleEvaluacion>
   ///////////////  finalizavion de los steps //////////
 
   _onFinish() {
-    _key.currentState.save();
+    // _key.currentState.save();
     print(preguntasList);
     showDialog<String>(
       context: context,
@@ -432,15 +428,7 @@ class __ContentSingleEvaluacionState extends State<_ContentSingleEvaluacion>
                 ),
               ),
               TextButton(
-                onPressed: () {
-                  EvaluacionBloc evalacionBloc = EvaluacionBloc();
-                  evalacionBloc.sendEvaluacion(
-                    uid: widget.user.userId,
-                    token: widget.user.token,
-                    data: preguntasList,
-                    nid: widget.nid,
-                  );
-                },
+                onPressed: () {},
                 child: const Text(
                   'OK',
                   style: TextStyle(
@@ -453,6 +441,8 @@ class __ContentSingleEvaluacionState extends State<_ContentSingleEvaluacion>
         ],
       ),
     );
+
+    // print(preguntasList);
   }
 
   ///  finalizacion del tiempo ////
@@ -475,14 +465,14 @@ class __ContentSingleEvaluacionState extends State<_ContentSingleEvaluacion>
         ],
       ),
     );
-
-    EvaluacionBloc evalacionBloc = EvaluacionBloc();
-
-    evalacionBloc.sendEvaluacion(
-      uid: widget.user.userId,
-      token: widget.user.token,
-      data: preguntasList,
-      nid: widget.nid,
-    );
   }
+}
+
+class SendDataEvaluacion {
+  Map data;
+  SendDataEvaluacion(this.data);
+
+  // tengo que enviar  usUARIOS  token   idd evaluacion y la data
+
+  EvaluacionBloc evalacionBloc = EvaluacionBloc();
 }
