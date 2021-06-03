@@ -126,8 +126,15 @@ class _SingleEvaluacionPageState extends State<SingleEvaluacionPage> {
               ),
               TextButton(
                 onPressed: () {
-                  print(preguntasList);
                   controllerTime.disposeTimer();
+
+                  EvaluacionBloc evalacionBloc = EvaluacionBloc();
+                  evalacionBloc.sendEvaluacion(
+                    uid: widget.user.userId,
+                    token: widget.user.token,
+                    data: preguntasList,
+                    nid: widget.nid,
+                  );
 
                   Navigator.pop(context);
                   Navigator.pop(context);
@@ -195,6 +202,8 @@ class __SingleEvaluacionContentState extends State<_SingleEvaluacionContent> {
         child: _ContentSingleEvaluacion(
           evaluacionInfo: evaluacionInfo.status,
           time: int.parse(evaluacionInfo.status.tiempo),
+          user: widget.user,
+          nid: widget.nid,
         ),
       );
     }
@@ -209,8 +218,11 @@ class __SingleEvaluacionContentState extends State<_SingleEvaluacionContent> {
 
 class _ContentSingleEvaluacion extends StatefulWidget {
   final Status evaluacionInfo;
+  final User user;
+  final String nid;
   int time;
-  _ContentSingleEvaluacion({this.evaluacionInfo, this.time});
+  _ContentSingleEvaluacion(
+      {this.evaluacionInfo, this.time, this.user, this.nid});
 
   @override
   __ContentSingleEvaluacionState createState() =>
@@ -296,7 +308,7 @@ class __ContentSingleEvaluacionState extends State<_ContentSingleEvaluacion>
                 ),
                 CountdownTimer(
                   controller: controllerTime,
-                  onEnd: _onFinishTime,
+                  onEnd: _onFinishTime(),
                   endTime: endTime,
                   widgetBuilder: (_, CurrentRemainingTime time) {
                     if (time == null) {
@@ -392,7 +404,7 @@ class __ContentSingleEvaluacionState extends State<_ContentSingleEvaluacion>
   ///////////////  finalizavion de los steps //////////
 
   _onFinish() {
-    // _key.currentState.save();
+    _key.currentState.save();
     print(preguntasList);
     showDialog<String>(
       context: context,
@@ -420,7 +432,15 @@ class __ContentSingleEvaluacionState extends State<_ContentSingleEvaluacion>
                 ),
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  EvaluacionBloc evalacionBloc = EvaluacionBloc();
+                  evalacionBloc.sendEvaluacion(
+                    uid: widget.user.userId,
+                    token: widget.user.token,
+                    data: preguntasList,
+                    nid: widget.nid,
+                  );
+                },
                 child: const Text(
                   'OK',
                   style: TextStyle(
@@ -433,8 +453,6 @@ class __ContentSingleEvaluacionState extends State<_ContentSingleEvaluacion>
         ],
       ),
     );
-
-    // print(preguntasList);
   }
 
   ///  finalizacion del tiempo ////
@@ -457,12 +475,14 @@ class __ContentSingleEvaluacionState extends State<_ContentSingleEvaluacion>
         ],
       ),
     );
+
+    EvaluacionBloc evalacionBloc = EvaluacionBloc();
+
+    evalacionBloc.sendEvaluacion(
+      uid: widget.user.userId,
+      token: widget.user.token,
+      data: preguntasList,
+      nid: widget.nid,
+    );
   }
-}
-
-class SendDataEvaluacion {
-  Map data;
-  SendDataEvaluacion(this.data);
-
-  EvaluacionBloc evalacionBloc = EvaluacionBloc();
 }

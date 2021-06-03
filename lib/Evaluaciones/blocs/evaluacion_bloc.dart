@@ -14,4 +14,9 @@ class EvaluacionBloc {
     return await entrenamintoService.servicegetSingleEvaluacionesContent(
         uid, token, nid);
   }
+
+  Future<SingleEvaluacion> sendEvaluacion(
+      {String token, String uid, String nid, Map data}) async {
+    return await entrenamintoService.sendEvaluacion(uid, token, nid, data);
+  }
 }
