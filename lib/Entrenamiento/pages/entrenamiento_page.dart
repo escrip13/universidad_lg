@@ -88,6 +88,13 @@ class __EntrenamientoContent extends State<_EntrenamientoContent> {
   EntrenamientoBloc entrenamientoBloc = EntrenamientoBloc();
   int filtro = 0;
 
+  @override
+  void initState() {
+    super.initState();
+
+    loadData();
+  }
+
   void _onLoad() {
     if (mounted) {
       setState(() {
@@ -180,10 +187,9 @@ class __EntrenamientoContent extends State<_EntrenamientoContent> {
       ));
     }
 
-    loadData();
     return Center(
       child: CircularProgressIndicator(
-        color: Colors.white,
+        color: mainColor,
       ),
     );
   }

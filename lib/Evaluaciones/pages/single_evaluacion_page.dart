@@ -1,21 +1,22 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_countdown_timer/countdown_timer_controller.dart';
+import 'package:flutter_countdown_timer/current_remaining_time.dart';
+import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:universidad_lg/Evaluaciones/blocs/evaluacion_bloc.dart';
 import 'package:universidad_lg/Evaluaciones/models/single_evaluacion_model.dart';
 import 'package:universidad_lg/Home/pages/home_page.dart';
 import 'package:universidad_lg/User/blocs/authentication/authentication.dart';
 import 'package:universidad_lg/User/models/models.dart';
 import 'package:universidad_lg/User/pages/login_page.dart';
-import 'package:universidad_lg/widgets/drawer_menu_left.dart';
-import 'package:universidad_lg/widgets/drawer_menu_right.dart';
 import 'package:cool_stepper/cool_stepper.dart';
 import 'package:radio_button_form_field/radio_button_form_field.dart';
-
 import '../../constants.dart';
 
-class SingleEvaluacionPage extends StatelessWidget {
+Map preguntasList = {};
+CountdownTimerController controllerTime;
+
+class SingleEvaluacionPage extends StatefulWidget {
   final User user;
   final String nid;
   const SingleEvaluacionPage({
@@ -25,57 +26,125 @@ class SingleEvaluacionPage extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  _SingleEvaluacionPageState createState() => _SingleEvaluacionPageState();
+}
+
+class _SingleEvaluacionPageState extends State<SingleEvaluacionPage> {
+  bool shouldPop = false;
+
+  @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return Scaffold(
-      // backgroundColor: Colors.transparent,
-      appBar: AppBar(
-        backgroundColor: mainColor,
-        title: Center(
-          child: InkWell(
-            onTap: () {
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => HomePage(
-                            user: user,
-                          )));
-            },
-            child: Image(
-              image: AssetImage('assets/img/new_logo.png'),
-              height: 35,
-            ),
-          ),
-        ),
-        actions: [
-          Builder(
-            builder: (context) => IconButton(
-              onPressed: () {
-                Scaffold.of(context).openEndDrawer();
+    return WillPopScope(
+      onWillPop: () async {
+        return _onBackPressed();
+      },
+      child: Scaffold(
+        // backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          backgroundColor: mainColor,
+          title: Center(
+            child: InkWell(
+              onTap: () {
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => HomePage(
+                              user: widget.user,
+                            )));
               },
-              icon: Icon(Icons.person),
+              child: Image(
+                image: AssetImage('assets/img/new_logo.png'),
+                height: 35,
+              ),
             ),
           ),
-        ],
-      ),
-      backgroundColor: Colors.white,
-      drawer: DrawerMenuLeft(
-        user: user,
-        currenPage: 'evaluaciones',
-      ),
-      endDrawer: DrawerMenuRight(),
-      body: BlocBuilder<AuthenticationBloc, AuthenticationState>(
-        builder: (context, state) {
-          if (state is AuthenticationAuthenticated) {
-            // show home page
+          actions: [
+            Builder(
+              builder: (context) => IconButton(
+                onPressed: () {
+                  Scaffold.of(context).openEndDrawer();
+                },
+                icon: Icon(Icons.person),
+                color: Colors.transparent,
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: Colors.white,
+        // drawer: DrawerMenuLeft(
+        //   user: widget.user,
+        //   currenPage: 'evaluaciones',
+        // ),
+        // endDrawer: DrawerMenuRight(),
+        body: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+          builder: (context, state) {
+            if (state is AuthenticationAuthenticated) {
+              // show home page
 
-            return _SingleEvaluacionContent(user: state.user, nid: nid);
-          }
-          // otherwise show login page
-          return LoginPage();
-        },
+              return _SingleEvaluacionContent(
+                user: state.user,
+                nid: widget.nid,
+              );
+            }
+            // otherwise show login page
+            return LoginPage();
+          },
+        ),
       ),
     );
+  }
+
+  Future<bool> _onBackPressed() async {
+    await showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: const Text(
+          '¡Desea regresar!',
+          textAlign: TextAlign.center,
+          style: TextStyle(color: mainColor),
+        ),
+        content: const Text(
+          'perderas todo el progreso',
+          textAlign: TextAlign.center,
+        ),
+        actions: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  print('enviar atras');
+                },
+                child: const Text(
+                  'Cancelar',
+                  style: TextStyle(
+                    color: mainColor,
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  print(preguntasList);
+                  controllerTime.disposeTimer();
+
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                },
+                child: const Text(
+                  'OK',
+                  style: TextStyle(
+                    color: mainColor,
+                  ),
+                ),
+              ),
+            ],
+          )
+        ],
+      ),
+    );
+    return false;
   }
 }
 
@@ -91,7 +160,7 @@ class _SingleEvaluacionContent extends StatefulWidget {
 class __SingleEvaluacionContentState extends State<_SingleEvaluacionContent> {
   SingleEvaluacion evaluacionInfo;
   bool load = false;
-  EvaluacionBloc evalacioonBloc = EvaluacionBloc();
+  EvaluacionBloc evalacionBloc = EvaluacionBloc();
 
   void _onLoad() {
     if (mounted) {
@@ -102,13 +171,19 @@ class __SingleEvaluacionContentState extends State<_SingleEvaluacionContent> {
   }
 
   void loadData() {
-    evalacioonBloc
+    evalacionBloc
         .getSingleEvaluaionesContent(
             token: widget.user.token, uid: widget.user.userId, nid: widget.nid)
         .then((value) {
       _onLoad();
       evaluacionInfo = value;
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadData();
   }
 
   @override
@@ -123,8 +198,6 @@ class __SingleEvaluacionContentState extends State<_SingleEvaluacionContent> {
         ),
       );
     }
-
-    loadData();
 
     return Center(
       child: CircularProgressIndicator(
@@ -144,61 +217,107 @@ class _ContentSingleEvaluacion extends StatefulWidget {
       __ContentSingleEvaluacionState();
 }
 
-class __ContentSingleEvaluacionState extends State<_ContentSingleEvaluacion> {
+class __ContentSingleEvaluacionState extends State<_ContentSingleEvaluacion>
+    with TickerProviderStateMixin {
   final GlobalKey<FormState> _key = GlobalKey<FormState>();
-  Map preguntasList = {};
+
   List<CoolStep> steps = [];
-  bool cargo = false;
   String selectedRole = '';
   bool _autoValidate = false;
 
+  AnimationController controllerAnimation;
+  int endTime = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    //crear los steps/////
+    listSteps(context);
+
+    endTime = DateTime.now().millisecondsSinceEpoch + 1000 * (widget.time * 1);
+
+    controllerTime =
+        CountdownTimerController(endTime: endTime, onEnd: _onFinishTime);
+
+    controllerAnimation = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: widget.time),
+    )..addListener(() {
+        setState(() {});
+      });
+    controllerAnimation.repeat(max: 1);
+    controllerAnimation.forward();
+  }
+
+  @override
+  void dispose() {
+    controllerAnimation.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    setState(() {
-      if (!cargo) {
-        listSteps(context);
-        cargo = true;
-      }
-    });
-
-    // startTimeout();
-    // print(totalTime);
-
-    // print(preguntasList);
-
     return Container(
       child: Form(
         key: _key,
         autovalidateMode:
             _autoValidate ? AutovalidateMode.always : AutovalidateMode.disabled,
-        child: Stack(children: [
-          CoolStepper(
-            showErrorSnackbar: false,
-            onCompleted: () {
-              _onSave();
-            },
-            steps: steps,
-            config: CoolStepperConfig(
-              backText: 'ANTERIOR',
-              nextText: 'SIGUIENTE',
-              finalText: 'ENVIAR',
-              stepText: '',
-              iconColor: mainColor,
-              ofText: 'DE',
-              headerColor: mainColor,
-              titleTextStyle: TextStyle(color: Colors.white, fontSize: 20.0),
-              subtitleTextStyle: TextStyle(color: Colors.white, fontSize: 16.0),
+        child: Column(children: [
+          Expanded(
+            child: CoolStepper(
+              showErrorSnackbar: false,
+              onCompleted: () {
+                _onFinish();
+              },
+              steps: steps,
+              config: CoolStepperConfig(
+                backText: 'ANTERIOR',
+                nextText: 'SIGUIENTE',
+                finalText: 'ENVIAR',
+                stepText: '',
+                iconColor: mainColor,
+                ofText: 'DE',
+                headerColor: mainColor,
+                titleTextStyle: TextStyle(color: Colors.white, fontSize: 20.0),
+                subtitleTextStyle:
+                    TextStyle(color: Colors.white, fontSize: 16.0),
+              ),
             ),
           ),
-          Positioned(
-            child: Text('sss'),
-            top: 30.0,
-            right: 30.0,
+          Container(
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                LinearProgressIndicator(
+                  value: controllerAnimation.value,
+                  color: mainColor,
+                  backgroundColor: secondColor,
+                  minHeight: 25.0,
+                ),
+                CountdownTimer(
+                  controller: controllerTime,
+                  onEnd: _onFinishTime,
+                  endTime: endTime,
+                  widgetBuilder: (_, CurrentRemainingTime time) {
+                    if (time == null) {
+                      return Text('Tiempo finalizado');
+                    }
+                    return Text(
+                      '${time.min} : ${time.sec}',
+                      style: TextStyle(
+                          fontWeight: FontWeight.w600, color: Colors.white),
+                    );
+                  },
+                ),
+              ],
+            ),
           )
         ]),
       ),
     );
   }
+
+  ////////////////////  llenar los steps/////////////////
 
   List listSteps(context) {
     int cont = 1;
@@ -212,7 +331,7 @@ class __ContentSingleEvaluacionState extends State<_ContentSingleEvaluacion> {
         data.add({'value': rs.delta, 'display': rs.texto});
       }
 
-      preguntasList[item.id] = '';
+      preguntasList[item.id] = '0';
 
       steps.add(CoolStep(
         title: 'Pregunta $cont',
@@ -260,41 +379,90 @@ class __ContentSingleEvaluacionState extends State<_ContentSingleEvaluacion> {
             return 'no-pasa';
           }
 
+          /// guarda el formulatio despues de cada step para llenar el map  ///
           _key.currentState.save();
-
           return null;
         },
       ));
       cont++;
     }
-
     return steps;
   }
 
-  _onSave() {
+  ///////////////  finalizavion de los steps //////////
+
+  _onFinish() {
     // _key.currentState.save();
     print(preguntasList);
-    print('pasa');
-
-    _key.currentState.save();
     showDialog<String>(
       context: context,
       builder: (BuildContext context) => AlertDialog(
-        title: const Text('!DESEA ENVIAR!'),
-        content: const Text('AlertDialog description'),
+        title: const Text(
+          '¡ENVIAR EVALUACION!',
+          textAlign: TextAlign.center,
+          style: TextStyle(color: mainColor),
+        ),
+        content: const Text(
+          'lorem mas lorem mas lomrem',
+          textAlign: TextAlign.center,
+        ),
         actions: <Widget>[
-          TextButton(
-            onPressed: () => Navigator.pop(context, 'Cancel'),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, 'OK'),
-            child: const Text('OK'),
-          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              TextButton(
+                onPressed: () {},
+                child: const Text(
+                  'Cancelar',
+                  style: TextStyle(
+                    color: mainColor,
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: () {},
+                child: const Text(
+                  'OK',
+                  style: TextStyle(
+                    color: mainColor,
+                  ),
+                ),
+              ),
+            ],
+          )
         ],
       ),
     );
 
     // print(preguntasList);
   }
+
+  ///  finalizacion del tiempo ////
+  _onFinishTime() {
+    print(preguntasList);
+
+    showDialog<String>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) => AlertDialog(
+        title: const Text('!TIEMPO FINALIZADO!'),
+        content: const Text('lorem mas lorem mas lomrem'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context, 'Enviar');
+            },
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class SendDataEvaluacion {
+  Map data;
+  SendDataEvaluacion(this.data);
+
+  EvaluacionBloc evalacionBloc = EvaluacionBloc();
 }
