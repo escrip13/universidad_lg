@@ -227,6 +227,7 @@ class _ContentSingleEvaluacion extends StatefulWidget {
 
 class __ContentSingleEvaluacionState extends State<_ContentSingleEvaluacion>
     with TickerProviderStateMixin {
+  EvaluacionBloc evalacionBloc = EvaluacionBloc();
   final GlobalKey<FormState> _key = GlobalKey<FormState>();
 
   List<CoolStep> steps = [];
@@ -428,9 +429,15 @@ class __ContentSingleEvaluacionState extends State<_ContentSingleEvaluacion>
                 ),
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  evalacionBloc.sendEvaluacion(
+                    data: preguntasList,
+                    uid: widget.user.userId,
+                    token: widget.user.userId,
+                  );
+                },
                 child: const Text(
-                  'OK',
+                  'ENVIAR',
                   style: TextStyle(
                     color: mainColor,
                   ),

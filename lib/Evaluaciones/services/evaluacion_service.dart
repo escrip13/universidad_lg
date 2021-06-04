@@ -62,16 +62,24 @@ class EvaluacionService {
     }
   }
 
+  ////   enviar evaluacion
+
   Future<SingleEvaluacion> sendEvaluacion(
       String userid, String token, String nid, Map data) async {
     final response = await http.post(
-      Uri.https(baseUrl, 'app/evaluaciones/detalle'),
+      Uri.https(baseUrl, 'app/evaluaciones/detalle/save'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode(
-          <String, String>{'userId': userid, 'token': token, 'eva_nid': nid}),
+      body: jsonEncode(<String, String>{
+        'userId': userid,
+        'token': token,
+        'eva_nid': nid,
+        'respuestas': data.toString()
+      }),
     );
+
+    print(response.body);
 
     if (response.statusCode == 200) {
       final _request = json.decode(response.body);

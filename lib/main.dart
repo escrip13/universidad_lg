@@ -9,6 +9,7 @@ import 'User/services/authentication_service.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 void main() => runApp(
+
         // Injects the Authentication service
         RepositoryProvider<AuthenticationService>(
       create: (context) {
