@@ -194,7 +194,11 @@ class __SingleEvaluacionContentState extends State<_SingleEvaluacionContent> {
         // padding: EdgeInsets.all(0),
         child: _ContentSingleEvaluacion(
           evaluacionInfo: evaluacionInfo.status,
-          time: int.parse(evaluacionInfo.status.tiempo),
+          time: int.parse(
+            evaluacionInfo.status.tiempo,
+          ),
+          nid: widget.nid,
+          user: widget.user,
         ),
       );
     }
@@ -210,7 +214,11 @@ class __SingleEvaluacionContentState extends State<_SingleEvaluacionContent> {
 class _ContentSingleEvaluacion extends StatefulWidget {
   final Status evaluacionInfo;
   int time;
-  _ContentSingleEvaluacion({this.evaluacionInfo, this.time});
+  User user;
+  String nid;
+
+  _ContentSingleEvaluacion(
+      {this.evaluacionInfo, this.time, this.user, this.nid});
 
   @override
   __ContentSingleEvaluacionState createState() =>
@@ -219,6 +227,7 @@ class _ContentSingleEvaluacion extends StatefulWidget {
 
 class __ContentSingleEvaluacionState extends State<_ContentSingleEvaluacion>
     with TickerProviderStateMixin {
+  EvaluacionBloc evalacionBloc = EvaluacionBloc();
   final GlobalKey<FormState> _key = GlobalKey<FormState>();
 
   List<CoolStep> steps = [];
@@ -234,14 +243,14 @@ class __ContentSingleEvaluacionState extends State<_ContentSingleEvaluacion>
     //crear los steps/////
     listSteps(context);
 
-    endTime = DateTime.now().millisecondsSinceEpoch + 1000 * (widget.time * 1);
+    endTime = DateTime.now().millisecondsSinceEpoch + 1000 * (widget.time * 60);
 
     controllerTime =
         CountdownTimerController(endTime: endTime, onEnd: _onFinishTime);
 
     controllerAnimation = AnimationController(
       vsync: this,
-      duration: Duration(seconds: widget.time),
+      duration: Duration(minutes: widget.time),
     )..addListener(() {
         setState(() {});
       });
@@ -420,9 +429,15 @@ class __ContentSingleEvaluacionState extends State<_ContentSingleEvaluacion>
                 ),
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  evalacionBloc.sendEvaluacion(
+                    data: preguntasList,
+                    uid: widget.user.userId,
+                    token: widget.user.userId,
+                  );
+                },
                 child: const Text(
-                  'OK',
+                  'ENVIAR',
                   style: TextStyle(
                     color: mainColor,
                   ),
@@ -463,6 +478,8 @@ class __ContentSingleEvaluacionState extends State<_ContentSingleEvaluacion>
 class SendDataEvaluacion {
   Map data;
   SendDataEvaluacion(this.data);
+
+  // tengo que enviar  usUARIOS  token   idd evaluacion y la data
 
   EvaluacionBloc evalacionBloc = EvaluacionBloc();
 }

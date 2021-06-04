@@ -15,14 +15,40 @@ class IsAuthenticationService extends AuthenticationService {
   @override
   Future<User> getCurrentUser() async {
     final islogin = await UserSecureStorage.getIslogin();
+
     if (islogin != null) {
       final nombre = await UserSecureStorage.getNombre();
       final email = await UserSecureStorage.getEmail();
       final token = await UserSecureStorage.getLoginToken();
       final uid = await UserSecureStorage.getUserId();
 
-      return User(name: nombre, email: email, token: token, userId: uid);
+      final response = await http.post(
+        Uri.https(baseUrl, 'app/validate-session'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          'userId': uid,
+          'token': token,
+        }),
+      );
+      // print(response.body);
+      if (response.statusCode == 200) {
+        final _request = json.decode(response.body);
+
+        if (_request['status']['type'] != 'error') {
+          return User(name: nombre, email: email, token: token, userId: uid);
+        } else {
+          return null;
+          // throw AuthenticationException(message: _request['status']['message']);
+        }
+        // throw AuthenticationException(message: 'Wrong username or password');
+      } else {
+        throw AuthenticationException(
+            message: 'ocurrio un problema de conexion');
+      }
     }
+
     return null;
   }
 
