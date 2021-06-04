@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:universidad_lg/Entrenamiento/blocs/entrenamiento.dart';
 import 'package:universidad_lg/Entrenamiento/models/models.dart';
+import 'package:universidad_lg/Entrenamiento/pages/cursopreview_page.dart';
 import 'package:universidad_lg/Home/pages/home_page.dart';
 import 'package:universidad_lg/User/blocs/authentication/authentication.dart';
 import 'package:universidad_lg/User/models/models.dart';
@@ -153,11 +154,10 @@ class __EntrenamientoContent extends State<_EntrenamientoContent> {
 
   void loadData() {
     entrenamientoBloc
-        .getEntrenamintoContent(
+        .getEntrenamientoContent(
             token: widget.user.token, uid: widget.user.userId)
         .then((value) {
       _onLoad();
-
       entrenamientoInfo = value;
     });
   }
@@ -286,8 +286,9 @@ class _ContentEntrenamintoType extends StatelessWidget {
 class _ItemCurso extends StatelessWidget {
   TipoCurso curso;
   int filtro;
+  User user;
 
-  _ItemCurso({this.curso, this.filtro});
+  _ItemCurso({this.curso, this.filtro, this.user});
 
   @override
   Widget build(BuildContext context) {
@@ -320,9 +321,11 @@ class _ItemCurso extends StatelessWidget {
                     style: TextStyle(fontSize: 18.0),
                   ),
                   ButtomMain(
-                    text: 'VER CURSO',
-                    onpress: () {},
-                  )
+                      text: 'VER CURSO',
+                      onpress: CursoPreviewPage(
+                        user: user,
+                        nid: curso.nid,
+                      ))
                 ],
               ),
             )
