@@ -1,4 +1,5 @@
 import 'package:universidad_lg/Evaluaciones/models/evaluacion_model.dart';
+import 'package:universidad_lg/Evaluaciones/models/send_evaluacion.dart';
 import 'package:universidad_lg/Evaluaciones/models/single_evaluacion_model.dart';
 import 'package:universidad_lg/Evaluaciones/services/services.dart';
 
@@ -15,7 +16,7 @@ class EvaluacionBloc {
         uid, token, nid);
   }
 
-  Future<SingleEvaluacion> sendEvaluacion(
+  Future<SendEvaluacion> sendEvaluacion(
       {String token, String uid, String nid, Map data}) async {
     return await entrenamintoService.sendEvaluacion(uid, token, nid, data);
   }

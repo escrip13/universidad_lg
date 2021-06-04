@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_countdown_timer/countdown_timer_controller.dart';
-import 'package:flutter_countdown_timer/current_remaining_time.dart';
-import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
-import 'package:universidad_lg/Evaluaciones/blocs/evaluacion_bloc.dart';
+import 'package:universidad_lg/Evaluaciones/models/send_evaluacion.dart';
+import '../../constants.dart';
+
 import 'package:universidad_lg/Evaluaciones/models/single_evaluacion_model.dart';
-import 'package:universidad_lg/Home/pages/home_page.dart';
-import 'package:universidad_lg/User/blocs/authentication/authentication.dart';
 import 'package:universidad_lg/User/models/models.dart';
-import 'package:universidad_lg/User/pages/login_page.dart';
+
 import 'package:cool_stepper/cool_stepper.dart';
 import 'package:radio_button_form_field/radio_button_form_field.dart';
-import '../../constants.dart';
+import 'package:flutter_countdown_timer/index.dart';
+
+import 'package:universidad_lg/Evaluaciones/blocs/evaluacion_bloc.dart';
+
+import 'package:universidad_lg/Home/pages/home_page.dart';
 
 Map preguntasList = {};
 CountdownTimerController controllerTime;
@@ -40,58 +40,51 @@ class _SingleEvaluacionPageState extends State<SingleEvaluacionPage> {
         return _onBackPressed();
       },
       child: Scaffold(
-        // backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          backgroundColor: mainColor,
-          title: Center(
-            child: InkWell(
-              onTap: () {
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => HomePage(
-                              user: widget.user,
-                            )));
-              },
-              child: Image(
-                image: AssetImage('assets/img/new_logo.png'),
-                height: 35,
-              ),
-            ),
-          ),
-          actions: [
-            Builder(
-              builder: (context) => IconButton(
-                onPressed: () {
-                  Scaffold.of(context).openEndDrawer();
+          // backgroundColor: Colors.transparent,
+          appBar: AppBar(
+            backgroundColor: mainColor,
+            title: Center(
+              child: InkWell(
+                onTap: () {
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => HomePage(
+                                user: widget.user,
+                              )));
                 },
-                icon: Icon(Icons.person),
-                color: Colors.transparent,
+                child: Image(
+                  image: AssetImage('assets/img/new_logo.png'),
+                  height: 35,
+                ),
               ),
             ),
-          ],
-        ),
-        backgroundColor: Colors.white,
-        // drawer: DrawerMenuLeft(
-        //   user: widget.user,
-        //   currenPage: 'evaluaciones',
-        // ),
-        // endDrawer: DrawerMenuRight(),
-        body: BlocBuilder<AuthenticationBloc, AuthenticationState>(
-          builder: (context, state) {
-            if (state is AuthenticationAuthenticated) {
-              // show home page
+            actions: [
+              Builder(
+                builder: (context) => IconButton(
+                  onPressed: () {
+                    Scaffold.of(context).openEndDrawer();
+                  },
+                  icon: Icon(Icons.person),
+                  color: Colors.transparent,
+                ),
+              ),
+            ],
+          ),
+          backgroundColor: Colors.white,
+          // drawer: DrawerMenuLeft(
+          //   user: widget.user,
+          //   currenPage: 'evaluaciones',
+          // ),
+          // endDrawer: DrawerMenuRight(),
+          body: _SingleEvaluacionContent(
+            user: widget.user,
+            nid: widget.nid,
+          )
 
-              return _SingleEvaluacionContent(
-                user: state.user,
-                nid: widget.nid,
-              );
-            }
-            // otherwise show login page
-            return LoginPage();
-          },
-        ),
-      ),
+          // otherwise show login page
+
+          ),
     );
   }
 
@@ -115,7 +108,6 @@ class _SingleEvaluacionPageState extends State<SingleEvaluacionPage> {
               TextButton(
                 onPressed: () {
                   Navigator.pop(context);
-                  print('enviar atras');
                 },
                 child: const Text(
                   'Cancelar',
@@ -166,6 +158,7 @@ class __SingleEvaluacionContentState extends State<_SingleEvaluacionContent> {
     if (mounted) {
       setState(() {
         load = true;
+        preguntasList = {};
       });
     }
   }
@@ -193,7 +186,7 @@ class __SingleEvaluacionContentState extends State<_SingleEvaluacionContent> {
       return Container(
         // padding: EdgeInsets.all(0),
         child: _ContentSingleEvaluacion(
-          evaluacionInfo: evaluacionInfo.status,
+          evaluacionInfo: evaluacionInfo,
           time: int.parse(
             evaluacionInfo.status.tiempo,
           ),
@@ -205,14 +198,14 @@ class __SingleEvaluacionContentState extends State<_SingleEvaluacionContent> {
 
     return Center(
       child: CircularProgressIndicator(
-        color: Colors.white,
+        color: mainColor,
       ),
     );
   }
 }
 
 class _ContentSingleEvaluacion extends StatefulWidget {
-  final Status evaluacionInfo;
+  final SingleEvaluacion evaluacionInfo;
   int time;
   User user;
   String nid;
@@ -233,6 +226,7 @@ class __ContentSingleEvaluacionState extends State<_ContentSingleEvaluacion>
   List<CoolStep> steps = [];
   String selectedRole = '';
   bool _autoValidate = false;
+  SendEvaluacion respuesta;
 
   AnimationController controllerAnimation;
   int endTime = 0;
@@ -330,7 +324,7 @@ class __ContentSingleEvaluacionState extends State<_ContentSingleEvaluacion>
 
   List listSteps(context) {
     int cont = 1;
-    for (var item in widget.evaluacionInfo.preguntas) {
+    for (var item in widget.evaluacionInfo.status.preguntas) {
       // List<Respuesta> repustas = item.respuestas;
       List<Respuesta> respuesta = item.respuestas;
 
@@ -339,9 +333,7 @@ class __ContentSingleEvaluacionState extends State<_ContentSingleEvaluacion>
       for (var rs in respuesta) {
         data.add({'value': rs.delta, 'display': rs.texto});
       }
-
       preguntasList[item.id] = '0';
-
       steps.add(CoolStep(
         title: 'Pregunta $cont',
         subtitle: item.texto,
@@ -401,8 +393,6 @@ class __ContentSingleEvaluacionState extends State<_ContentSingleEvaluacion>
   ///////////////  finalizavion de los steps //////////
 
   _onFinish() {
-    // _key.currentState.save();
-    print(preguntasList);
     showDialog<String>(
       context: context,
       builder: (BuildContext context) => AlertDialog(
@@ -420,9 +410,11 @@ class __ContentSingleEvaluacionState extends State<_ContentSingleEvaluacion>
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pop(context);
+                },
                 child: const Text(
-                  'Cancelar',
+                  'CANCELAR',
                   style: TextStyle(
                     color: mainColor,
                   ),
@@ -430,11 +422,20 @@ class __ContentSingleEvaluacionState extends State<_ContentSingleEvaluacion>
               ),
               TextButton(
                 onPressed: () {
-                  evalacionBloc.sendEvaluacion(
-                    data: preguntasList,
-                    uid: widget.user.userId,
-                    token: widget.user.userId,
-                  );
+                  // evalacionBloc
+                  //     .sendEvaluacion(
+                  //   data: preguntasList,
+                  //   uid: widget.user.userId,
+                  //   token: widget.user.token,
+                  //   nid: widget.nid,
+                  // )
+                  //     .then((value) {
+                  //   respuesta = value;
+
+                  //   _result(respuesta.status.restEvaluacion);
+                  // });
+
+                  _result();
                 },
                 child: const Text(
                   'ENVIAR',
@@ -473,13 +474,84 @@ class __ContentSingleEvaluacionState extends State<_ContentSingleEvaluacion>
       ),
     );
   }
-}
 
-class SendDataEvaluacion {
-  Map data;
-  SendDataEvaluacion(this.data);
+  /// resivir el resultado /////
 
-  // tengo que enviar  usUARIOS  token   idd evaluacion y la data
+  _result() {
+    String title = 'EVALUACIÓN MAYO 2021 - AV ';
+    String puntaje = '10';
 
-  EvaluacionBloc evalacionBloc = EvaluacionBloc();
+    showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: const Text(
+          'EVALUACION',
+          textAlign: TextAlign.center,
+          style: TextStyle(color: mainColor),
+        ),
+        content: Container(
+          height: 200.0,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                widget.user.name,
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(
+                height: 20.0,
+              ),
+              RichText(
+                text: TextSpan(
+                    text: "EVALUACION: ",
+                    style: TextStyle(color: mainColor),
+                    children: [
+                      TextSpan(
+                          text: title, style: TextStyle(color: Colors.black))
+                    ]),
+              ),
+              SizedBox(
+                height: 20.0,
+              ),
+              RichText(
+                text: TextSpan(
+                    text: "Puntaje: ",
+                    style: TextStyle(color: mainColor),
+                    children: [
+                      TextSpan(
+                          text: '$puntaje %',
+                          style: TextStyle(color: Colors.black))
+                    ]),
+              ),
+            ],
+          ),
+        ),
+        actions: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              TextButton(
+                onPressed: () {},
+                child: const Text(
+                  'CANCELAR',
+                  style: TextStyle(
+                    color: mainColor,
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: () {},
+                child: const Text(
+                  'ENVIAR',
+                  style: TextStyle(
+                    color: mainColor,
+                  ),
+                ),
+              ),
+            ],
+          )
+        ],
+      ),
+    );
+  }
 }

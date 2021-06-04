@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:universidad_lg/Evaluaciones/models/evaluacion_model.dart';
+import 'package:universidad_lg/Evaluaciones/models/send_evaluacion.dart';
 import 'package:universidad_lg/Evaluaciones/models/single_evaluacion_model.dart';
 
 import '../../constants.dart';
@@ -64,30 +65,28 @@ class EvaluacionService {
 
   ////   enviar evaluacion
 
-  Future<SingleEvaluacion> sendEvaluacion(
+  Future<SendEvaluacion> sendEvaluacion(
       String userid, String token, String nid, Map data) async {
     final response = await http.post(
       Uri.https(baseUrl, 'app/evaluaciones/detalle/save'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode(<String, String>{
+      body: jsonEncode(<String, dynamic>{
         'userId': userid,
         'token': token,
         'eva_nid': nid,
-        'respuestas': data.toString()
+        'respuestas': data
       }),
     );
-
-    print(response.body);
 
     if (response.statusCode == 200) {
       final _request = json.decode(response.body);
       if (_request['status']['type'] != 'error') {
-        SingleEvaluacion singleEvacionesFJ =
-            SingleEvaluacion.fromJson(json.decode(response.body));
+        SendEvaluacion resEvacionesFJ =
+            SendEvaluacion.fromJson(json.decode(response.body));
 
-        return singleEvacionesFJ;
+        return resEvacionesFJ;
       } else {
         throw _request['status']['message'];
       }
