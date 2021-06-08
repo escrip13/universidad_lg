@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:universidad_lg/Evaluaciones/blocs/evaluacion.dart';
+import 'package:universidad_lg/Evaluaciones/blocs/evaluacion_bloc.dart';
 import 'package:universidad_lg/Evaluaciones/models/evaluacion_model.dart';
 import 'package:universidad_lg/Evaluaciones/pages/single_evaluacion_page.dart';
 
@@ -97,6 +97,13 @@ class __EvaluacionContent extends State<_EvaluacionContent> {
     }
   }
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    loadData();
+  }
+
   void loadData() {
     evalacioonBloc
         .getEvaluaionesContent(
@@ -124,7 +131,6 @@ class __EvaluacionContent extends State<_EvaluacionContent> {
       ));
     }
 
-    loadData();
     return Center(
       child: CircularProgressIndicator(
         color: Colors.white,

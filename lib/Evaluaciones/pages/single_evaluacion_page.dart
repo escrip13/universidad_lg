@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/shims/dart_ui_real.dart';
 import 'package:universidad_lg/Evaluaciones/models/send_evaluacion.dart';
+import 'package:universidad_lg/Evaluaciones/pages/resultado_page.dart';
 import '../../constants.dart';
 
 import 'package:universidad_lg/Evaluaciones/models/single_evaluacion_model.dart';
@@ -12,6 +14,8 @@ import 'package:flutter_countdown_timer/index.dart';
 import 'package:universidad_lg/Evaluaciones/blocs/evaluacion_bloc.dart';
 
 import 'package:universidad_lg/Home/pages/home_page.dart';
+
+import 'evaluacion_page.dart';
 
 Map preguntasList = {};
 CountdownTimerController controllerTime;
@@ -30,8 +34,7 @@ class SingleEvaluacionPage extends StatefulWidget {
 }
 
 class _SingleEvaluacionPageState extends State<SingleEvaluacionPage> {
-  bool shouldPop = false;
-
+  EvaluacionBloc evalacionBloc = EvaluacionBloc();
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -93,12 +96,12 @@ class _SingleEvaluacionPageState extends State<SingleEvaluacionPage> {
       context: context,
       builder: (BuildContext context) => AlertDialog(
         title: const Text(
-          '¡Desea regresar!',
+          '¡DESEA REGRESAR!',
           textAlign: TextAlign.center,
           style: TextStyle(color: mainColor),
         ),
         content: const Text(
-          'perderas todo el progreso',
+          'Se enviará la información provista hasta el momento',
           textAlign: TextAlign.center,
         ),
         actions: <Widget>[
@@ -118,14 +121,25 @@ class _SingleEvaluacionPageState extends State<SingleEvaluacionPage> {
               ),
               TextButton(
                 onPressed: () {
-                  print(preguntasList);
-                  controllerTime.disposeTimer();
+                  evalacionBloc
+                      .sendEvaluacion(
+                    data: preguntasList,
+                    uid: widget.user.userId,
+                    token: widget.user.token,
+                    nid: widget.nid,
+                  )
+                      .then((value) {
+                    SendEvaluacion respuesta = value;
 
-                  Navigator.pop(context);
-                  Navigator.pop(context);
+                    _result(
+                        res: respuesta.status.evaluacionRest,
+                        user: widget.user,
+                        context: context,
+                        id: widget.nid);
+                  });
                 },
                 child: const Text(
-                  'OK',
+                  'Aceptar',
                   style: TextStyle(
                     color: mainColor,
                   ),
@@ -237,11 +251,12 @@ class __ContentSingleEvaluacionState extends State<_ContentSingleEvaluacion>
     //crear los steps/////
     listSteps(context);
 
+    //  inicion de contador
     endTime = DateTime.now().millisecondsSinceEpoch + 1000 * (widget.time * 60);
-
     controllerTime =
         CountdownTimerController(endTime: endTime, onEnd: _onFinishTime);
 
+    /// animacion del loader
     controllerAnimation = AnimationController(
       vsync: this,
       duration: Duration(minutes: widget.time),
@@ -254,6 +269,7 @@ class __ContentSingleEvaluacionState extends State<_ContentSingleEvaluacion>
 
   @override
   void dispose() {
+    // detroy de la animacion
     controllerAnimation.dispose();
     super.dispose();
   }
@@ -303,10 +319,13 @@ class __ContentSingleEvaluacionState extends State<_ContentSingleEvaluacion>
                   endTime: endTime,
                   widgetBuilder: (_, CurrentRemainingTime time) {
                     if (time == null) {
-                      return Text('Tiempo finalizado');
+                      return Text(
+                        'Tiempo finalizado',
+                        style: TextStyle(color: Colors.white),
+                      );
                     }
                     return Text(
-                      '${time.min} : ${time.sec}',
+                      '${time.min == null ? 0 : time.min} : ${time.sec}',
                       style: TextStyle(
                           fontWeight: FontWeight.w600, color: Colors.white),
                     );
@@ -394,15 +413,16 @@ class __ContentSingleEvaluacionState extends State<_ContentSingleEvaluacion>
 
   _onFinish() {
     showDialog<String>(
+      barrierDismissible: false,
       context: context,
       builder: (BuildContext context) => AlertDialog(
         title: const Text(
-          '¡ENVIAR EVALUACION!',
+          '¡ENVIAR EVALUACIÓN!',
           textAlign: TextAlign.center,
           style: TextStyle(color: mainColor),
         ),
         content: const Text(
-          'lorem mas lorem mas lomrem',
+          'lorem mas lorem mas lorem',
           textAlign: TextAlign.center,
         ),
         actions: <Widget>[
@@ -422,20 +442,22 @@ class __ContentSingleEvaluacionState extends State<_ContentSingleEvaluacion>
               ),
               TextButton(
                 onPressed: () {
-                  // evalacionBloc
-                  //     .sendEvaluacion(
-                  //   data: preguntasList,
-                  //   uid: widget.user.userId,
-                  //   token: widget.user.token,
-                  //   nid: widget.nid,
-                  // )
-                  //     .then((value) {
-                  //   respuesta = value;
+                  evalacionBloc
+                      .sendEvaluacion(
+                    data: preguntasList,
+                    uid: widget.user.userId,
+                    token: widget.user.token,
+                    nid: widget.nid,
+                  )
+                      .then((value) {
+                    respuesta = value;
 
-                  //   _result(respuesta.status.restEvaluacion);
-                  // });
-
-                  _result();
+                    _result(
+                        res: respuesta.status.evaluacionRest,
+                        user: widget.user,
+                        context: context,
+                        id: widget.nid);
+                  });
                 },
                 child: const Text(
                   'ENVIAR',
@@ -455,37 +477,69 @@ class __ContentSingleEvaluacionState extends State<_ContentSingleEvaluacion>
 
   ///  finalizacion del tiempo ////
   _onFinishTime() {
-    print(preguntasList);
-
     showDialog<String>(
       context: context,
       barrierDismissible: false,
-      builder: (BuildContext context) => AlertDialog(
-        title: const Text('!TIEMPO FINALIZADO!'),
-        content: const Text('lorem mas lorem mas lomrem'),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context, 'Enviar');
-            },
-            child: const Text('OK'),
+      builder: (BuildContext context) => WillPopScope(
+        onWillPop: () async => false,
+        child: AlertDialog(
+          title: const Text(
+            '!TIEMPO FINALIZADO!',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: mainColor),
           ),
-        ],
+          content: const Text('lorem mas lorem mas lomrem '),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                evalacionBloc
+                    .sendEvaluacion(
+                  data: preguntasList,
+                  uid: widget.user.userId,
+                  token: widget.user.token,
+                  nid: widget.nid,
+                )
+                    .then((value) {
+                  respuesta = value;
+
+                  _result(
+                      res: respuesta.status.evaluacionRest,
+                      user: widget.user,
+                      context: context,
+                      id: widget.nid);
+                });
+              },
+              child: const Text(
+                'ENVIAR',
+                style: TextStyle(color: mainColor),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  /// resivir el resultado /////
+  /// resivir el resultado ///
+}
 
-  _result() {
-    String title = 'EVALUACIÓN MAYO 2021 - AV ';
-    String puntaje = '10';
+_result({EvaluacionRest res, User user, context, String id}) {
+  // destroy del contador
+  controllerTime.disposeTimer();
+  String title = res.titulo;
+  int puntaje = res.puntaje;
+  String copa = res.copa;
 
-    showDialog<String>(
-      context: context,
-      builder: (BuildContext context) => AlertDialog(
+  showDialog<String>(
+    context: context,
+    barrierDismissible: false,
+    // para no cerrar outclick de la alerta
+    builder: (BuildContext context) => WillPopScope(
+      // will para evitar el retroceso
+      onWillPop: () async => false,
+      child: AlertDialog(
         title: const Text(
-          'EVALUACION',
+          'RESULTADO',
           textAlign: TextAlign.center,
           style: TextStyle(color: mainColor),
         ),
@@ -495,7 +549,7 @@ class __ContentSingleEvaluacionState extends State<_ContentSingleEvaluacion>
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                widget.user.name,
+                user.name,
                 textAlign: TextAlign.center,
               ),
               SizedBox(
@@ -503,7 +557,7 @@ class __ContentSingleEvaluacionState extends State<_ContentSingleEvaluacion>
               ),
               RichText(
                 text: TextSpan(
-                    text: "EVALUACION: ",
+                    text: "EVALUACIÓN: ",
                     style: TextStyle(color: mainColor),
                     children: [
                       TextSpan(
@@ -515,14 +569,23 @@ class __ContentSingleEvaluacionState extends State<_ContentSingleEvaluacion>
               ),
               RichText(
                 text: TextSpan(
-                    text: "Puntaje: ",
+                    text: "PUNTAJE: ",
                     style: TextStyle(color: mainColor),
                     children: [
                       TextSpan(
-                          text: '$puntaje %',
+                          text: '$puntaje%',
                           style: TextStyle(color: Colors.black))
                     ]),
               ),
+              SizedBox(
+                height: 20.0,
+              ),
+              Row(
+                children: [
+                  Icon(Icons.emoji_events, color: mainColor),
+                  Text(copa)
+                ],
+              )
             ],
           ),
         ),
@@ -531,18 +594,38 @@ class __ContentSingleEvaluacionState extends State<_ContentSingleEvaluacion>
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ResultadoPage(
+                                user: user,
+                                evaluacion: id,
+                              )));
+                },
                 child: const Text(
-                  'CANCELAR',
+                  'VER RESPUESTAS',
                   style: TextStyle(
                     color: mainColor,
                   ),
                 ),
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+
+                  // debe haber un forma de retocedder el nav hasta un  punto
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute<void>(
+                          builder: (BuildContext context) => EvaluacionPage(
+                                user: user,
+                              )));
+                },
                 child: const Text(
-                  'ENVIAR',
+                  'CONTINUAR',
                   style: TextStyle(
                     color: mainColor,
                   ),
@@ -552,6 +635,6 @@ class __ContentSingleEvaluacionState extends State<_ContentSingleEvaluacion>
           )
         ],
       ),
-    );
-  }
+    ),
+  );
 }

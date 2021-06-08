@@ -1,3 +1,7 @@
+// To parse this JSON data, do
+//
+//     final sendEvaluacion = sendEvaluacionFromJson(jsonString);
+
 import 'dart:convert';
 
 SendEvaluacion sendEvaluacionFromJson(String str) =>
@@ -26,31 +30,31 @@ class Status {
     this.type,
     this.code,
     this.message,
-    this.restEvaluacion,
+    this.evaluacionRest,
   });
 
   String type;
   int code;
   String message;
-  RestEvaluacion restEvaluacion;
+  EvaluacionRest evaluacionRest;
 
   factory Status.fromJson(Map<String, dynamic> json) => Status(
         type: json["type"],
         code: json["code"],
         message: json["message"],
-        restEvaluacion: RestEvaluacion.fromJson(json["restEvaluacion"]),
+        evaluacionRest: EvaluacionRest.fromJson(json["evaluacionRest"]),
       );
 
   Map<String, dynamic> toJson() => {
         "type": type,
         "code": code,
         "message": message,
-        "restEvaluacion": restEvaluacion.toJson(),
+        "evaluacionRest": evaluacionRest.toJson(),
       };
 }
 
-class RestEvaluacion {
-  RestEvaluacion({
+class EvaluacionRest {
+  EvaluacionRest({
     this.sustituto,
     this.copa,
     this.puntaje,
@@ -62,7 +66,7 @@ class RestEvaluacion {
   int puntaje;
   String titulo;
 
-  factory RestEvaluacion.fromJson(Map<String, dynamic> json) => RestEvaluacion(
+  factory EvaluacionRest.fromJson(Map<String, dynamic> json) => EvaluacionRest(
         sustituto: json["sustituto"],
         copa: json["copa"],
         puntaje: json["puntaje"],

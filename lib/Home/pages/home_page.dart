@@ -90,6 +90,13 @@ class __HomeContent extends State<_HomeContent> {
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _loader();
+  }
+
+  @override
   Widget build(BuildContext context) {
     // final authBloc = BlocProvider.of<AuthenticationBloc>(context);
 
@@ -108,7 +115,7 @@ class __HomeContent extends State<_HomeContent> {
         ),
       );
     }
-    _loader();
+
     return Center(
       child: CircularProgressIndicator(
         color: mainColor,
