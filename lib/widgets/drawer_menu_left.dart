@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:universidad_lg/Entrenamiento/pages/entrenamiento_page.dart';
 import 'package:universidad_lg/Evaluaciones/pages/evaluacion_page.dart';
 import 'package:universidad_lg/Home/pages/home_page.dart';
+import 'package:universidad_lg/Streaming/pages/streaming_page.dart';
 import 'package:universidad_lg/User/models/user.dart';
 import 'package:universidad_lg/constants.dart';
 
@@ -87,11 +88,21 @@ class DrawerMenuLeft extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.local_activity),
             title: Text('Club'),
+            onTap: () {},
           ),
           ListTile(
-            leading: Icon(Icons.cast_for_education),
-            title: Text('Streamings'),
-          ),
+              leading: Icon(Icons.cast_for_education),
+              title: Text('Streamings'),
+              onTap: () {
+                if (currenPage != 'streaming') {
+                  Navigator.of(context).pop();
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return StreamingPage(user: user);
+                  }));
+                  // Navigator.pop(context);
+                }
+                return null;
+              }),
           ListTile(
             leading: Icon(Icons.help),
             title: Text('Ayuda'),
