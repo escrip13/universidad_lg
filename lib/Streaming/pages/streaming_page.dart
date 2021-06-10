@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:universidad_lg/Evaluaciones/models/respuetas_evaluacion.dart';
 import 'package:universidad_lg/Home/pages/home_page.dart';
 import 'package:universidad_lg/Streaming/blog/bloc/streaming_bloc.dart';
 import 'package:universidad_lg/Streaming/models/streaming_model.dart';
@@ -88,14 +87,19 @@ class __ContentSteamingPageState extends State<_ContentSteamingPage> {
           final authBloc = BlocProvider.of<StreamingBloc>(context);
 
           if (state is StreamingSuccess) {
-            return SingleChildScrollView(
-              child: Column(
-                children: [
-                  for (var item in state.data.status.data)
-                    _ItemStreaming(item: item, user: widget.user),
-                ],
-              ),
-            );
+            return RefreshIndicator(
+                onRefresh: () async {
+                  authBloc.add(GetSreamingEvent(
+                      token: widget.user.token, user: widget.user.userId));
+                },
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      for (var item in state.data.status.data)
+                        _ItemStreaming(item: item, user: widget.user),
+                    ],
+                  ),
+                ));
           }
 
           if (state is ErrorStreaming) {
