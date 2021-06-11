@@ -1,32 +1,38 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:universidad_lg/Streaming/Exeption/exeption.dart';
-import 'package:universidad_lg/Streaming/models/streaming_model.dart';
+
 import '../../constants.dart';
 
-abstract class StreamingService {
-  Future<Streaming> getSteamingData({String userid, String token});
+import 'package:universidad_lg/Streaming/models/streaming_single_model.dart';
+
+abstract class ServiceStreamingSingle {
+  Future<SingleStreaming> getSteamingSingleData(
+      {String userid, String token, String nid});
 }
 
-class IsStreamingService extends StreamingService {
+class IsServiceStreamingSingle extends ServiceStreamingSingle {
   @override
-  Future<Streaming> getSteamingData({String userid, String token}) async {
+  Future<SingleStreaming> getSteamingSingleData(
+      {String userid, String token, String nid}) async {
     final response = await http.post(
-      Uri.https(baseUrl, 'app/streaming'),
+      Uri.https(baseUrl, 'app/streaming/detalle'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(<String, String>{
         'userId': userid,
         'token': token,
+        'nid': nid,
       }),
     );
 
     if (response.statusCode == 200) {
-      final _request = json.decode(response.body);
+      final _request = jsonDecode(response.body);
 
       if (_request['status']['type'] != 'error') {
-        Streaming streaming = Streaming.fromJson(json.decode(response.body));
+        SingleStreaming streaming =
+            SingleStreaming.fromJson(json.decode(response.body));
         return streaming;
       } else {
         throw StreamingExeption(message: _request['status']['message']);

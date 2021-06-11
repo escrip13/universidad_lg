@@ -31,7 +31,7 @@ class StreamingBloc extends Bloc<StreamingEvent, StreamingState> {
 
       yield StreamingSuccess(data);
     } on StreamingExeption catch (e) {
-      ErrorStreaming(e.message);
+      yield ErrorStreaming(e.message);
     }
   }
 }

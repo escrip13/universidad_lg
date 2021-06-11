@@ -2,8 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:universidad_lg/Home/pages/home_page.dart';
-import 'package:universidad_lg/Streaming/blog/bloc/streaming_bloc.dart';
+import 'package:universidad_lg/Streaming/blog/bloc/general/streaming_bloc.dart';
 import 'package:universidad_lg/Streaming/models/streaming_model.dart';
+import 'package:universidad_lg/Streaming/pages/streaming_single_page.dart';
 import 'package:universidad_lg/Streaming/services/streaming_service.dart';
 import 'package:universidad_lg/User/models/user.dart';
 import 'package:universidad_lg/widgets/buttom_main_navigator.dart';
@@ -19,45 +20,46 @@ class StreamingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        // backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          backgroundColor: mainColor,
-          title: Center(
-            child: InkWell(
-              onTap: () {
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => HomePage(
-                              user: user,
-                            )));
-              },
-              child: Image(
-                image: AssetImage('assets/img/new_logo.png'),
-                height: 35,
-              ),
+      appBar: AppBar(
+        backgroundColor: mainColor,
+        title: Center(
+          child: InkWell(
+            onTap: () {
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => HomePage(
+                            user: user,
+                          )));
+            },
+            child: Image(
+              image: AssetImage('assets/img/new_logo.png'),
+              height: 35,
             ),
           ),
-          actions: [
-            Builder(
-              builder: (context) => IconButton(
-                onPressed: () {
-                  Scaffold.of(context).openEndDrawer();
-                },
-                icon: Icon(Icons.person),
-              ),
+        ),
+        actions: [
+          Builder(
+            builder: (context) => IconButton(
+              onPressed: () {
+                Scaffold.of(context).openEndDrawer();
+              },
+              icon: Icon(Icons.person),
             ),
-          ],
-        ),
-        backgroundColor: Colors.white,
-        drawer: DrawerMenuLeft(
-          user: user,
-          currenPage: 'streaming',
-        ),
-        endDrawer: DrawerMenuRight(),
-        body: BlocProvider<StreamingBloc>(
-            create: (context) => StreamingBloc(service: IsStreamingService()),
-            child: _ContentSteamingPage(user: user)));
+          ),
+        ],
+      ),
+      backgroundColor: Colors.white,
+      drawer: DrawerMenuLeft(
+        user: user,
+        currenPage: 'streaming',
+      ),
+      endDrawer: DrawerMenuRight(),
+      body: BlocProvider<StreamingBloc>(
+        create: (context) => StreamingBloc(service: IsStreamingService()),
+        child: _ContentSteamingPage(user: user),
+      ),
+    );
   }
 }
 
@@ -84,17 +86,35 @@ class __ContentSteamingPageState extends State<_ContentSteamingPage> {
     return Container(
       child: BlocBuilder<StreamingBloc, StreamingState>(
         builder: (context, state) {
-          final authBloc = BlocProvider.of<StreamingBloc>(context);
+          final streamingBloc = BlocProvider.of<StreamingBloc>(context);
 
           if (state is StreamingSuccess) {
             return RefreshIndicator(
                 onRefresh: () async {
-                  authBloc.add(GetSreamingEvent(
+                  streamingBloc.add(GetSreamingEvent(
                       token: widget.user.token, user: widget.user.userId));
                 },
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
+                      Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 15.0, horizontal: 20.0),
+                        margin: EdgeInsets.only(bottom: 20.0),
+                        child: Text(
+                          'STREAMIGS',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 18.0),
+                        ),
+                      ),
                       for (var item in state.data.status.data)
                         _ItemStreaming(item: item, user: widget.user),
                     ],
@@ -112,7 +132,7 @@ class __ContentSteamingPageState extends State<_ContentSteamingPage> {
                 TextButton(
                   child: Text('Volver a intentar'),
                   onPressed: () {
-                    authBloc.add(GetSreamingEvent(
+                    streamingBloc.add(GetSreamingEvent(
                         token: widget.user.token, user: widget.user.userId));
                   },
                 )
@@ -131,8 +151,8 @@ class __ContentSteamingPageState extends State<_ContentSteamingPage> {
   }
 
   void _loadStreamingData() {
-    final authBloc = BlocProvider.of<StreamingBloc>(context);
-    authBloc.add(
+    final streamingBloc = BlocProvider.of<StreamingBloc>(context);
+    streamingBloc.add(
         GetSreamingEvent(token: widget.user.token, user: widget.user.userId));
   }
 }
@@ -184,12 +204,13 @@ class _ItemStreaming extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 15.0),
-                ButtomMain(text: 'VER', onpress: () {}
-                    //  SingleEvaluacionPage(
-                    //   user: user,
-                    //   nid: evaluacion.nid,
-                    // ),
-                    )
+                ButtomMain(
+                  text: 'VER',
+                  onpress: StreamingSinglePage(
+                    user: user,
+                    nid: item.nid,
+                  ),
+                )
               ],
             ),
           )
