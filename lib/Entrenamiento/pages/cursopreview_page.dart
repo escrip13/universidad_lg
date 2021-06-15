@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:universidad_lg/Entrenamiento/blocs/entrenamiento_bloc.dart';
 import 'package:universidad_lg/Entrenamiento/models/cursopreview_model.dart';
+import 'package:universidad_lg/Entrenamiento/pages/leccion_page.dart';
+import 'package:universidad_lg/Entrenamiento/pages/testentrada_page.dart';
 import 'package:universidad_lg/Home/pages/home_page.dart';
 import 'package:universidad_lg/User/blocs/authentication/authentication_bloc.dart';
 import 'package:universidad_lg/User/blocs/authentication/authentication_state.dart';
@@ -92,6 +94,7 @@ class _CursoPreviewContent extends StatefulWidget {
 class __CursoPreviewContentState extends State<_CursoPreviewContent> {
   CursoPreview cursoPreview;
   bool load = false;
+  String _textTestEntrada;
   EntrenamientoBloc cursoPreviewBloc = EntrenamientoBloc();
 
   void _onLoad() {
@@ -154,55 +157,152 @@ class __CursoPreviewContentState extends State<_CursoPreviewContent> {
                   Html(
                     data: cursoPreview.status.data.curso.bodyValue,
                   ),
-                  ButtomMain(
-                      text: 'TEST DE ENTRADA',
-                      onpress: () {
-                        _viewTestEntrada();
-                      }),
-                  // ButtomMain(text: 'TOMAR LECCIÓN', onpress: () {}),
-                  // ButtomMain(text: 'TEST DE SALIDA', onpress: () {}),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(primary: mainColor),
+                    onPressed: () {
+                      if (cursoPreview.status.data.testEntrada == 0 ||
+                          cursoPreview.status.data.testEntrada == 2)
+                        _textTestEntrada =
+                            'Por favor lee detenidamente cada una de las preguntas y opciones de respuesta a continuación. Debes disponer de ${cursoPreview.status.data.testTiempo} minutos, una buena conexión a internet, no cierres o salgas de la aplicación.';
+                      else
+                        _textTestEntrada =
+                            'Este Test de Entrada ya fue realizado y no puede repetirse, debes continuar el curso.';
+
+                      _viewTestEntrada(_textTestEntrada);
+                    },
+                    child: const Text('TEST DE ENTRADA'),
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(primary: mainColor),
+                    onPressed: () {
+                      if (cursoPreview.status.data.testEntrada == 1 ||
+                          cursoPreview.status.data.testEntrada == 2)
+                        return true;
+                      else
+                        _textTestEntrada =
+                            'Primero debes completar el Test de Entrada para ingresar al contenido del curso.';
+
+                      _viewLeccion(_textTestEntrada);
+                    },
+                    child: const Text('TOMAR LECCIÓN'),
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(primary: mainColor),
+                    onPressed: () {
+                      if ((cursoPreview.status.data.testEntrada == 1 &&
+                              cursoPreview.status.data.testSalida == 0 &&
+                              cursoPreview.status.data.verCurso == 1) ||
+                          (cursoPreview.status.data.testEntrada == 2 &&
+                              cursoPreview.status.data.testSalida == 0 &&
+                              cursoPreview.status.data.verCurso == 1))
+                        _textTestEntrada =
+                            'Por favor lee detenidamente cada una de las preguntas y opciones de respuesta a continuación. Debes disponer de ${cursoPreview.status.data.testTiempo} minutos, una buena conexión a internet, no cierres o salgas de la aplicación.';
+
+                      if (cursoPreview.status.data.testSalida == 1 &&
+                          cursoPreview.status.data.verCurso == 1)
+                        _textTestEntrada =
+                            'Este Test de Salida ya fue realizado y no puede repetirse.';
+
+                      if (cursoPreview.status.data.testEntrada == 0 ||
+                          cursoPreview.status.data.verCurso == 0)
+                        _textTestEntrada =
+                            'Primero debes terminar el Test de Entrada y luego tomar la Lección del curso para tomar este Test de Salida.';
+
+                      if ((cursoPreview.status.data.testEntrada == 1 &&
+                              cursoPreview.status.data.verCurso == 0) ||
+                          cursoPreview.status.data.testEntrada == 2 ||
+                          cursoPreview.status.data.verCurso == 0)
+                        _textTestEntrada =
+                            'Debes tomar la Lección del curso para tomar este Test de Salida.';
+
+                      _viewTestEntrada(_textTestEntrada);
+                    },
+                    child: const Text('TEST DE SALIDA'),
+                  )
                 ],
               ),
             ),
           ],
         ),
       ));
+    } else {
+      return Center(
+        child: CircularProgressIndicator(color: mainColor),
+      );
     }
   }
 
-  _viewTestEntrada() {
+  _viewTestEntrada(textDinamic) {
     showDialog<String>(
       context: context,
       builder: (BuildContext context) => AlertDialog(
         title: const Text(
-          '¡ENVIAR EVALUACION!',
+          '¡Ten presente!',
           textAlign: TextAlign.center,
-          style: TextStyle(color: mainColor),
+          style: TextStyle(color: mainColor, fontWeight: FontWeight.w600),
         ),
-        content: const Text(
-          'lorem mas lorem mas lomrem',
+        content: Text(
+          _textTestEntrada,
           textAlign: TextAlign.center,
         ),
         actions: <Widget>[
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => TestEntradaPage(
+                              user: widget.user,
+                              curso: cursoPreview.status.data.curso.nid,
+                              leccion: cursoPreview.status.data.leccionId)));
+                },
                 child: const Text(
-                  'Cancelar',
-                  style: TextStyle(
-                    color: mainColor,
-                  ),
+                  'Continuar',
+                  style: TextStyle(color: mainColor, fontSize: 18.0),
                 ),
               ),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
+  _viewLeccion(textDinamic) {
+    showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: const Text(
+          '¡Ten presente!',
+          textAlign: TextAlign.center,
+          style: TextStyle(color: mainColor, fontWeight: FontWeight.w600),
+        ),
+        content: Text(
+          _textTestEntrada,
+          textAlign: TextAlign.center,
+        ),
+        actions: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => LeccionPage(
+                              user: widget.user,
+                              curso: cursoPreview.status.data.curso.nid,
+                              leccion: cursoPreview.status.data.leccionId)));
+                },
                 child: const Text(
-                  'OK',
-                  style: TextStyle(
-                    color: mainColor,
-                  ),
+                  'Continuar',
+                  style: TextStyle(color: mainColor, fontSize: 18.0),
                 ),
               ),
             ],
