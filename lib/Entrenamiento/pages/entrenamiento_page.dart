@@ -362,7 +362,10 @@ class _ItemCurso extends StatelessWidget {
                   ),
                   ButtomMain(
                     text: 'VER CURSO',
-                    onpress: () {},
+                    onpress: CursoPreviewPage(
+                      user: user,
+                      nid: curso.nid,
+                    ),
                   )
                 ],
               ),

@@ -70,7 +70,7 @@ class Data {
   int testEntrada;
   String testTiempo;
   int sustitutorio;
-  String puntaje;
+  int puntaje;
   int testSalida;
   int verCurso;
 
