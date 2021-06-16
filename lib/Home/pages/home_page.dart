@@ -1,8 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/shims/dart_ui_real.dart';
 import 'package:universidad_lg/Home/blocs/home/home_bloc.dart';
 import 'package:universidad_lg/Home/models/models.dart';
+import 'package:universidad_lg/User/blocs/authentication/authentication_bloc.dart';
+import 'package:universidad_lg/User/blocs/blocs.dart';
 import 'package:universidad_lg/User/models/user.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:universidad_lg/widgets/background_image.dart';
@@ -334,6 +337,7 @@ class __NoticiasHome extends State<_NoticiasHome> {
 class _ConoceMas extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final authBloc = BlocProvider.of<AuthenticationBloc>(context);
     // TODO: implement build
     return Container(
       margin: EdgeInsets.only(top: 40.0),
@@ -395,7 +399,7 @@ class _ConoceMas extends StatelessWidget {
                           ),
                           side: BorderSide(width: 1.0, color: Colors.white)),
                       onPressed: () {
-                        print('aa');
+                        authBloc.add(UserLoggedOut());
                       },
                       child: Text('CLUB LG'),
                     ),

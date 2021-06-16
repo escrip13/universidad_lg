@@ -8,6 +8,8 @@ import 'User/blocs/authentication/authentication_state.dart';
 import 'User/services/authentication_service.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'constants.dart';
+
 void main() => runApp(
 
         // Injects the Authentication service
@@ -38,15 +40,26 @@ class MyApp extends StatelessWidget {
       ),
       home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
         builder: (context, state) {
+          print(state);
+
           if (state is AuthenticationAuthenticated) {
             // show home page
-
             return HomePage(
               user: state.user,
             );
           }
           // otherwise show login page
-          return LoginPage();
+
+          if (state is AuthenticationNotAuthenticated) {
+            return LoginPage();
+          }
+          if (state is AuthenticationNotCode) {
+            return LoginPage();
+          }
+          // print(state);
+          return Center(
+            child: CircularProgressIndicator(color: mainColor),
+          );
         },
       ),
     );

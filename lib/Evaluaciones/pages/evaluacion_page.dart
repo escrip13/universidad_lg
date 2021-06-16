@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:universidad_lg/Evaluaciones/blocs/evaluacion_bloc.dart';
 import 'package:universidad_lg/Evaluaciones/models/evaluacion_model.dart';
 import 'package:universidad_lg/Evaluaciones/pages/single_evaluacion_page.dart';
-
 import 'package:universidad_lg/Home/pages/home_page.dart';
-import 'package:universidad_lg/User/blocs/authentication/authentication.dart';
 import 'package:universidad_lg/User/models/models.dart';
-import 'package:universidad_lg/User/pages/login_page.dart';
 import 'package:universidad_lg/widgets/buttom_main_navigator.dart';
 import 'package:universidad_lg/widgets/drawer_menu_left.dart';
 import 'package:universidad_lg/widgets/drawer_menu_right.dart';
@@ -24,56 +21,45 @@ class EvaluacionPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // backgroundColor: Colors.transparent,
-      appBar: AppBar(
-        backgroundColor: mainColor,
-        title: Center(
-          child: InkWell(
-            onTap: () {
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => HomePage(
-                            user: user,
-                          )));
-            },
-            child: Image(
-              image: AssetImage('assets/img/new_logo.png'),
-              height: 35,
-            ),
-          ),
-        ),
-        actions: [
-          Builder(
-            builder: (context) => IconButton(
-              onPressed: () {
-                Scaffold.of(context).openEndDrawer();
+        // backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          backgroundColor: mainColor,
+          title: Center(
+            child: InkWell(
+              onTap: () {
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => HomePage(
+                              user: user,
+                            )));
               },
-              icon: Icon(Icons.person),
+              child: Image(
+                image: AssetImage('assets/img/new_logo.png'),
+                height: 35,
+              ),
             ),
           ),
-        ],
-      ),
-      backgroundColor: Colors.white,
-      drawer: DrawerMenuLeft(
-        user: user,
-        currenPage: 'evaluaciones',
-      ),
-      endDrawer: DrawerMenuRight(),
-      body: BlocBuilder<AuthenticationBloc, AuthenticationState>(
-        builder: (context, state) {
-          if (state is AuthenticationAuthenticated) {
-            // show home page
-
-            return _EvaluacionContent(
-              user: state.user,
-            );
-          }
-          // otherwise show login page
-          return LoginPage();
-        },
-      ),
-    );
+          actions: [
+            Builder(
+              builder: (context) => IconButton(
+                onPressed: () {
+                  Scaffold.of(context).openEndDrawer();
+                },
+                icon: Icon(Icons.person),
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: Colors.white,
+        drawer: DrawerMenuLeft(
+          user: user,
+          currenPage: 'evaluaciones',
+        ),
+        endDrawer: DrawerMenuRight(),
+        body: _EvaluacionContent(
+          user: user,
+        ));
   }
 }
 

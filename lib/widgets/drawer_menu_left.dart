@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:universidad_lg/Ayuda/pages/ayuda_page.dart';
 import 'package:universidad_lg/Entrenamiento/pages/entrenamiento_page.dart';
 import 'package:universidad_lg/Evaluaciones/pages/evaluacion_page.dart';
 import 'package:universidad_lg/Home/pages/home_page.dart';
@@ -104,9 +105,19 @@ class DrawerMenuLeft extends StatelessWidget {
                 return null;
               }),
           ListTile(
-            leading: Icon(Icons.help),
-            title: Text('Ayuda'),
-          ),
+              leading: Icon(Icons.help),
+              title: Text('Ayuda'),
+              onTap: () {
+                if (currenPage != 'ayuda') {
+                  Navigator.of(context).pop();
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return AyudaPage(user: user);
+                  }));
+
+                  // Navigator.pop(context);
+                }
+                return null;
+              }),
         ],
       ),
     );

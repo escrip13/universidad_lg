@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:universidad_lg/Home/models/home_model.dart';
 import 'package:universidad_lg/Home/pages/home_page.dart';
 import 'package:universidad_lg/User/blocs/authentication/authentication.dart';
-import 'package:universidad_lg/User/models/user.dart';
+import 'package:universidad_lg/User/pages/login_page.dart';
 import 'package:universidad_lg/constants.dart';
 
 class DrawerMenuRight extends StatelessWidget {
@@ -12,6 +13,7 @@ class DrawerMenuRight extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authBloc = BlocProvider.of<AuthenticationBloc>(context);
+
     // TODO: implement build
     return Drawer(
       child: ListView(
@@ -53,7 +55,11 @@ class DrawerMenuRight extends StatelessWidget {
           ),
           ListTile(
             onTap: () {
-              authBloc.add(UserLoggedOut());
+              Navigator.pushAndRemoveUntil(context,
+                  MaterialPageRoute(builder: (_) {
+                authBloc.add(UserLoggedOut());
+                return LoginPage();
+              }), (route) => false);
             },
             leading: Icon(Icons.logout),
             title: Text('Cerrar sesión'),
