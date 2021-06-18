@@ -13,7 +13,7 @@ class SendFormularioAyudaEvent extends FormularioayudaEvent {
   final String user;
   final String token;
 
-  SendFormularioAyudaEvent(this.user, this.token, {this.tema, this.pregunta});
+  SendFormularioAyudaEvent({this.user, this.token, this.tema, this.pregunta});
   @override
   List<Object> get props => [tema, pregunta, user, token];
 }

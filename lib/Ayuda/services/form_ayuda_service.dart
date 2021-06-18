@@ -13,7 +13,7 @@ class IsformAyuadaService extends FormAyudaService {
   Future<String> sendFormAyuda(
       {String tema, String pregunta, String user, String token}) async {
     final response = await http.post(
-      Uri.https(baseUrl, 'app/ayuda/send'),
+      Uri.https(baseUrl, 'app/ayuda/save'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

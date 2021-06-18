@@ -65,7 +65,9 @@ class AyudaPage extends StatelessWidget {
         child: Icon(Icons.add),
         onPressed: () {
           Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return AyudaFormPage();
+            return AyudaFormPage(
+              user: user,
+            );
           }));
         },
       ),
