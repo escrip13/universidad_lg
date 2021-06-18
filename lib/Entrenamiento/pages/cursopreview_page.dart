@@ -95,6 +95,7 @@ class __CursoPreviewContentState extends State<_CursoPreviewContent> {
   CursoPreview cursoPreview;
   bool load = false;
   String _textTestEntrada;
+  bool acceso = false;
   EntrenamientoBloc cursoPreviewBloc = EntrenamientoBloc();
 
   void _onLoad() {
@@ -158,22 +159,35 @@ class __CursoPreviewContentState extends State<_CursoPreviewContent> {
                     data: cursoPreview.status.data.curso.bodyValue,
                   ),
                   ElevatedButton(
-                    style: ElevatedButton.styleFrom(primary: mainColor),
+                    style: ElevatedButton.styleFrom(
+                      primary: mainColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero,
+                      ),
+                    ),
                     onPressed: () {
                       if (cursoPreview.status.data.testEntrada == 0 ||
-                          cursoPreview.status.data.testEntrada == 2)
+                          cursoPreview.status.data.testEntrada == 2) {
+                        acceso = true;
                         _textTestEntrada =
                             'Por favor lee detenidamente cada una de las preguntas y opciones de respuesta a continuación. Debes disponer de ${cursoPreview.status.data.testTiempo} minutos, una buena conexión a internet, no cierres o salgas de la aplicación.';
-                      else
+                      } else {
+                        acceso = false;
                         _textTestEntrada =
                             'Este Test de Entrada ya fue realizado y no puede repetirse, debes continuar el curso.';
+                      }
 
-                      _viewTestEntrada(_textTestEntrada);
+                      _viewTestEntrada(_textTestEntrada, acceso);
                     },
                     child: const Text('TEST DE ENTRADA'),
                   ),
                   ElevatedButton(
-                    style: ElevatedButton.styleFrom(primary: mainColor),
+                    style: ElevatedButton.styleFrom(
+                      primary: mainColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero,
+                      ),
+                    ),
                     onPressed: () {
                       if (cursoPreview.status.data.testEntrada == 1 ||
                           cursoPreview.status.data.testEntrada == 2)
@@ -187,35 +201,48 @@ class __CursoPreviewContentState extends State<_CursoPreviewContent> {
                     child: const Text('TOMAR LECCIÓN'),
                   ),
                   ElevatedButton(
-                    style: ElevatedButton.styleFrom(primary: mainColor),
+                    style: ElevatedButton.styleFrom(
+                      primary: mainColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero,
+                      ),
+                    ),
                     onPressed: () {
                       if ((cursoPreview.status.data.testEntrada == 1 &&
                               cursoPreview.status.data.testSalida == 0 &&
                               cursoPreview.status.data.verCurso == 1) ||
                           (cursoPreview.status.data.testEntrada == 2 &&
                               cursoPreview.status.data.testSalida == 0 &&
-                              cursoPreview.status.data.verCurso == 1))
+                              cursoPreview.status.data.verCurso == 1)) {
+                        acceso = true;
                         _textTestEntrada =
                             'Por favor lee detenidamente cada una de las preguntas y opciones de respuesta a continuación. Debes disponer de ${cursoPreview.status.data.testTiempo} minutos, una buena conexión a internet, no cierres o salgas de la aplicación.';
+                      }
 
                       if (cursoPreview.status.data.testSalida == 1 &&
-                          cursoPreview.status.data.verCurso == 1)
+                          cursoPreview.status.data.verCurso == 1) {
+                        acceso = false;
                         _textTestEntrada =
                             'Este Test de Salida ya fue realizado y no puede repetirse.';
+                      }
 
                       if (cursoPreview.status.data.testEntrada == 0 ||
-                          cursoPreview.status.data.verCurso == 0)
+                          cursoPreview.status.data.verCurso == 0) {
+                        acceso = false;
                         _textTestEntrada =
                             'Primero debes terminar el Test de Entrada y luego tomar la Lección del curso para tomar este Test de Salida.';
+                      }
 
                       if ((cursoPreview.status.data.testEntrada == 1 &&
                               cursoPreview.status.data.verCurso == 0) ||
                           cursoPreview.status.data.testEntrada == 2 ||
-                          cursoPreview.status.data.verCurso == 0)
+                          cursoPreview.status.data.verCurso == 0) {
+                        acceso = false;
                         _textTestEntrada =
                             'Debes tomar la Lección del curso para tomar este Test de Salida.';
+                      }
 
-                      _viewTestEntrada(_textTestEntrada);
+                      _viewTestEntrada(_textTestEntrada, acceso);
                     },
                     child: const Text('TEST DE SALIDA'),
                   )
@@ -232,7 +259,7 @@ class __CursoPreviewContentState extends State<_CursoPreviewContent> {
     }
   }
 
-  _viewTestEntrada(textDinamic) {
+  _viewTestEntrada(String textDinamic, bool acceso) {
     showDialog<String>(
       context: context,
       builder: (BuildContext context) => AlertDialog(
@@ -252,13 +279,18 @@ class __CursoPreviewContentState extends State<_CursoPreviewContent> {
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => TestEntradaPage(
-                              user: widget.user,
-                              curso: cursoPreview.status.data.curso.nid,
-                              leccion: cursoPreview.status.data.leccionId)));
+
+                  if (acceso) {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => TestEntradaPage(
+                                user: widget.user,
+                                curso: cursoPreview.status.data.curso.nid,
+                                leccion: cursoPreview.status.data.leccionId)));
+                  }
+
+                  return false;
                 },
                 child: const Text(
                   'Continuar',
