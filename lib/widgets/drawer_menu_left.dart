@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:universidad_lg/Ayuda/pages/ayuda_page.dart';
+import 'package:universidad_lg/Biblioteca/pages/biblioteca_page.dart';
 import 'package:universidad_lg/Entrenamiento/pages/entrenamiento_page.dart';
 import 'package:universidad_lg/Evaluaciones/pages/evaluacion_page.dart';
 import 'package:universidad_lg/Home/pages/home_page.dart';
@@ -83,9 +84,18 @@ class DrawerMenuLeft extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: Icon(Icons.collections_bookmark),
-            title: Text('Biblioteca'),
-          ),
+              leading: Icon(Icons.collections_bookmark),
+              title: Text('Biblioteca'),
+              onTap: () {
+                if (currenPage != 'biblioteca') {
+                  Navigator.of(context).pop();
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return BibliotecaPage(user: user);
+                  }));
+                  // Navigator.pop(context);
+                }
+                return null;
+              }),
           ListTile(
             leading: Icon(Icons.local_activity),
             title: Text('Club'),
