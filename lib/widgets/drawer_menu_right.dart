@@ -98,7 +98,7 @@ class DrawerMenuRight extends StatelessWidget {
               Navigator.pushAndRemoveUntil(context,
                   MaterialPageRoute(builder: (_) {
                 authBloc.add(UserLoggedOut());
-                return MyApp();
+                return LoginPage();
               }), (route) => false);
             },
             leading: Icon(Icons.logout),

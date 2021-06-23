@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:universidad_lg/Home/pages/home_page.dart';
 import 'package:universidad_lg/User/pages/pages.dart';
 import 'package:universidad_lg/widgets/background_image.dart';
 import '../../constants.dart';
@@ -15,7 +16,13 @@ class LoginPage extends StatelessWidget {
       body:
           Container(child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
         builder: (context, state) {
+          print('$state login page');
           final authBloc = BlocProvider.of<AuthenticationBloc>(context);
+          if (state is AuthenticationAuthenticated) {
+            return HomePage(
+              user: state.user,
+            );
+          }
           if (state is AuthenticationNotAuthenticated) {
             return _AuthForm(
               islogin: true,

@@ -384,29 +384,29 @@ class _ConoceMas extends StatelessWidget {
                     ),
                   ],
                 ),
-                Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    BacgroundImage(
-                      image: 'assets/img/club.png',
-                      height: 240.0,
-                    ),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(horizontal: 30.0),
-                          primary: Colors.transparent,
-                          shadowColor: Colors.transparent,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.zero,
-                          ),
-                          side: BorderSide(width: 1.0, color: Colors.white)),
-                      onPressed: () {
-                        authBloc.add(UserLoggedOut());
-                      },
-                      child: Text('CLUB LG'),
-                    ),
-                  ],
-                ),
+                // Stack(
+                //   alignment: Alignment.center,
+                //   children: [
+                //     BacgroundImage(
+                //       image: 'assets/img/club.png',
+                //       height: 240.0,
+                //     ),
+                //     ElevatedButton(
+                //       style: ElevatedButton.styleFrom(
+                //           padding: EdgeInsets.symmetric(horizontal: 30.0),
+                //           primary: Colors.transparent,
+                //           shadowColor: Colors.transparent,
+                //           shape: RoundedRectangleBorder(
+                //             borderRadius: BorderRadius.zero,
+                //           ),
+                //           side: BorderSide(width: 1.0, color: Colors.white)),
+                //       onPressed: () {
+                //         authBloc.add(UserLoggedOut());
+                //       },
+                //       child: Text('CLUB LG'),
+                //     ),
+                //   ],
+                // ),
               ],
             ),
           )
