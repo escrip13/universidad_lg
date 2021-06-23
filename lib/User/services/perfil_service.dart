@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:universidad_lg/User/exceptions/perfil_exception.dart';
+import 'package:universidad_lg/User/models/perfil.dart';
 import 'package:universidad_lg/User/services/secure_storage.dart';
 import '../../constants.dart';
-import '../models/models.dart';
 
 abstract class PerfilService {
   Future<Perfil> getPerfil(String uid, String token);
@@ -32,10 +32,10 @@ class IsPerfilService extends PerfilService {
         Perfil perfil = Perfil.fromJson(json.decode(response.body));
         return perfil;
       } else {
-        throw PefinException(message: _request['status']['message']);
+        throw PerfinException(message: _request['status']['message']);
       }
     } else {
-      throw PefinException(message: 'ocurrio un problema de conexion');
+      throw PerfinException(message: 'ocurrio un problema de conexion');
     }
   }
 
@@ -65,10 +65,10 @@ class IsPerfilService extends PerfilService {
 
         return _request['status']['message'];
       } else {
-        throw PefinException(message: _request['status']['message']);
+        throw PerfinException(message: _request['status']['message']);
       }
     } else {
-      throw PefinException(message: 'ocurrio un problema de conexion');
+      throw PerfinException(message: 'ocurrio un problema de conexion');
     }
   }
 }

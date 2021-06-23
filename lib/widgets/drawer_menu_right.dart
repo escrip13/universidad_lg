@@ -5,6 +5,7 @@ import 'package:universidad_lg/Home/pages/home_page.dart';
 import 'package:universidad_lg/User/blocs/authentication/authentication.dart';
 import 'package:universidad_lg/User/models/user.dart';
 import 'package:universidad_lg/User/pages/login_page.dart';
+import 'package:universidad_lg/User/pages/logros_page.dart';
 import 'package:universidad_lg/User/pages/perfil_page.dart';
 import 'package:universidad_lg/constants.dart';
 
@@ -73,6 +74,18 @@ class DrawerMenuRight extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.emoji_events),
             title: Text('Mis logros'),
+            onTap: () {
+              if (currenPage != 'logros') {
+                Navigator.of(context).pop();
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return PageLogros(
+                    user: user,
+                  );
+                }));
+                // Navigator.pop(context);
+              }
+              return null;
+            },
           ),
           ListTile(
             leading: Icon(Icons.public),

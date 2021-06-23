@@ -18,3 +18,19 @@ class LogrosSuccess extends LogrosState {
   @override
   List<Object> get props => [data];
 }
+
+class LogrosSearch extends LogrosState {
+  final String title;
+
+  LogrosSearch(this.title);
+  @override
+  List<Object> get props => [title];
+}
+
+class ErrorLogros extends LogrosState {
+  final String message;
+
+  ErrorLogros(this.message);
+  @override
+  List<Object> get props => [message];
+}

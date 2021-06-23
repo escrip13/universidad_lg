@@ -59,10 +59,10 @@ class PerfilPage extends StatelessWidget {
       backgroundColor: Colors.white,
       drawer: DrawerMenuLeft(
         user: user,
-        currenPage: 'streaming',
       ),
       endDrawer: DrawerMenuRight(
         user: user,
+        currenPage: 'perfil',
       ),
       body: BlocProvider<PerfilBloc>(
         create: (context) => PerfilBloc(service: IsPerfilService()),

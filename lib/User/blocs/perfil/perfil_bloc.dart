@@ -1,12 +1,11 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:universidad_lg/User/exceptions/perfil_exception.dart';
-import 'package:universidad_lg/User/models/models.dart';
+import 'package:universidad_lg/User/models/perfil.dart';
+
 import 'package:universidad_lg/User/services/perfil_service.dart';
-import 'package:universidad_lg/User/services/secure_storage.dart';
 
 part 'perfil_event.dart';
 part 'perfil_state.dart';
@@ -37,7 +36,7 @@ class PerfilBloc extends Bloc<PerfilEvent, PerfilState> {
       Perfil data = await service.getPerfil(event.user, event.token);
 
       yield PerfilSuccess(data);
-    } on PefinException catch (e) {
+    } on PerfinException catch (e) {
       yield ErrorPerfil(e.message);
     }
   }
@@ -56,7 +55,7 @@ class PerfilBloc extends Bloc<PerfilEvent, PerfilState> {
       yield PerfilSend(message);
       // Perfil data = await service.getPerfil(event.user, event.token);
       // yield PerfilSuccess(data);
-    } on PefinException catch (e) {
+    } on PerfinException catch (e) {
       yield ErrorPerfil(e.message);
     }
 
@@ -64,7 +63,7 @@ class PerfilBloc extends Bloc<PerfilEvent, PerfilState> {
       Perfil data = await service.getPerfil(event.user, event.token);
 
       yield PerfilSuccess(data);
-    } on PefinException catch (e) {
+    } on PerfinException catch (e) {
       yield ErrorPerfil(e.message);
     }
   }

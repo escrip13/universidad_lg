@@ -1,5 +1,5 @@
-class PefinException implements Exception {
+class PerfinException implements Exception {
   final String message;
 
-  PefinException({this.message = 'A ocurrido un error'});
+  PerfinException({this.message = 'A ocurrido un error'});
 }
