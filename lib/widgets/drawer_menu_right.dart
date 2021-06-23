@@ -9,6 +9,8 @@ import 'package:universidad_lg/User/pages/logros_page.dart';
 import 'package:universidad_lg/User/pages/perfil_page.dart';
 import 'package:universidad_lg/constants.dart';
 
+import '../main.dart';
+
 class DrawerMenuRight extends StatelessWidget {
   final User user;
   final String currenPage;
@@ -96,7 +98,7 @@ class DrawerMenuRight extends StatelessWidget {
               Navigator.pushAndRemoveUntil(context,
                   MaterialPageRoute(builder: (_) {
                 authBloc.add(UserLoggedOut());
-                return LoginPage();
+                return MyApp();
               }), (route) => false);
             },
             leading: Icon(Icons.logout),

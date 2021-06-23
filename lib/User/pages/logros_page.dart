@@ -288,7 +288,10 @@ class __ContentLogrosPageState extends State<_ContentLogrosPage> {
                 border: InputBorder.none),
           )),
           InkWell(
-              onTap: () {},
+              onTap: () {
+                search(searchController.text);
+                print(searchController.text);
+              },
               child: Container(child: Icon(Icons.search, color: mainColor)))
         ],
       ),

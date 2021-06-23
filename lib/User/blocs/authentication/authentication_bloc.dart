@@ -60,7 +60,7 @@ class AuthenticationBloc
 
   Stream<AuthenticationState> _mapUserLoggedOutToState(
       UserLoggedOut event) async* {
-    await _authenticationService.signOut();
+    _authenticationService.signOut();
     yield AuthenticationNotAuthenticated();
   }
 }
