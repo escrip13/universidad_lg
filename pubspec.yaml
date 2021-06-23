@@ -41,6 +41,7 @@ dependencies:
   cool_stepper: ^1.2.1
   flutter_countdown_timer: ^4.1.0
   radio_button_form_field: ^0.0.4
+  video_player: ^2.1.6
 
   
 

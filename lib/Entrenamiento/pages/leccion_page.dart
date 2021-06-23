@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:video_player/video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -162,6 +163,8 @@ class __LeccionContentState extends State<_LeccionContent> {
                 ],
               ),
             ),
+            // if (leccion.status.data.curso.tipo == 'VideoLocal')
+            //   _VideoPlayerLeccion(leccion)
           ],
         ),
       ));
@@ -170,5 +173,80 @@ class __LeccionContentState extends State<_LeccionContent> {
         child: CircularProgressIndicator(color: mainColor),
       );
     }
+  }
+}
+
+class _VideoPlayerLeccion extends StatefulWidget {
+  final Leccion leccion;
+  _VideoPlayerLeccion(this.leccion);
+  @override
+  __VideoPlayerLeccion createState() => __VideoPlayerLeccion();
+}
+
+class __VideoPlayerLeccion extends State<_VideoPlayerLeccion> {
+  VideoPlayerController _controller;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _controller =
+        VideoPlayerController.network(widget.leccion.status.data.curso.datos)
+          ..initialize().then((_) {
+            // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
+            setState(() {});
+          });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return Container(
+      padding: const EdgeInsets.all(10.5),
+      child: Column(
+        children: [
+          _controller.value.isInitialized
+              ? AspectRatio(
+                  aspectRatio: _controller.value.aspectRatio,
+                  child: VideoPlayer(_controller),
+                )
+              : Container(),
+          LinearProgressIndicator(
+            value: _controller.value.position.inSeconds /
+                _controller.value.duration.inSeconds,
+          ),
+          Text('Duracion ${_controller.value.position.inSeconds}'),
+          Text('Duracion ${_controller.value.duration.inSeconds}'),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              primary: mainColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.zero,
+              ),
+            ),
+            onPressed: () {
+              setState(() {
+                // Si el vídeo se está reproduciendo, pausalo.
+                if (_controller.value.isPlaying) {
+                  _controller.pause();
+                } else {
+                  // Si el vídeo está pausado, reprodúcelo
+                  _controller.play();
+                }
+              });
+            },
+            child: Icon(
+              _controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller.dispose();
   }
 }

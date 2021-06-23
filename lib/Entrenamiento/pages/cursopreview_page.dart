@@ -190,13 +190,16 @@ class __CursoPreviewContentState extends State<_CursoPreviewContent> {
                     ),
                     onPressed: () {
                       if (cursoPreview.status.data.testEntrada == 1 ||
-                          cursoPreview.status.data.testEntrada == 2)
-                        return true;
-                      else
+                          cursoPreview.status.data.testEntrada == 2) {
+                        _textTestEntrada = 'Contiuar';
+                        acceso = true;
+                      } else {
                         _textTestEntrada =
                             'Primero debes completar el Test de Entrada para ingresar al contenido del curso.';
+                        acceso = false;
+                      }
 
-                      _viewLeccion(_textTestEntrada);
+                      _viewLeccion(_textTestEntrada, acceso);
                     },
                     child: const Text('TOMAR LECCIÓN'),
                   ),
@@ -304,7 +307,7 @@ class __CursoPreviewContentState extends State<_CursoPreviewContent> {
     );
   }
 
-  _viewLeccion(textDinamic) {
+  _viewLeccion(String textDinamic, bool acceso) {
     showDialog<String>(
       context: context,
       builder: (BuildContext context) => AlertDialog(
@@ -314,7 +317,7 @@ class __CursoPreviewContentState extends State<_CursoPreviewContent> {
           style: TextStyle(color: mainColor, fontWeight: FontWeight.w600),
         ),
         content: Text(
-          _textTestEntrada,
+          textDinamic,
           textAlign: TextAlign.center,
         ),
         actions: <Widget>[
@@ -324,13 +327,16 @@ class __CursoPreviewContentState extends State<_CursoPreviewContent> {
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => LeccionPage(
-                              user: widget.user,
-                              curso: cursoPreview.status.data.curso.nid,
-                              leccion: cursoPreview.status.data.leccionId)));
+                  if (acceso) {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => LeccionPage(
+                                user: widget.user,
+                                curso: cursoPreview.status.data.curso.nid,
+                                leccion: cursoPreview.status.data.leccionId)));
+                  }
+                  return false;
                 },
                 child: const Text(
                   'Continuar',
