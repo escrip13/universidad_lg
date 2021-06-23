@@ -53,7 +53,9 @@ class AyudaPage extends StatelessWidget {
         user: user,
         currenPage: 'streaming',
       ),
-      endDrawer: DrawerMenuRight(),
+      endDrawer: DrawerMenuRight(
+        user: user,
+      ),
       body: BlocProvider<AyudaBloc>(
         create: (context) => AyudaBloc(
           service: IsAyudaService(),

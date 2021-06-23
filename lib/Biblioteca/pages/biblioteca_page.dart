@@ -55,7 +55,9 @@ class BibliotecaPage extends StatelessWidget {
         user: user,
         currenPage: 'biblioteca',
       ),
-      endDrawer: DrawerMenuRight(),
+      endDrawer: DrawerMenuRight(
+        user: user,
+      ),
       body: BlocProvider<BibliotecaBloc>(
         create: (context) => BibliotecaBloc(service: IsBibliotecaService()),
         child: _ContentBibliotecaPage(user: user),

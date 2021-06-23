@@ -56,7 +56,9 @@ class EvaluacionPage extends StatelessWidget {
           user: user,
           currenPage: 'evaluaciones',
         ),
-        endDrawer: DrawerMenuRight(),
+        endDrawer: DrawerMenuRight(
+          user: user,
+        ),
         body: _EvaluacionContent(
           user: user,
         ));

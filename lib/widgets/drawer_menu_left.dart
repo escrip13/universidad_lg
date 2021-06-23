@@ -96,11 +96,11 @@ class DrawerMenuLeft extends StatelessWidget {
                 }
                 return null;
               }),
-          ListTile(
-            leading: Icon(Icons.local_activity),
-            title: Text('Club'),
-            onTap: () {},
-          ),
+          // ListTile(
+          //   leading: Icon(Icons.local_activity),
+          //   title: Text('Club'),
+          //   onTap: () {},
+          // ),
           ListTile(
               leading: Icon(Icons.cast_for_education),
               title: Text('Streamings'),

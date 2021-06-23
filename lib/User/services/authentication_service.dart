@@ -21,6 +21,8 @@ class IsAuthenticationService extends AuthenticationService {
       final email = await UserSecureStorage.getEmail();
       final token = await UserSecureStorage.getLoginToken();
       final uid = await UserSecureStorage.getUserId();
+      final documento = await UserSecureStorage.getDocumento();
+      final celular = await UserSecureStorage.getCelular();
 
       final response = await http.post(
         Uri.https(baseUrl, 'app/validate-session'),
@@ -37,7 +39,13 @@ class IsAuthenticationService extends AuthenticationService {
         final _request = json.decode(response.body);
 
         if (_request['status']['type'] != 'error') {
-          return User(name: nombre, email: email, token: token, userId: uid);
+          return User(
+              name: nombre,
+              email: email,
+              token: token,
+              userId: uid,
+              documento: documento,
+              celular: celular);
         } else {
           return null;
           // throw AuthenticationException(message: _request['status']['message']);

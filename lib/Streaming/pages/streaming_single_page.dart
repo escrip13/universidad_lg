@@ -54,7 +54,9 @@ class StreamingSinglePage extends StatelessWidget {
           user: user,
           currenPage: 'streaming',
         ),
-        endDrawer: DrawerMenuRight(),
+        endDrawer: DrawerMenuRight(
+          user: user,
+        ),
         body: BlocProvider<StreamingsingleBloc>(
           create: (context) => StreamingsingleBloc(
             servive: IsServiceStreamingSingle(),

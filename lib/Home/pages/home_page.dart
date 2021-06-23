@@ -49,7 +49,9 @@ class HomePage extends StatelessWidget {
       drawer: DrawerMenuLeft(
         user: user,
       ),
-      endDrawer: DrawerMenuRight(),
+      endDrawer: DrawerMenuRight(
+        user: user,
+      ),
 
       body: Builder(
         builder: (context) => Container(

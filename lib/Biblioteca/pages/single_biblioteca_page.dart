@@ -51,7 +51,9 @@ class SingleBibliotecaPage extends StatelessWidget {
         user: user,
         currenPage: '',
       ),
-      endDrawer: DrawerMenuRight(),
+      endDrawer: DrawerMenuRight(
+        user: user,
+      ),
       body: _ContentSingleBibliotecaPage(data: data),
     );
   }

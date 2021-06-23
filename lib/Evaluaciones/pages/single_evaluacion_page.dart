@@ -220,12 +220,13 @@ class __SingleEvaluacionContentState extends State<_SingleEvaluacionContent> {
 
 class _ContentSingleEvaluacion extends StatefulWidget {
   final SingleEvaluacion evaluacionInfo;
-  int time;
-  User user;
-  String nid;
+  final int time;
+  final User user;
+  final String nid;
 
-  _ContentSingleEvaluacion(
-      {this.evaluacionInfo, this.time, this.user, this.nid});
+  const _ContentSingleEvaluacion(
+      {Key key, this.evaluacionInfo, this.time, this.user, this.nid})
+      : super(key: key);
 
   @override
   __ContentSingleEvaluacionState createState() =>

@@ -58,7 +58,9 @@ class EntrenamientoPage extends StatelessWidget {
         user: user,
         currenPage: 'entrenamiento',
       ),
-      endDrawer: DrawerMenuRight(),
+      endDrawer: DrawerMenuRight(
+        user: user,
+      ),
       body: BlocBuilder<AuthenticationBloc, AuthenticationState>(
         builder: (context, state) {
           if (state is AuthenticationAuthenticated) {

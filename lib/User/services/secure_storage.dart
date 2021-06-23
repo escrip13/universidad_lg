@@ -12,7 +12,7 @@ class UserSecureStorage {
   static const _keyEmail = 'email';
   static const _keyDocumento = 'documento';
   static const _keyCelular = 'celular';
-  static const _keyEmpresa = 'celular';
+  static const _keyEmpresa = 'empresa';
   static const _keyCargo = 'cargo';
   static const _keyMensaje = 'mensaje';
   static const _keyisLogin = 'isLogin';

@@ -3,12 +3,18 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:universidad_lg/Home/models/home_model.dart';
 import 'package:universidad_lg/Home/pages/home_page.dart';
 import 'package:universidad_lg/User/blocs/authentication/authentication.dart';
+import 'package:universidad_lg/User/models/user.dart';
 import 'package:universidad_lg/User/pages/login_page.dart';
+import 'package:universidad_lg/User/pages/perfil_page.dart';
 import 'package:universidad_lg/constants.dart';
 
 class DrawerMenuRight extends StatelessWidget {
+  final User user;
+  final String currenPage;
   const DrawerMenuRight({
     Key key,
+    this.user,
+    this.currenPage,
   }) : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -28,7 +34,14 @@ class DrawerMenuRight extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 InkWell(
-                  onTap: () => HomePage(),
+                  onTap: () {
+                    Navigator.pushAndRemoveUntil(context,
+                        MaterialPageRoute(builder: (_) {
+                      return HomePage(
+                        user: user,
+                      );
+                    }), (route) => false);
+                  },
                   child: Image(
                     image: AssetImage('assets/img/new_logo.png'),
                     height: 40,
@@ -44,6 +57,18 @@ class DrawerMenuRight extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.account_circle),
             title: Text('Mi perfil'),
+            onTap: () {
+              if (currenPage != 'perfil') {
+                Navigator.of(context).pop();
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return PerfilPage(
+                    user: user,
+                  );
+                }));
+                // Navigator.pop(context);
+              }
+              return null;
+            },
           ),
           ListTile(
             leading: Icon(Icons.emoji_events),
