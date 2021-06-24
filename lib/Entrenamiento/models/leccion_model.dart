@@ -74,8 +74,6 @@ class Curso {
     this.tipo,
     this.tipoDocumento,
     this.datos,
-    this.datosmulti,
-    this.sig,
     this.url,
     this.pos,
     this.bodyValue,
@@ -86,8 +84,6 @@ class Curso {
   String tipo;
   String tipoDocumento;
   String datos;
-  List<String> datosmulti;
-  dynamic sig;
   String url;
   String pos;
   String bodyValue;
@@ -98,8 +94,6 @@ class Curso {
         tipo: json["tipo"],
         tipoDocumento: json["tipo_documento"],
         datos: json["datos"],
-        datosmulti: List<String>.from(json["datosmulti"].map((x) => x)),
-        sig: json["sig"],
         url: json["url"],
         pos: json["pos"],
         bodyValue: json["body_value"],
@@ -111,8 +105,6 @@ class Curso {
         "tipo": tipo,
         "tipo_documento": tipoDocumento,
         "datos": datos,
-        "datosmulti": List<dynamic>.from(datosmulti.map((x) => x)),
-        "sig": sig,
         "url": url,
         "pos": pos,
         "body_value": bodyValue,

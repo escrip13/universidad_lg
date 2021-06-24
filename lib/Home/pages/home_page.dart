@@ -4,11 +4,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/shims/dart_ui_real.dart';
 import 'package:universidad_lg/Home/blocs/home/home_bloc.dart';
 import 'package:universidad_lg/Home/models/models.dart';
+import 'package:universidad_lg/Noticias/pages/noticias_single_page.dart';
 import 'package:universidad_lg/User/blocs/authentication/authentication_bloc.dart';
 import 'package:universidad_lg/User/blocs/blocs.dart';
 import 'package:universidad_lg/User/models/user.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:universidad_lg/widgets/background_image.dart';
+import 'package:universidad_lg/widgets/buttom_main_navigator.dart';
 import 'package:universidad_lg/widgets/drawer_menu_left.dart';
 import 'package:universidad_lg/widgets/drawer_menu_right.dart';
 
@@ -113,7 +115,7 @@ class __HomeContent extends State<_HomeContent> {
             children: [
               _CarrucelHome(homeInfo.status.carrucel),
               // _CalendarioHome(),
-              _NoticiasHome(homeInfo.status.noticias),
+              _NoticiasHome(homeInfo.status.noticias, widget.user),
               _ConoceMas(),
             ],
           ),
@@ -198,8 +200,9 @@ class __CarrucelHomeState extends State<_CarrucelHome> {
 
 // ignore: must_be_immutable
 class _NoticiasHome extends StatefulWidget {
+  final User user;
   List<Noticias> dataNoticias;
-  _NoticiasHome(this.dataNoticias);
+  _NoticiasHome(this.dataNoticias, this.user);
 
   @override
   __NoticiasHome createState() => __NoticiasHome();
@@ -233,7 +236,13 @@ class __NoticiasHome extends State<_NoticiasHome> {
                   builder: (BuildContext context) {
                     return InkWell(
                       onTap: () {
-                        print("tapped on container");
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => NoticiaSinglePage(
+                                      user: widget.user,
+                                      nid: i.nid,
+                                    )));
                       },
                       child: Column(
                         children: [
@@ -271,8 +280,7 @@ class __NoticiasHome extends State<_NoticiasHome> {
                               textAlign: TextAlign.center,
                               style: TextStyle(fontSize: 13),
                             ),
-                          ),
-
+                          )
                           // Text(i.title),
                         ],
                         // Text(i.title),

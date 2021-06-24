@@ -163,8 +163,22 @@ class __LeccionContentState extends State<_LeccionContent> {
                 ],
               ),
             ),
-            // if (leccion.status.data.curso.tipo == 'VideoLocal')
-            //   _VideoPlayerLeccion(leccion)
+            if (leccion.status.data.curso.tipo == 'VideoLocal')
+              _VideoPlayerLeccion(leccion)
+            else
+              Container(
+                height: MediaQuery.of(context).size.height - 200,
+                width: double.infinity,
+                child: Html(
+                  key: Key('iframe'),
+                  data:
+                      '<iframe height="${MediaQuery.of(context).size.height - 250} "  width="${MediaQuery.of(context).size.width}"+ src="https://docs.google.com/gview?url=${leccion.status.data.curso.datos}&embedded=true" frameborder="0" ></iframe>',
+                  style: {
+                    'iframe': Style(
+                        margin: EdgeInsets.all(20), padding: EdgeInsets.all(20))
+                  },
+                ),
+              ),
           ],
         ),
       ));
@@ -183,8 +197,10 @@ class _VideoPlayerLeccion extends StatefulWidget {
   __VideoPlayerLeccion createState() => __VideoPlayerLeccion();
 }
 
-class __VideoPlayerLeccion extends State<_VideoPlayerLeccion> {
+class __VideoPlayerLeccion extends State<_VideoPlayerLeccion>
+    with TickerProviderStateMixin {
   VideoPlayerController _controller;
+  AnimationController controllerAnimation;
 
   @override
   void initState() {
@@ -196,6 +212,14 @@ class __VideoPlayerLeccion extends State<_VideoPlayerLeccion> {
             // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
             setState(() {});
           });
+    // controllerAnimation = AnimationController(
+    //   vsync: this,
+    //   duration: Duration(minutes: 10),
+    // )..addListener(() {
+    //     setState(() {});
+    //   });
+    // controllerAnimation.repeat(max: 1);
+    // controllerAnimation.forward();
   }
 
   @override
@@ -211,12 +235,13 @@ class __VideoPlayerLeccion extends State<_VideoPlayerLeccion> {
                   child: VideoPlayer(_controller),
                 )
               : Container(),
-          LinearProgressIndicator(
-            value: _controller.value.position.inSeconds /
-                _controller.value.duration.inSeconds,
+          Container(
+            child: LinearProgressIndicator(
+              value: 10.0,
+              color: mainColor,
+              backgroundColor: secondColor,
+            ),
           ),
-          Text('Duracion ${_controller.value.position.inSeconds}'),
-          Text('Duracion ${_controller.value.duration.inSeconds}'),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               primary: mainColor,
@@ -248,5 +273,6 @@ class __VideoPlayerLeccion extends State<_VideoPlayerLeccion> {
   void dispose() {
     super.dispose();
     _controller.dispose();
+    controllerAnimation.dispose();
   }
 }

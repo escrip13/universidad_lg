@@ -6,6 +6,7 @@ import 'package:universidad_lg/Entrenamiento/blocs/entrenamiento_bloc.dart';
 import 'package:universidad_lg/Entrenamiento/models/cursopreview_model.dart';
 import 'package:universidad_lg/Entrenamiento/pages/leccion_page.dart';
 import 'package:universidad_lg/Entrenamiento/pages/testentrada_page.dart';
+import 'package:universidad_lg/Entrenamiento/pages/testsalida_page.dart';
 import 'package:universidad_lg/Home/pages/home_page.dart';
 import 'package:universidad_lg/User/blocs/authentication/authentication_bloc.dart';
 import 'package:universidad_lg/User/blocs/authentication/authentication_state.dart';
@@ -245,7 +246,7 @@ class __CursoPreviewContentState extends State<_CursoPreviewContent> {
                             'Debes tomar la Lección del curso para tomar este Test de Salida.';
                       }
 
-                      _viewTestEntrada(_textTestEntrada, acceso);
+                      _viewTestSalida(_textTestEntrada, acceso = true);
                     },
                     child: const Text('TEST DE SALIDA'),
                   )
@@ -308,6 +309,50 @@ class __CursoPreviewContentState extends State<_CursoPreviewContent> {
   }
 
   _viewLeccion(String textDinamic, bool acceso) {
+    if (acceso) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => LeccionPage(
+                  user: widget.user,
+                  curso: cursoPreview.status.data.curso.nid,
+                  leccion: cursoPreview.status.data.leccionId)));
+    } else {
+      showDialog<String>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text(
+            '¡Ten presente!',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: mainColor, fontWeight: FontWeight.w600),
+          ),
+          content: Text(
+            textDinamic,
+            textAlign: TextAlign.center,
+          ),
+          actions: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    return false;
+                  },
+                  child: const Text(
+                    'Continuar',
+                    style: TextStyle(color: mainColor, fontSize: 18.0),
+                  ),
+                ),
+              ],
+            )
+          ],
+        ),
+      );
+    }
+  }
+
+  _viewTestSalida(String textDinamic, bool acceso) {
     showDialog<String>(
       context: context,
       builder: (BuildContext context) => AlertDialog(
@@ -317,7 +362,7 @@ class __CursoPreviewContentState extends State<_CursoPreviewContent> {
           style: TextStyle(color: mainColor, fontWeight: FontWeight.w600),
         ),
         content: Text(
-          textDinamic,
+          _textTestEntrada,
           textAlign: TextAlign.center,
         ),
         actions: <Widget>[
@@ -327,15 +372,17 @@ class __CursoPreviewContentState extends State<_CursoPreviewContent> {
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
+
                   if (acceso) {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => LeccionPage(
+                            builder: (context) => TestSalidaPage(
                                 user: widget.user,
                                 curso: cursoPreview.status.data.curso.nid,
                                 leccion: cursoPreview.status.data.leccionId)));
                   }
+
                   return false;
                 },
                 child: const Text(

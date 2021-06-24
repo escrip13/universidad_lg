@@ -4,6 +4,7 @@ import 'package:universidad_lg/Biblioteca/pages/biblioteca_page.dart';
 import 'package:universidad_lg/Entrenamiento/pages/entrenamiento_page.dart';
 import 'package:universidad_lg/Evaluaciones/pages/evaluacion_page.dart';
 import 'package:universidad_lg/Home/pages/home_page.dart';
+import 'package:universidad_lg/Noticias/pages/noticias_page.dart';
 import 'package:universidad_lg/Streaming/pages/streaming_page.dart';
 import 'package:universidad_lg/User/models/user.dart';
 import 'package:universidad_lg/constants.dart';
@@ -96,11 +97,19 @@ class DrawerMenuLeft extends StatelessWidget {
                 }
                 return null;
               }),
-          // ListTile(
-          //   leading: Icon(Icons.local_activity),
-          //   title: Text('Club'),
-          //   onTap: () {},
-          // ),
+          ListTile(
+              leading: Icon(Icons.local_activity),
+              title: Text('Noticias'),
+              onTap: () {
+                if (currenPage != 'noticias') {
+                  Navigator.of(context).pop();
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return NoticiasPage(user: user);
+                  }));
+                  // Navigator.pop(context);
+                }
+                return null;
+              }),
           ListTile(
               leading: Icon(Icons.cast_for_education),
               title: Text('Streamings'),

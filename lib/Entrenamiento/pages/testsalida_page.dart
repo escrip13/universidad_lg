@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/shims/dart_ui_real.dart';
-import 'package:universidad_lg/Entrenamiento/models/sendtestentrada_model.dart';
 import 'package:universidad_lg/Entrenamiento/pages/entrenamiento_page.dart';
 import '../../constants.dart';
 
-import 'package:universidad_lg/Entrenamiento/models/testentrada_model.dart';
 import 'package:universidad_lg/User/models/models.dart';
+import 'package:universidad_lg/Entrenamiento/models/testsalida_model.dart';
+import 'package:universidad_lg/Entrenamiento/models/sendtestsalida_model.dart';
 
 import 'package:cool_stepper/cool_stepper.dart';
 import 'package:radio_button_form_field/radio_button_form_field.dart';
@@ -15,16 +15,14 @@ import 'package:universidad_lg/Entrenamiento/blocs/entrenamiento_bloc.dart';
 
 import 'package:universidad_lg/Home/pages/home_page.dart';
 
-import 'cursopreview_page.dart';
-
 Map preguntasList = {};
 CountdownTimerController controllerTime;
 
-class TestEntradaPage extends StatefulWidget {
+class TestSalidaPage extends StatefulWidget {
   final User user;
   final String curso;
   final String leccion;
-  const TestEntradaPage({
+  const TestSalidaPage({
     Key key,
     @required this.user,
     @required this.curso,
@@ -32,11 +30,11 @@ class TestEntradaPage extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _TestEntradaPageState createState() => _TestEntradaPageState();
+  _TestSalidaPageState createState() => _TestSalidaPageState();
 }
 
-class _TestEntradaPageState extends State<TestEntradaPage> {
-  EntrenamientoBloc testEntradaBloc = EntrenamientoBloc();
+class _TestSalidaPageState extends State<TestSalidaPage> {
+  EntrenamientoBloc testSalidaBloc = EntrenamientoBloc();
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -82,7 +80,7 @@ class _TestEntradaPageState extends State<TestEntradaPage> {
           //   currenPage: 'evaluaciones',
           // ),
           // endDrawer: DrawerMenuRight(),
-          body: _TestEntradaContent(
+          body: _TestSalidaContent(
               user: widget.user, curso: widget.curso, leccion: widget.leccion)
 
           // otherwise show login page
@@ -121,15 +119,15 @@ class _TestEntradaPageState extends State<TestEntradaPage> {
               ),
               TextButton(
                 onPressed: () {
-                  testEntradaBloc
-                      .sendTestEntrada(
+                  testSalidaBloc
+                      .sendTestSalida(
                           data: preguntasList,
                           uid: widget.user.userId,
                           token: widget.user.token,
                           curso: widget.curso,
                           leccion: widget.leccion)
                       .then((value) {
-                    SendTestEntrada respuesta = value;
+                    SendTestSalida respuesta = value;
 
                     _result(
                         context: context,
@@ -154,19 +152,19 @@ class _TestEntradaPageState extends State<TestEntradaPage> {
   }
 }
 
-class _TestEntradaContent extends StatefulWidget {
+class _TestSalidaContent extends StatefulWidget {
   User user;
   String curso;
   String leccion;
-  _TestEntradaContent({this.user, this.curso, this.leccion});
+  _TestSalidaContent({this.user, this.curso, this.leccion});
   @override
-  __TestEntradaContentState createState() => __TestEntradaContentState();
+  __TestSalidaContentState createState() => __TestSalidaContentState();
 }
 
-class __TestEntradaContentState extends State<_TestEntradaContent> {
-  TestEntrada testEntradaInfo;
+class __TestSalidaContentState extends State<_TestSalidaContent> {
+  TestSalida testSalidaInfo;
   bool load = false;
-  EntrenamientoBloc testEntradaBloc = EntrenamientoBloc();
+  EntrenamientoBloc testSalidaBloc = EntrenamientoBloc();
 
   void _onLoad() {
     if (mounted) {
@@ -178,15 +176,15 @@ class __TestEntradaContentState extends State<_TestEntradaContent> {
   }
 
   void loadData() {
-    testEntradaBloc
-        .getTestEntradaContent(
+    testSalidaBloc
+        .getTestSalidaContent(
             token: widget.user.token,
             uid: widget.user.userId,
             curso: widget.curso,
             leccion: widget.leccion)
         .then((value) {
       _onLoad();
-      testEntradaInfo = value;
+      testSalidaInfo = value;
     });
   }
 
@@ -202,10 +200,10 @@ class __TestEntradaContentState extends State<_TestEntradaContent> {
     if (load) {
       return Container(
         // padding: EdgeInsets.all(0),
-        child: _ContentTestEntrada(
-          testEntradaInfo: testEntradaInfo,
+        child: _ContentTestSalida(
+          testSalidaInfo: testSalidaInfo,
           time: int.parse(
-            testEntradaInfo.status.tiempo,
+            testSalidaInfo.status.tiempo,
           ),
           user: widget.user,
           curso: widget.curso,
@@ -222,24 +220,24 @@ class __TestEntradaContentState extends State<_TestEntradaContent> {
   }
 }
 
-class _ContentTestEntrada extends StatefulWidget {
-  final TestEntrada testEntradaInfo;
+class _ContentTestSalida extends StatefulWidget {
+  final TestSalida testSalidaInfo;
   int time;
   User user;
   String curso;
   String leccion;
 
-  _ContentTestEntrada(
-      {this.testEntradaInfo, this.time, this.user, this.curso, this.leccion});
+  _ContentTestSalida(
+      {this.testSalidaInfo, this.time, this.user, this.curso, this.leccion});
 
   @override
-  __ContentTestEntradaState createState() => __ContentTestEntradaState();
+  __ContentTestSalidaState createState() => __ContentTestSalidaState();
 }
 
-class __ContentTestEntradaState extends State<_ContentTestEntrada>
+class __ContentTestSalidaState extends State<_ContentTestSalida>
     with TickerProviderStateMixin {
   // EvaluacionBloc evalacionBloc = EvaluacionBloc();
-  EntrenamientoBloc testEntradaBloc = EntrenamientoBloc();
+  EntrenamientoBloc testSalidaBloc = EntrenamientoBloc();
 
   final GlobalKey<FormState> _key = GlobalKey<FormState>();
 
@@ -349,7 +347,7 @@ class __ContentTestEntradaState extends State<_ContentTestEntrada>
 
   List listSteps(context) {
     int cont = 1;
-    for (var item in widget.testEntradaInfo.status.preguntas) {
+    for (var item in widget.testSalidaInfo.status.preguntas) {
       // List<Respuesta> repustas = item.respuestas;
       List<Respuesta> respuesta = item.respuestas;
 
@@ -416,7 +414,6 @@ class __ContentTestEntradaState extends State<_ContentTestEntrada>
   }
 
   ///////////////  finalizavion de los steps //////////
-
   _onFinish() {
     showDialog<String>(
       barrierDismissible: false,
@@ -448,15 +445,15 @@ class __ContentTestEntradaState extends State<_ContentTestEntrada>
               ),
               TextButton(
                 onPressed: () {
-                  testEntradaBloc
-                      .sendTestEntrada(
+                  testSalidaBloc
+                      .sendTestSalida(
                           data: preguntasList,
                           uid: widget.user.userId,
                           token: widget.user.token,
                           curso: widget.curso,
                           leccion: widget.leccion)
                       .then((value) {
-                    SendTestEntrada respuesta = value;
+                    SendTestSalida respuesta = value;
 
                     _result(
                         context: context,
@@ -505,15 +502,15 @@ class __ContentTestEntradaState extends State<_ContentTestEntrada>
           actions: <Widget>[
             TextButton(
               onPressed: () {
-                testEntradaBloc
-                    .sendTestEntrada(
+                testSalidaBloc
+                    .sendTestSalida(
                         data: preguntasList,
                         uid: widget.user.userId,
                         token: widget.user.token,
                         curso: widget.curso,
                         leccion: widget.leccion)
                     .then((value) {
-                  SendTestEntrada respuesta = value;
+                  SendTestSalida respuesta = value;
 
                   _result(
                       context: context,
@@ -570,7 +567,7 @@ _result({DataTest res, User user, context, String id}) {
               ),
               RichText(
                 text: TextSpan(
-                    text: "TEST ENTRADA: ",
+                    text: "TEST SALIDA: ",
                     style: TextStyle(color: mainColor),
                     children: [
                       TextSpan(
