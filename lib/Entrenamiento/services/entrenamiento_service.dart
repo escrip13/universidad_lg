@@ -124,7 +124,7 @@ class EntrenamientoService {
         'userAnswers': data
       }),
     );
-
+    print(response.body);
     if (response.statusCode == 200) {
       final _request = json.decode(response.body);
       if (_request['status']['type'] != 'error') {
@@ -209,9 +209,6 @@ class EntrenamientoService {
 
   Future<SendTestSalida> serviceSendTestSalida(String userid, String token,
       String curso, String leccion, Map data) async {
-    print(data);
-    print(curso);
-    print(leccion);
     final response = await http.post(
       Uri.https(baseUrl, 'app/entrenamiento/curso/test-salida/save'),
       headers: <String, String>{

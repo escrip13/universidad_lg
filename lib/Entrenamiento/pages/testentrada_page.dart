@@ -570,7 +570,7 @@ _result({DataTest res, User user, context, String id}) {
               ),
               RichText(
                 text: TextSpan(
-                    text: "TEST ENTRADA: ",
+                    text: "TEST DE ENTRADA: ",
                     style: TextStyle(color: mainColor),
                     children: [
                       TextSpan(
@@ -607,6 +607,15 @@ _result({DataTest res, User user, context, String id}) {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               TextButton(
+                onPressed: () {},
+                child: const Text(
+                  'VER RESPUESTAS',
+                  style: TextStyle(
+                    color: mainColor,
+                  ),
+                ),
+              ),
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                   Navigator.pop(context);
@@ -616,8 +625,9 @@ _result({DataTest res, User user, context, String id}) {
                   Navigator.pushReplacement(
                       context,
                       MaterialPageRoute<void>(
-                          builder: (BuildContext context) =>
-                              EntrenamientoPage(user: user)));
+                          builder: (BuildContext context) => EntrenamientoPage(
+                                user: user,
+                              )));
                 },
                 child: const Text(
                   'CONTINUAR',
