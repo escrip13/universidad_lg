@@ -3,7 +3,6 @@ import 'package:flutter_html/shims/dart_ui_real.dart';
 import 'package:universidad_lg/Entrenamiento/blocs/entrenamiento_bloc.dart';
 import 'package:universidad_lg/Entrenamiento/models/respuestastestsalida_model.dart';
 import 'package:universidad_lg/User/models/models.dart';
-
 import '../../constants.dart';
 
 class RespuestasTestSalidaPage extends StatelessWidget {
@@ -15,7 +14,6 @@ class RespuestasTestSalidaPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Scaffold(
       appBar: AppBar(
         title: Text(

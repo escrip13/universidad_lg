@@ -16,7 +16,7 @@ class LoginPage extends StatelessWidget {
       body:
           Container(child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
         builder: (context, state) {
-          print('$state login page');
+          // print('$state login page');
           final authBloc = BlocProvider.of<AuthenticationBloc>(context);
           if (state is AuthenticationAuthenticated) {
             return HomePage(

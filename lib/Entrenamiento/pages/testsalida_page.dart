@@ -50,12 +50,12 @@ class _TestSalidaPageState extends State<TestSalidaPage> {
             title: Center(
               child: InkWell(
                 onTap: () {
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => HomePage(
-                                user: widget.user,
-                              )));
+                  // Navigator.pushReplacement(
+                  //     context,
+                  //     MaterialPageRoute(
+                  //         builder: (context) => HomePage(
+                  //               user: widget.user,
+                  //             )));
                 },
                 child: Image(
                   image: AssetImage('assets/img/new_logo.png'),

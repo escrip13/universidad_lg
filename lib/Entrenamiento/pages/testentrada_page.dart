@@ -50,14 +50,14 @@ class _TestEntradaPageState extends State<TestEntradaPage> {
             backgroundColor: mainColor,
             title: Center(
               child: InkWell(
-                onTap: () {
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => HomePage(
-                                user: widget.user,
-                              )));
-                },
+                // onTap: () {
+                //   Navigator.pushReplacement(
+                //       context,
+                //       MaterialPageRoute(
+                //           builder: (context) => HomePage(
+                //                 user: widget.user,
+                //               )));
+                // },
                 child: Image(
                   image: AssetImage('assets/img/new_logo.png'),
                   height: 35,

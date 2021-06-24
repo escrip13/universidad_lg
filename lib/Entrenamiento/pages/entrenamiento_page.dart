@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:universidad_lg/Entrenamiento/blocs/entrenamiento.dart';
 import 'package:universidad_lg/Entrenamiento/models/models.dart';
 import 'package:universidad_lg/Entrenamiento/pages/cursopreview_page.dart';
 import 'package:universidad_lg/Home/pages/home_page.dart';
-import 'package:universidad_lg/User/blocs/authentication/authentication.dart';
 import 'package:universidad_lg/User/models/models.dart';
-import 'package:universidad_lg/User/pages/login_page.dart';
 import 'package:universidad_lg/widgets/buttom_main_navigator.dart';
 import 'package:universidad_lg/widgets/drawer_menu_left.dart';
 import 'package:universidad_lg/widgets/drawer_menu_right.dart';
@@ -23,58 +20,45 @@ class EntrenamientoPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // backgroundColor: Colors.transparent,
-      appBar: AppBar(
-        backgroundColor: mainColor,
-        title: Center(
-          child: InkWell(
-            onTap: () {
-              Navigator.pushAndRemoveUntil(context,
-                  MaterialPageRoute(builder: (_) {
-                return HomePage(
-                  user: user,
-                );
-              }), (route) => false);
-            },
-            child: Image(
-              image: AssetImage('assets/img/new_logo.png'),
-              height: 35,
-            ),
-          ),
-        ),
-        actions: [
-          Builder(
-            builder: (context) => IconButton(
-              onPressed: () {
-                Scaffold.of(context).openEndDrawer();
+        // backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          backgroundColor: mainColor,
+          title: Center(
+            child: InkWell(
+              onTap: () {
+                Navigator.pushAndRemoveUntil(context,
+                    MaterialPageRoute(builder: (_) {
+                  return HomePage(
+                    user: user,
+                  );
+                }), (route) => false);
               },
-              icon: Icon(Icons.person),
+              child: Image(
+                image: AssetImage('assets/img/new_logo.png'),
+                height: 35,
+              ),
             ),
           ),
-        ],
-      ),
-      backgroundColor: Colors.white,
-      drawer: DrawerMenuLeft(
-        user: user,
-        currenPage: 'entrenamiento',
-      ),
-      endDrawer: DrawerMenuRight(
-        user: user,
-      ),
-      body: BlocBuilder<AuthenticationBloc, AuthenticationState>(
-        builder: (context, state) {
-          if (state is AuthenticationAuthenticated) {
-            // show home page
-
-            return _EntrenamientoContent(
-              user: state.user,
-            );
-          }
-          // otherwise show login page
-          return LoginPage();
-        },
-      ),
-    );
+          actions: [
+            Builder(
+              builder: (context) => IconButton(
+                onPressed: () {
+                  Scaffold.of(context).openEndDrawer();
+                },
+                icon: Icon(Icons.person),
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: Colors.white,
+        drawer: DrawerMenuLeft(
+          user: user,
+          currenPage: 'entrenamiento',
+        ),
+        endDrawer: DrawerMenuRight(
+          user: user,
+        ),
+        body: _EntrenamientoContent(user: user));
   }
 }
 
@@ -94,7 +78,6 @@ class __EntrenamientoContent extends State<_EntrenamientoContent> {
   @override
   void initState() {
     super.initState();
-
     loadData();
   }
 
@@ -130,7 +113,6 @@ class __EntrenamientoContent extends State<_EntrenamientoContent> {
                     ),
                     onTap: () {
                       _changeFilter(0);
-
                       Navigator.pop(context);
                     }),
                 for (var fil in data)
@@ -172,7 +154,11 @@ class __EntrenamientoContent extends State<_EntrenamientoContent> {
           // padding: EdgeInsets.all(0),
           child: Stack(
         children: [
-          _ContentEntrenamiento(entrenamientoInfo, filtro),
+          _ContentEntrenamiento(
+            user: widget.user,
+            entrenamientoInfo: entrenamientoInfo,
+            filtro: filtro,
+          ),
           Positioned(
             bottom: 10.0,
             right: 10.0,
@@ -198,10 +184,11 @@ class __EntrenamientoContent extends State<_EntrenamientoContent> {
 }
 
 class _ContentEntrenamiento extends StatefulWidget {
-  Entrenamiento entrenamientoInfo;
-  int filtro;
+  final User user;
+  final Entrenamiento entrenamientoInfo;
+  final int filtro;
 
-  _ContentEntrenamiento(this.entrenamientoInfo, this.filtro);
+  _ContentEntrenamiento({this.entrenamientoInfo, this.filtro, this.user});
 
   @override
   __ContentEntrenamientoState createState() => __ContentEntrenamientoState();
@@ -234,11 +221,13 @@ class __ContentEntrenamientoState extends State<_ContentEntrenamiento> {
                       _ContentEntrenamintoType(
                         data: widget.entrenamientoInfo.status.cursos.basico,
                         filtro: widget.filtro,
+                        user: widget.user,
                       ),
                       //
                       _ContentEntrenamintoType(
                         data: widget.entrenamientoInfo.status.cursos.intermedio,
                         filtro: widget.filtro,
+                        user: widget.user,
                       ),
                       _ContentEntrenamintoType(
                         data: widget.entrenamientoInfo.status.cursos.avanzado,
@@ -259,7 +248,8 @@ class __ContentEntrenamientoState extends State<_ContentEntrenamiento> {
 class _ContentEntrenamintoType extends StatelessWidget {
   final Map<String, TipoCurso> data;
   final int filtro;
-  _ContentEntrenamintoType({this.data, this.filtro});
+  final User user;
+  _ContentEntrenamintoType({this.data, this.filtro, this.user});
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -277,6 +267,7 @@ class _ContentEntrenamintoType extends StatelessWidget {
               _ItemCurso(
                 curso: curso,
                 filtro: filtro,
+                user: user,
               )
           ],
         ),
@@ -286,9 +277,9 @@ class _ContentEntrenamintoType extends StatelessWidget {
 }
 
 class _ItemCurso extends StatelessWidget {
-  TipoCurso curso;
-  int filtro;
-  User user;
+  final TipoCurso curso;
+  final int filtro;
+  final User user;
 
   _ItemCurso({this.curso, this.filtro, this.user});
 

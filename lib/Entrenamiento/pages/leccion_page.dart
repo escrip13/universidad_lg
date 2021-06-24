@@ -12,7 +12,6 @@ import 'package:universidad_lg/User/blocs/authentication/authentication_bloc.dar
 import 'package:universidad_lg/User/blocs/authentication/authentication_state.dart';
 import 'package:universidad_lg/User/models/user.dart';
 import 'package:universidad_lg/User/pages/login_page.dart';
-import 'package:universidad_lg/widgets/buttom_main_navigator.dart';
 
 import '../../constants.dart';
 
@@ -38,54 +37,43 @@ class _LeccionPageState extends State<LeccionPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        backgroundColor: mainColor,
-        title: Center(
-          child: InkWell(
-            onTap: () {
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => HomePage(
-                            user: widget.user,
-                          )));
-            },
-            child: Image(
-              image: AssetImage('assets/img/new_logo.png'),
-              height: 35,
-            ),
-          ),
-        ),
-        actions: [
-          Builder(
-            builder: (context) => IconButton(
-              onPressed: () {
-                Scaffold.of(context).openEndDrawer();
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          backgroundColor: mainColor,
+          title: Center(
+            child: InkWell(
+              onTap: () {
+                Navigator.pushAndRemoveUntil(context,
+                    MaterialPageRoute(builder: (_) {
+                  return HomePage(
+                    user: widget.user,
+                  );
+                }), (route) => false);
               },
-              icon: Icon(Icons.person),
-              color: Colors.transparent,
+              child: Image(
+                image: AssetImage('assets/img/new_logo.png'),
+                height: 35,
+              ),
             ),
           ),
-        ],
-      ),
-      backgroundColor: Colors.white,
-      body: BlocBuilder<AuthenticationBloc, AuthenticationState>(
-        builder: (context, state) {
-          if (state is AuthenticationAuthenticated) {
-            // show home page
-
-            return _LeccionContent(
-              user: state.user,
-              curso: widget.curso,
-              leccion: widget.leccion,
-            );
-          }
-          // otherwise show login page
-          return LoginPage();
-        },
-      ),
-    );
+          actions: [
+            Builder(
+              builder: (context) => IconButton(
+                onPressed: () {
+                  Scaffold.of(context).openEndDrawer();
+                },
+                icon: Icon(Icons.person),
+                color: Colors.transparent,
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: Colors.white,
+        body: _LeccionContent(
+          user: widget.user,
+          curso: widget.curso,
+          leccion: widget.leccion,
+        ));
   }
 }
 

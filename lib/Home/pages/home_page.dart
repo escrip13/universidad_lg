@@ -385,9 +385,7 @@ class _ConoceMas extends StatelessWidget {
                             borderRadius: BorderRadius.zero,
                           ),
                           side: BorderSide(width: 1.0, color: Colors.white)),
-                      onPressed: () {
-                        print('aa');
-                      },
+                      onPressed: () {},
                       child: Text('BIBLIOTECA'),
                     ),
                   ],

@@ -58,7 +58,7 @@ class IsPerfilService extends PerfilService {
 
     if (response.statusCode == 200) {
       final _request = json.decode(response.body);
-      print(_request);
+      // print(_request);
       if (_request['status']['type'] != 'error') {
         UserSecureStorage.setDocumento(documento);
         UserSecureStorage.setCelular(celular);

@@ -12,13 +12,13 @@ import 'package:universidad_lg/User/blocs/authentication/authentication_bloc.dar
 import 'package:universidad_lg/User/blocs/authentication/authentication_state.dart';
 import 'package:universidad_lg/User/models/user.dart';
 import 'package:universidad_lg/User/pages/login_page.dart';
-import 'package:universidad_lg/widgets/buttom_main_navigator.dart';
 
 import '../../constants.dart';
 
 class CursoPreviewPage extends StatefulWidget {
   final User user;
   final String nid;
+
   const CursoPreviewPage({
     Key key,
     @required this.user,
@@ -31,6 +31,11 @@ class CursoPreviewPage extends StatefulWidget {
 
 class _CursoPreviewPageState extends State<CursoPreviewPage> {
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,12 +45,12 @@ class _CursoPreviewPageState extends State<CursoPreviewPage> {
         title: Center(
           child: InkWell(
             onTap: () {
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => HomePage(
-                            user: widget.user,
-                          )));
+              Navigator.pushAndRemoveUntil(context,
+                  MaterialPageRoute(builder: (_) {
+                return HomePage(
+                  user: widget.user,
+                );
+              }), (route) => false);
             },
             child: Image(
               image: AssetImage('assets/img/new_logo.png'),
