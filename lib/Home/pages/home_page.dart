@@ -10,7 +10,6 @@ import 'package:universidad_lg/User/blocs/blocs.dart';
 import 'package:universidad_lg/User/models/user.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:universidad_lg/widgets/background_image.dart';
-import 'package:universidad_lg/widgets/buttom_main_navigator.dart';
 import 'package:universidad_lg/widgets/drawer_menu_left.dart';
 import 'package:universidad_lg/widgets/drawer_menu_right.dart';
 
@@ -29,7 +28,6 @@ class HomePage extends StatelessWidget {
         backgroundColor: mainColor,
         title: Center(
           child: InkWell(
-            onTap: () => HomePage(),
             child: Image(
               image: AssetImage('assets/img/new_logo.png'),
               height: 35,
@@ -50,9 +48,11 @@ class HomePage extends StatelessWidget {
       backgroundColor: mainColor,
       drawer: DrawerMenuLeft(
         user: user,
+        isHome: true,
       ),
       endDrawer: DrawerMenuRight(
         user: user,
+        isHome: true,
       ),
 
       body: Builder(

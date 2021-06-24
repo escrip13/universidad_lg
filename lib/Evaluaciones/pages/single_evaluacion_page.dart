@@ -13,8 +13,6 @@ import 'package:flutter_countdown_timer/index.dart';
 
 import 'package:universidad_lg/Evaluaciones/blocs/evaluacion_bloc.dart';
 
-import 'package:universidad_lg/Home/pages/home_page.dart';
-
 import 'evaluacion_page.dart';
 
 Map preguntasList = {};
@@ -43,19 +41,10 @@ class _SingleEvaluacionPageState extends State<SingleEvaluacionPage> {
         return _onBackPressed();
       },
       child: Scaffold(
-          // backgroundColor: Colors.transparent,
           appBar: AppBar(
             backgroundColor: mainColor,
             title: Center(
               child: InkWell(
-                onTap: () {
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => HomePage(
-                                user: widget.user,
-                              )));
-                },
                 child: Image(
                   image: AssetImage('assets/img/new_logo.png'),
                   height: 35,
@@ -75,19 +64,10 @@ class _SingleEvaluacionPageState extends State<SingleEvaluacionPage> {
             ],
           ),
           backgroundColor: Colors.white,
-          // drawer: DrawerMenuLeft(
-          //   user: widget.user,
-          //   currenPage: 'evaluaciones',
-          // ),
-          // endDrawer: DrawerMenuRight(),
           body: _SingleEvaluacionContent(
             user: widget.user,
             nid: widget.nid,
-          )
-
-          // otherwise show login page
-
-          ),
+          )),
     );
   }
 

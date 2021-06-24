@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:universidad_lg/Home/models/home_model.dart';
 import 'package:universidad_lg/Home/pages/home_page.dart';
 import 'package:universidad_lg/Ranking/pages/ranking_page.dart';
 import 'package:universidad_lg/User/blocs/authentication/authentication.dart';
@@ -10,15 +9,15 @@ import 'package:universidad_lg/User/pages/logros_page.dart';
 import 'package:universidad_lg/User/pages/perfil_page.dart';
 import 'package:universidad_lg/constants.dart';
 
-import '../main.dart';
-
 class DrawerMenuRight extends StatelessWidget {
   final User user;
   final String currenPage;
+  final bool isHome;
   const DrawerMenuRight({
     Key key,
     this.user,
     this.currenPage,
+    this.isHome,
   }) : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -39,12 +38,14 @@ class DrawerMenuRight extends StatelessWidget {
               children: [
                 InkWell(
                   onTap: () {
-                    Navigator.pushAndRemoveUntil(context,
-                        MaterialPageRoute(builder: (_) {
-                      return HomePage(
-                        user: user,
-                      );
-                    }), (route) => false);
+                    if (!isHome ?? false) {
+                      Navigator.pushAndRemoveUntil(context,
+                          MaterialPageRoute(builder: (_) {
+                        return HomePage(
+                          user: user,
+                        );
+                      }), (route) => false);
+                    }
                   },
                   child: Image(
                     image: AssetImage('assets/img/new_logo.png'),
@@ -52,7 +53,7 @@ class DrawerMenuRight extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'user',
+                  user.name,
                   style: TextStyle(color: Colors.white),
                 ),
               ],
@@ -64,11 +65,21 @@ class DrawerMenuRight extends StatelessWidget {
             onTap: () {
               if (currenPage != 'perfil') {
                 Navigator.of(context).pop();
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return PerfilPage(
-                    user: user,
-                  );
-                }));
+                if (isHome ?? false) {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return PerfilPage(
+                      user: user,
+                    );
+                  }));
+                } else {
+                  Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (context) {
+                    return PerfilPage(
+                      user: user,
+                    );
+                  }));
+                }
+
                 // Navigator.pop(context);
               }
               return null;
@@ -80,11 +91,21 @@ class DrawerMenuRight extends StatelessWidget {
             onTap: () {
               if (currenPage != 'logros') {
                 Navigator.of(context).pop();
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return PageLogros(
-                    user: user,
-                  );
-                }));
+                if (isHome ?? false) {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return PageLogros(
+                      user: user,
+                    );
+                  }));
+                } else {
+                  Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (context) {
+                    return PageLogros(
+                      user: user,
+                    );
+                  }));
+                }
+
                 // Navigator.pop(context);
               }
               return null;
@@ -96,11 +117,21 @@ class DrawerMenuRight extends StatelessWidget {
             onTap: () {
               if (currenPage != 'ranking') {
                 Navigator.of(context).pop();
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return PageRanking(
-                    user: user,
-                  );
-                }));
+                if (isHome ?? false) {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return PageRanking(
+                      user: user,
+                    );
+                  }));
+                } else {
+                  Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (context) {
+                    return PageRanking(
+                      user: user,
+                    );
+                  }));
+                }
+
                 // Navigator.pop(context);
               }
               return null;

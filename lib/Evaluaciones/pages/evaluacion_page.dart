@@ -27,12 +27,12 @@ class EvaluacionPage extends StatelessWidget {
           title: Center(
             child: InkWell(
               onTap: () {
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => HomePage(
-                              user: user,
-                            )));
+                Navigator.pushAndRemoveUntil(context,
+                    MaterialPageRoute(builder: (_) {
+                  return HomePage(
+                    user: user,
+                  );
+                }), (route) => false);
               },
               child: Image(
                 image: AssetImage('assets/img/new_logo.png'),

@@ -22,12 +22,12 @@ class SingleBibliotecaPage extends StatelessWidget {
         title: Center(
           child: InkWell(
             onTap: () {
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => HomePage(
-                            user: user,
-                          )));
+              Navigator.pushAndRemoveUntil(context,
+                  MaterialPageRoute(builder: (_) {
+                return HomePage(
+                  user: user,
+                );
+              }), (route) => false);
             },
             child: Image(
               image: AssetImage('assets/img/new_logo.png'),
@@ -49,7 +49,6 @@ class SingleBibliotecaPage extends StatelessWidget {
       backgroundColor: Colors.white,
       drawer: DrawerMenuLeft(
         user: user,
-        currenPage: '',
       ),
       endDrawer: DrawerMenuRight(
         user: user,
@@ -98,7 +97,7 @@ class __ContentSingleBibliotecaPageState
           if (widget.data.fieldRecursosTipoValue.toString() ==
               'FieldRecursosTipoValue.VIDEO')
             Container(
-              height: MediaQuery.of(context).size.height - 200,
+              height: MediaQuery.of(context).size.height - 400,
               width: double.infinity,
               child: Html(
                 key: Key('iframe'),
@@ -124,6 +123,19 @@ class __ContentSingleBibliotecaPageState
                 },
               ),
             ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              padding: EdgeInsets.symmetric(horizontal: 30.0),
+              primary: mainColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.zero,
+              ),
+            ),
+            child: Text('Volver'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          )
         ],
       ),
     );

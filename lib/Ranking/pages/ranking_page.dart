@@ -8,7 +8,6 @@ import 'package:universidad_lg/Ranking/services/ranking_service.dart';
 import 'package:universidad_lg/User/models/user.dart';
 import 'package:universidad_lg/widgets/drawer_menu_left.dart';
 import 'package:universidad_lg/widgets/drawer_menu_right.dart';
-import 'package:lazy_load_scrollview/lazy_load_scrollview.dart';
 
 import '../../constants.dart';
 
@@ -23,12 +22,12 @@ class PageRanking extends StatelessWidget {
         title: Center(
           child: InkWell(
             onTap: () {
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => HomePage(
-                            user: user,
-                          )));
+              Navigator.pushAndRemoveUntil(context,
+                  MaterialPageRoute(builder: (_) {
+                return HomePage(
+                  user: user,
+                );
+              }), (route) => false);
             },
             child: Image(
               image: AssetImage('assets/img/new_logo.png'),
@@ -200,7 +199,6 @@ class ItemListRanking extends StatelessWidget {
   const ItemListRanking({Key key, this.item}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Container(
       margin: EdgeInsets.only(bottom: 20.0),
       width: double.infinity,

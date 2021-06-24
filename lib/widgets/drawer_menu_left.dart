@@ -9,15 +9,16 @@ import 'package:universidad_lg/Streaming/pages/streaming_page.dart';
 import 'package:universidad_lg/User/models/user.dart';
 import 'package:universidad_lg/constants.dart';
 
-enum DrawerSections { home, profile, settings, about, logout }
-
 class DrawerMenuLeft extends StatelessWidget {
   final User user;
   final String currenPage;
+  final bool isHome;
+
   const DrawerMenuLeft({
     Key key,
     @required this.user,
     this.currenPage,
+    this.isHome,
   }) : super(key: key);
 
   @override
@@ -28,33 +29,37 @@ class DrawerMenuLeft extends StatelessWidget {
       child: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[
-          DrawerHeader(
-            decoration: BoxDecoration(
-              color: mainColor,
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                InkWell(
-                  onTap: () {
-                    Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => HomePage(
-                                  user: user,
-                                )));
-                  },
-                  child: Image(
-                    image: AssetImage('assets/img/new_logo.png'),
-                    height: 40,
+          Container(
+            child: DrawerHeader(
+              decoration: BoxDecoration(
+                color: mainColor,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      if (!isHome ?? false) {
+                        Navigator.pushAndRemoveUntil(context,
+                            MaterialPageRoute(builder: (_) {
+                          return HomePage(
+                            user: user,
+                          );
+                        }), (route) => false);
+                      }
+                    },
+                    child: Image(
+                      image: AssetImage('assets/img/new_logo.png'),
+                      height: 40,
+                    ),
                   ),
-                ),
-                Text(
-                  'user',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ],
+                  // Text(
+                  //   user.name,
+                  //   style: TextStyle(color: Colors.white),
+                  // ),
+                ],
+              ),
             ),
           ),
           ListTile(
@@ -63,9 +68,18 @@ class DrawerMenuLeft extends StatelessWidget {
               onTap: () {
                 if (currenPage != 'entrenamiento') {
                   Navigator.of(context).pop();
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return EntrenamientoPage(user: user);
-                  }));
+                  if (isHome ?? false) {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) {
+                      return EntrenamientoPage(user: user);
+                    }));
+                  } else {
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (context) {
+                      return EntrenamientoPage(user: user);
+                    }));
+                  }
+
                   // Navigator.pop(context);
                 }
                 return null;
@@ -76,9 +90,17 @@ class DrawerMenuLeft extends StatelessWidget {
             onTap: () {
               if (currenPage != 'evaluaciones') {
                 Navigator.of(context).pop();
-                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return EvaluacionPage(user: user);
-                }));
+                if (isHome ?? false) {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return EvaluacionPage(user: user);
+                  }));
+                } else {
+                  Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (context) {
+                    return EvaluacionPage(user: user);
+                  }));
+                }
+
                 // Navigator.pop(context);
               }
               return null;
@@ -90,9 +112,18 @@ class DrawerMenuLeft extends StatelessWidget {
               onTap: () {
                 if (currenPage != 'biblioteca') {
                   Navigator.of(context).pop();
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return BibliotecaPage(user: user);
-                  }));
+                  if (isHome ?? false) {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) {
+                      return BibliotecaPage(user: user);
+                    }));
+                  } else {
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (context) {
+                      return BibliotecaPage(user: user);
+                    }));
+                  }
+
                   // Navigator.pop(context);
                 }
                 return null;
@@ -103,9 +134,17 @@ class DrawerMenuLeft extends StatelessWidget {
               onTap: () {
                 if (currenPage != 'noticias') {
                   Navigator.of(context).pop();
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return NoticiasPage(user: user);
-                  }));
+                  if (isHome ?? false) {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) {
+                      return NoticiasPage(user: user);
+                    }));
+                  } else {
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (context) {
+                      return NoticiasPage(user: user);
+                    }));
+                  }
                   // Navigator.pop(context);
                 }
                 return null;
@@ -116,10 +155,17 @@ class DrawerMenuLeft extends StatelessWidget {
               onTap: () {
                 if (currenPage != 'streaming') {
                   Navigator.of(context).pop();
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return StreamingPage(user: user);
-                  }));
-                  // Navigator.pop(context);
+                  if (isHome ?? false) {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) {
+                      return StreamingPage(user: user);
+                    }));
+                  } else {
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (context) {
+                      return StreamingPage(user: user);
+                    }));
+                  }
                 }
                 return null;
               }),
@@ -129,9 +175,17 @@ class DrawerMenuLeft extends StatelessWidget {
               onTap: () {
                 if (currenPage != 'ayuda') {
                   Navigator.of(context).pop();
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return AyudaPage(user: user);
-                  }));
+                  if (isHome ?? false) {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) {
+                      return AyudaPage(user: user);
+                    }));
+                  } else {
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (context) {
+                      return AyudaPage(user: user);
+                    }));
+                  }
 
                   // Navigator.pop(context);
                 }
