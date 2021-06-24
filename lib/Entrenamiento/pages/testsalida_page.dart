@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/shims/dart_ui_real.dart';
 import 'package:universidad_lg/Entrenamiento/pages/entrenamiento_page.dart';
+import 'package:universidad_lg/Entrenamiento/pages/respuestastestsalida_page.dart';
 import '../../constants.dart';
 
 import 'package:universidad_lg/User/models/models.dart';
@@ -420,12 +421,12 @@ class __ContentTestSalidaState extends State<_ContentTestSalida>
       context: context,
       builder: (BuildContext context) => AlertDialog(
         title: const Text(
-          '¡ENVIAR TEST ENTRADA!',
+          '¡ENVIAR TEST SALIDA!',
           textAlign: TextAlign.center,
           style: TextStyle(color: mainColor),
         ),
         content: const Text(
-          'Se enviará tu test de entrada.',
+          'Se enviará tu test de salida.',
           textAlign: TextAlign.center,
         ),
         actions: <Widget>[
@@ -461,12 +462,6 @@ class __ContentTestSalidaState extends State<_ContentTestSalida>
                         user: widget.user,
                         id: widget.curso);
                   });
-
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute<void>(
-                          builder: (BuildContext context) =>
-                              EntrenamientoPage(user: widget.user)));
                 },
                 child: const Text(
                   'ENVIAR',
@@ -603,6 +598,23 @@ _result({DataTest res, User user, context, String id}) {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => (RespuestasTestSalidaPage(
+                                user: user,
+                                evaluacion: id,
+                              ))));
+                },
+                child: const Text(
+                  'VER RESPUESTAS',
+                  style: TextStyle(
+                    color: mainColor,
+                  ),
+                ),
+              ),
               TextButton(
                 onPressed: () {
                   Navigator.pop(context);

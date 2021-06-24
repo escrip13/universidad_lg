@@ -1,6 +1,8 @@
+import 'package:universidad_lg/Entrenamiento/models/activetestsalida_model.dart';
 import 'package:universidad_lg/Entrenamiento/models/entrenamiento_model.dart';
 import 'package:universidad_lg/Entrenamiento/models/cursopreview_model.dart';
 import 'package:universidad_lg/Entrenamiento/models/leccion_model.dart';
+import 'package:universidad_lg/Entrenamiento/models/respuestastestsalida_model.dart';
 import 'package:universidad_lg/Entrenamiento/models/sendtestentrada_model.dart';
 import 'package:universidad_lg/Entrenamiento/models/sendtestsalida_model.dart';
 import 'package:universidad_lg/Entrenamiento/models/testentrada_model.dart';
@@ -44,6 +46,12 @@ class EntrenamientoBloc {
         uid, token, curso, leccion);
   }
 
+  Future<ActiveTestSalida> activeTestSalida(
+      {String token, String uid, String curso}) async {
+    return await entrenamientoService.serviceActiveTestSalida(
+        uid, token, curso);
+  }
+
   Future<TestSalida> getTestSalidaContent(
       {String token, String uid, String curso, String leccion}) async {
     return await entrenamientoService.serviceGetTestSalidaContent(
@@ -58,5 +66,11 @@ class EntrenamientoBloc {
       Map data}) async {
     return await entrenamientoService.serviceSendTestSalida(
         uid, token, curso, leccion, data);
+  }
+
+  Future<RespuestasTestSalida> respuestasTestSalida(
+      {String token, String uid, String curso}) async {
+    return await entrenamientoService.serviceRespuestasTestSalida(
+        uid, token, curso);
   }
 }

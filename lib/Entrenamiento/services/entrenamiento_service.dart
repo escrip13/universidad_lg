@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:universidad_lg/Entrenamiento/models/activetestsalida_model.dart';
 import 'package:universidad_lg/Entrenamiento/models/entrenamiento_model.dart';
 import 'package:universidad_lg/Entrenamiento/models/cursopreview_model.dart';
 import 'package:universidad_lg/Entrenamiento/models/leccion_model.dart';
+import 'package:universidad_lg/Entrenamiento/models/respuestastestsalida_model.dart';
 import 'package:universidad_lg/Entrenamiento/models/sendtestentrada_model.dart';
 import 'package:universidad_lg/Entrenamiento/models/sendtestsalida_model.dart';
 import 'package:universidad_lg/Entrenamiento/models/testentrada_model.dart';
@@ -108,9 +110,6 @@ class EntrenamientoService {
 
   Future<SendTestEntrada> serviceSendTestEntrada(String userid, String token,
       String curso, String leccion, Map data) async {
-    print(data);
-    print(curso);
-    print(leccion);
     final response = await http.post(
       Uri.https(baseUrl, 'app/entrenamiento/curso/test-entrada/save'),
       headers: <String, String>{
@@ -124,7 +123,7 @@ class EntrenamientoService {
         'userAnswers': data
       }),
     );
-    print(response.body);
+
     if (response.statusCode == 200) {
       final _request = json.decode(response.body);
       if (_request['status']['type'] != 'error') {
@@ -163,6 +162,39 @@ class EntrenamientoService {
         print('API Leccion');
         Leccion leccionJson = Leccion.fromJson(json.decode(response.body));
         return leccionJson;
+      } else {
+        throw null;
+      }
+
+      // throw AuthenticationException(message: 'Wrong username or password');
+    } else {
+      // throw HomeException(message: 'ocurrio un problema de conexion');
+      print('Error Leccion');
+    }
+  }
+
+  Future<ActiveTestSalida> serviceActiveTestSalida(
+      String userid, String token, String curso) async {
+    final response = await http.post(
+      Uri.https(baseUrl, 'app/entrenamiento/curso/active'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'userId': userid,
+        'token': token,
+        'curso': curso,
+      }),
+    );
+    print(response.body);
+    // Validamos response
+    if (response.statusCode == 200) {
+      final _request = json.decode(response.body);
+      if (_request['status']['type'] != 'error') {
+        print('API Active TestSalida');
+        ActiveTestSalida activeTSJson =
+            ActiveTestSalida.fromJson(json.decode(response.body));
+        return activeTSJson;
       } else {
         throw null;
       }
@@ -230,6 +262,36 @@ class EntrenamientoService {
             SendTestSalida.fromJson(json.decode(response.body));
 
         return sendTestSalidaJson;
+      } else {
+        throw _request['status']['message'];
+      }
+      // throw AuthenticationException(message: 'Wrong username or password');
+    } else {
+      throw ('error');
+    }
+  }
+
+  Future<RespuestasTestSalida> serviceRespuestasTestSalida(
+      String userid, String token, String curso) async {
+    final response = await http.post(
+      Uri.https(baseUrl, 'app/entrenamiento/curso/test-salida/answers'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, dynamic>{
+        'userId': userid,
+        'token': token,
+        'curso': curso,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final _request = json.decode(response.body);
+      if (_request['status']['type'] != 'error') {
+        RespuestasTestSalida respuestasTestSalidaJson =
+            RespuestasTestSalida.fromJson(json.decode(response.body));
+
+        return respuestasTestSalidaJson;
       } else {
         throw _request['status']['message'];
       }

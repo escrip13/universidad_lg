@@ -1,4 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_countdown_timer/countdown_timer_controller.dart';
+import 'package:universidad_lg/Entrenamiento/models/activetestsalida_model.dart';
 import 'package:video_player/video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,6 +15,8 @@ import 'package:universidad_lg/User/pages/login_page.dart';
 import 'package:universidad_lg/widgets/buttom_main_navigator.dart';
 
 import '../../constants.dart';
+
+CountdownTimerController controllerTime;
 
 class LeccionPage extends StatefulWidget {
   final User user;
@@ -120,10 +124,27 @@ class __LeccionContentState extends State<_LeccionContent> {
     });
   }
 
+  int endTime = 0;
+
   @override
   void initState() {
     super.initState();
     loadData();
+
+    endTime = DateTime.now().millisecondsSinceEpoch + 1000 * (2 * 60);
+    controllerTime =
+        CountdownTimerController(endTime: endTime, onEnd: _onFinishTime);
+
+    // Activar Test Salida
+    leccionBloc
+        .activeTestSalida(
+      uid: widget.user.userId,
+      token: widget.user.token,
+      curso: widget.curso,
+    )
+        .then((value) {
+      ActiveTestSalida respuesta = value;
+    });
   }
 
   @override
@@ -187,6 +208,44 @@ class __LeccionContentState extends State<_LeccionContent> {
         child: CircularProgressIndicator(color: mainColor),
       );
     }
+  }
+
+  _onFinishTime() {
+    showDialog<String>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) => WillPopScope(
+        onWillPop: () async => false,
+        child: AlertDialog(
+          title: const Text(
+            '¡Enhorabuena!',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: mainColor),
+          ),
+          content: const Text(
+              'Has tomado toda la lección, ahora puedes realizar el Test de Salida, ¡Suerte!'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                leccionBloc
+                    .activeTestSalida(
+                  uid: widget.user.userId,
+                  token: widget.user.token,
+                  curso: widget.curso,
+                )
+                    .then((value) {
+                  ActiveTestSalida respuesta = value;
+                });
+              },
+              child: const Text(
+                'CONTINUAR',
+                style: TextStyle(color: mainColor),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 

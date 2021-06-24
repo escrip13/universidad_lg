@@ -246,7 +246,7 @@ class __CursoPreviewContentState extends State<_CursoPreviewContent> {
                             'Debes tomar la Lección del curso para tomar este Test de Salida.';
                       }
 
-                      _viewTestSalida(_textTestEntrada, acceso = true);
+                      _viewTestSalida(_textTestEntrada, acceso);
                     },
                     child: const Text('TEST DE SALIDA'),
                   )

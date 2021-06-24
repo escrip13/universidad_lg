@@ -607,15 +607,6 @@ _result({DataTest res, User user, context, String id}) {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               TextButton(
-                onPressed: () {},
-                child: const Text(
-                  'VER RESPUESTAS',
-                  style: TextStyle(
-                    color: mainColor,
-                  ),
-                ),
-              ),
-              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                   Navigator.pop(context);
