@@ -489,7 +489,7 @@ class __ContentSingleEvaluacionState extends State<_ContentSingleEvaluacion>
             textAlign: TextAlign.center,
             style: TextStyle(color: mainColor),
           ),
-          content: const Text('lorem mas lorem mas lomrem '),
+          content: const Text('El progreso realiazado sera enviado'),
           actions: <Widget>[
             TextButton(
               onPressed: () {

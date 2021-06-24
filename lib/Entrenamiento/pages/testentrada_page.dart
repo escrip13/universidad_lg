@@ -465,11 +465,11 @@ class __ContentTestEntradaState extends State<_ContentTestEntrada>
                         id: widget.curso);
                   });
 
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute<void>(
-                          builder: (BuildContext context) =>
-                              EntrenamientoPage(user: widget.user)));
+                  // Navigator.pushReplacement(
+                  //     context,
+                  //     MaterialPageRoute<void>(
+                  //         builder: (BuildContext context) =>
+                  //             EntrenamientoPage(user: widget.user)));
                 },
                 child: const Text(
                   'ENVIAR',
