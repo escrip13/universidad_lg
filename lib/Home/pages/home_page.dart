@@ -2,6 +2,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/shims/dart_ui_real.dart';
+import 'package:universidad_lg/Biblioteca/pages/biblioteca_page.dart';
+import 'package:universidad_lg/Entrenamiento/pages/entrenamiento_page.dart';
 import 'package:universidad_lg/Home/blocs/home/home_bloc.dart';
 import 'package:universidad_lg/Home/models/models.dart';
 import 'package:universidad_lg/Noticias/pages/noticias_single_page.dart';
@@ -116,7 +118,7 @@ class __HomeContent extends State<_HomeContent> {
               _CarrucelHome(homeInfo.status.carrucel),
               // _CalendarioHome(),
               _NoticiasHome(homeInfo.status.noticias, widget.user),
-              _ConoceMas(),
+              _ConoceMas(user: widget.user),
             ],
           ),
         ),
@@ -345,6 +347,9 @@ class __NoticiasHome extends State<_NoticiasHome> {
 }
 
 class _ConoceMas extends StatelessWidget {
+  final User user;
+
+  const _ConoceMas({Key key, this.user}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     final authBloc = BlocProvider.of<AuthenticationBloc>(context);
@@ -373,6 +378,32 @@ class _ConoceMas extends StatelessWidget {
                   alignment: Alignment.center,
                   children: [
                     BacgroundImage(
+                      image: 'assets/img/club.png',
+                      height: 240.0,
+                    ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(horizontal: 30.0),
+                          primary: Colors.transparent,
+                          shadowColor: Colors.transparent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.zero,
+                          ),
+                          side: BorderSide(width: 1.0, color: Colors.white)),
+                      onPressed: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
+                          return EntrenamientoPage(user: user);
+                        }));
+                      },
+                      child: Text('ENTRENAMIENTO'),
+                    ),
+                  ],
+                ),
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    BacgroundImage(
                       image: 'assets/img/biblioteca.png',
                       height: 240.0,
                     ),
@@ -385,34 +416,16 @@ class _ConoceMas extends StatelessWidget {
                             borderRadius: BorderRadius.zero,
                           ),
                           side: BorderSide(width: 1.0, color: Colors.white)),
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
+                          return BibliotecaPage(user: user);
+                        }));
+                      },
                       child: Text('BIBLIOTECA'),
                     ),
                   ],
                 ),
-                // Stack(
-                //   alignment: Alignment.center,
-                //   children: [
-                //     BacgroundImage(
-                //       image: 'assets/img/club.png',
-                //       height: 240.0,
-                //     ),
-                //     ElevatedButton(
-                //       style: ElevatedButton.styleFrom(
-                //           padding: EdgeInsets.symmetric(horizontal: 30.0),
-                //           primary: Colors.transparent,
-                //           shadowColor: Colors.transparent,
-                //           shape: RoundedRectangleBorder(
-                //             borderRadius: BorderRadius.zero,
-                //           ),
-                //           side: BorderSide(width: 1.0, color: Colors.white)),
-                //       onPressed: () {
-                //         authBloc.add(UserLoggedOut());
-                //       },
-                //       child: Text('CLUB LG'),
-                //     ),
-                //   ],
-                // ),
               ],
             ),
           )

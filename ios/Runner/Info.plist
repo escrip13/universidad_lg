@@ -44,6 +44,7 @@
 	<key>NSAppTransportSecurity</key>
 	<dict>
 	<key>NSAllowsArbitraryLoads</key>
+	<key>NSPhotoLibraryUsageDescription</key>
 	<true/>
 	</dict>
 </dict>

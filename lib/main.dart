@@ -11,7 +11,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'constants.dart';
 
 void main() => runApp(
-
         // Injects the Authentication service
         RepositoryProvider<AuthenticationService>(
       create: (context) {
@@ -35,13 +34,14 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Universidad LG',
       theme: ThemeData(
+        unselectedWidgetColor: mainColor,
         textTheme: GoogleFonts.titilliumWebTextTheme(
           Theme.of(context).textTheme,
         ),
       ),
       home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
         builder: (context, state) {
-          print(state);
+          // print(state);
           if (state is AuthenticationAuthenticated) {
             // show home page
             return HomePage(

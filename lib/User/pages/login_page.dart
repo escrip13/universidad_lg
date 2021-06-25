@@ -139,6 +139,7 @@ class __SignInFormState extends State<_SignInForm> {
   final _passwordController = TextEditingController();
   final _emailController = TextEditingController();
   bool _autoValidate = false;
+  bool isobscureText = true;
 
   @override
   Widget build(BuildContext context) {
@@ -235,8 +236,20 @@ class __SignInFormState extends State<_SignInForm> {
                         Icons.security,
                         color: Colors.white,
                       ),
+                      suffixIcon: IconButton(
+                        icon: Icon((isobscureText)
+                            ? Icons.visibility_off
+                            : Icons.visibility),
+                        onPressed: () {
+                          setState(() {
+                            isobscureText = !isobscureText;
+                          });
+                          print(isobscureText);
+                        },
+                        color: Colors.white,
+                      ),
                     ),
-                    obscureText: true,
+                    obscureText: isobscureText,
                     controller: _passwordController,
                     validator: (String value) {
                       if (validator.isNull(value)) {
