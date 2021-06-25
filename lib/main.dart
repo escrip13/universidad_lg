@@ -7,6 +7,7 @@ import 'User/blocs/authentication/authentication_event.dart';
 import 'User/blocs/authentication/authentication_state.dart';
 import 'User/services/authentication_service.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:universidad_lg/Home/pages/globals.dart' as globals;
 
 import 'constants.dart';
 
@@ -19,6 +20,7 @@ void main() => runApp(
       // Injects the Authentication BLoC
       child: BlocProvider<AuthenticationBloc>(
         create: (context) {
+          globals.appNavigator = GlobalKey<NavigatorState>();
           final authService =
               RepositoryProvider.of<AuthenticationService>(context);
           return AuthenticationBloc(authService)..add(AppLoaded());
@@ -39,6 +41,7 @@ class MyApp extends StatelessWidget {
           Theme.of(context).textTheme,
         ),
       ),
+      navigatorKey: globals.appNavigator,
       home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
         builder: (context, state) {
           // print(state);

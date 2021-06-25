@@ -1,8 +1,12 @@
+// @dart=2.9
+import 'dart:ffi';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/shims/dart_ui_real.dart';
 import 'package:universidad_lg/Biblioteca/pages/biblioteca_page.dart';
+import 'package:universidad_lg/Entrenamiento/pages/cursopreview_page.dart';
 import 'package:universidad_lg/Entrenamiento/pages/entrenamiento_page.dart';
 import 'package:universidad_lg/Home/blocs/home/home_bloc.dart';
 import 'package:universidad_lg/Home/models/models.dart';
@@ -14,6 +18,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:universidad_lg/widgets/background_image.dart';
 import 'package:universidad_lg/widgets/drawer_menu_left.dart';
 import 'package:universidad_lg/widgets/drawer_menu_right.dart';
+import 'package:universidad_lg/Home/pages/globals.dart' as globals;
 
 import '../../constants.dart';
 
@@ -77,6 +82,7 @@ class _HomeContent extends StatefulWidget {
 }
 
 class __HomeContent extends State<_HomeContent> {
+  static final String oneSignalAppId = "a1ea5f8a-4412-4e90-8fd0-8ac42aa31921";
   Home homeInfo;
   bool load = false;
   HomeBloc homeBloc = HomeBloc();
@@ -103,6 +109,7 @@ class __HomeContent extends State<_HomeContent> {
     // TODO: implement initState
     super.initState();
     _loader();
+    initPlatformState();
   }
 
   @override
@@ -130,6 +137,23 @@ class __HomeContent extends State<_HomeContent> {
         color: mainColor,
       ),
     );
+  }
+
+  Future<void> initPlatformState() async {
+    OneSignal.shared.init(
+      oneSignalAppId,
+    );
+
+    OneSignal.shared
+        .setInFocusDisplayType(OSNotificationDisplayType.notification);
+
+    OneSignal.shared.setNotificationOpenedHandler((openedResult) {
+      var data = openedResult.notification.payload.additionalData;
+      print(data);
+      globals.appNavigator.currentState.push(MaterialPageRoute(
+          builder: (context) => CursoPreviewPage(
+              user: widget.user, nid: data["curso"].toString())));
+    });
   }
 }
 
