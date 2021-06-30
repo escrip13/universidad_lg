@@ -103,18 +103,21 @@ class Curso {
     this.title,
     this.uri,
     this.bodyValue,
+    this.video,
   });
 
   String nid;
   String title;
   String uri;
   String bodyValue;
+  String video;
 
   factory Curso.fromJson(Map<String, dynamic> json) => Curso(
         nid: json["nid"],
         title: json["title"],
         uri: json["uri"],
         bodyValue: json["body_value"],
+        video: json["video"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -122,5 +125,6 @@ class Curso {
         "title": title,
         "uri": uri,
         "body_value": bodyValue,
+        "video": video,
       };
 }

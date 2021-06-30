@@ -13,10 +13,13 @@ import 'package:flutter_countdown_timer/index.dart';
 
 import 'package:universidad_lg/Evaluaciones/blocs/evaluacion_bloc.dart';
 
+import 'package:rainbow_color/rainbow_color.dart';
+
 import 'evaluacion_page.dart';
 
 Map preguntasList = {};
 CountdownTimerController controllerTime;
+final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
 class SingleEvaluacionPage extends StatefulWidget {
   final User user;
@@ -41,6 +44,7 @@ class _SingleEvaluacionPageState extends State<SingleEvaluacionPage> {
         return _onBackPressed();
       },
       child: Scaffold(
+          key: _scaffoldKey,
           appBar: AppBar(
             backgroundColor: mainColor,
             title: Center(
@@ -222,15 +226,17 @@ class __ContentSingleEvaluacionState extends State<_ContentSingleEvaluacion>
   String selectedRole = '';
   bool _autoValidate = false;
   SendEvaluacion respuesta;
+  Color barra = Color(0xFF009846);
 
   AnimationController controllerAnimation;
+  Animation<double> _anim;
   int endTime = 0;
 
   @override
   void initState() {
     super.initState();
     //crear los steps/////
-    listSteps(context);
+    listSteps();
 
     //  inicion de contador
     endTime = DateTime.now().millisecondsSinceEpoch + 1000 * (widget.time * 60);
@@ -242,11 +248,23 @@ class __ContentSingleEvaluacionState extends State<_ContentSingleEvaluacion>
       vsync: this,
       duration: Duration(minutes: widget.time),
     )..addListener(() {
-        setState(() {});
+        setState(() {
+          // col
+        });
       });
+
     controllerAnimation.repeat(max: 1);
     controllerAnimation.forward();
+    _anim = bgValue.animate(controllerAnimation);
   }
+
+  Animatable<double> bgValue = Tween<double>(begin: 0.0, end: 10.0);
+
+  Rainbow rb = Rainbow(rangeStart: 0.0, rangeEnd: 10.0, spectrum: [
+    Colors.green,
+    Colors.yellow,
+    mainColor,
+  ]);
 
   @override
   void dispose() {
@@ -291,24 +309,45 @@ class __ContentSingleEvaluacionState extends State<_ContentSingleEvaluacion>
                 LinearProgressIndicator(
                   value: controllerAnimation.value,
                   color: mainColor,
-                  backgroundColor: secondColor,
-                  minHeight: 25.0,
+                  backgroundColor: rb[_anim.value],
+                  minHeight: 30.0,
                 ),
                 CountdownTimer(
                   controller: controllerTime,
                   onEnd: _onFinishTime,
                   endTime: endTime,
                   widgetBuilder: (_, CurrentRemainingTime time) {
+                    // print((widget.time / 1.2));
+                    // print(time.min);
+
+                    // if (time.min <= 8) {
+                    //   setState(() {
+                    //     barra = Color(0xFFFFE900);
+                    //   });
+                    // }
+
                     if (time == null) {
                       return Text(
                         'Tiempo finalizado',
                         style: TextStyle(color: Colors.white),
                       );
                     }
-                    return Text(
-                      '${time.min == null ? 0 : time.min} : ${time.sec}',
-                      style: TextStyle(
-                          fontWeight: FontWeight.w600, color: Colors.white),
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.timer,
+                          color: Colors.white,
+                        ),
+                        SizedBox(
+                          width: 4.0,
+                        ),
+                        Text(
+                          '${time.min == null ? 0 : time.min} : ${time.sec}',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w600, color: Colors.white),
+                        ),
+                      ],
                     );
                   },
                 ),
@@ -322,7 +361,7 @@ class __ContentSingleEvaluacionState extends State<_ContentSingleEvaluacion>
 
   ////////////////////  llenar los steps/////////////////
 
-  List listSteps(context) {
+  void listSteps() {
     int cont = 1;
     for (var item in widget.evaluacionInfo.status.preguntas) {
       // List<Respuesta> repustas = item.respuestas;
@@ -370,7 +409,7 @@ class __ContentSingleEvaluacionState extends State<_ContentSingleEvaluacion>
           });
 
           if (!_key.currentState.validate()) {
-            ScaffoldMessenger.of(context).showSnackBar(
+            ScaffoldMessenger.of(_scaffoldKey.currentContext).showSnackBar(
               SnackBar(
                 content: Text('Marca una casilla para continuar'),
                 backgroundColor: mainColor,
@@ -387,7 +426,6 @@ class __ContentSingleEvaluacionState extends State<_ContentSingleEvaluacion>
       ));
       cont++;
     }
-    return steps;
   }
 
   ///////////////  finalizavion de los steps //////////
@@ -403,7 +441,7 @@ class __ContentSingleEvaluacionState extends State<_ContentSingleEvaluacion>
           style: TextStyle(color: mainColor),
         ),
         content: const Text(
-          'lorem mas lorem mas lorem',
+          'Se enviará tu evaluación',
           textAlign: TextAlign.center,
         ),
         actions: <Widget>[
@@ -469,7 +507,8 @@ class __ContentSingleEvaluacionState extends State<_ContentSingleEvaluacion>
             textAlign: TextAlign.center,
             style: TextStyle(color: mainColor),
           ),
-          content: const Text('El progreso realiazado sera enviado'),
+          content: const Text(
+              'Te has tomado más tiempo de lo previsto, El progreso realizado será enviado.'),
           actions: <Widget>[
             TextButton(
               onPressed: () {

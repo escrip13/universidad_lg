@@ -17,13 +17,12 @@ class DrawerMenuRight extends StatelessWidget {
     Key key,
     this.user,
     this.currenPage,
-    this.isHome,
+    this.isHome = false,
   }) : super(key: key);
   @override
   Widget build(BuildContext context) {
     final authBloc = BlocProvider.of<AuthenticationBloc>(context);
 
-    // TODO: implement build
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -38,7 +37,7 @@ class DrawerMenuRight extends StatelessWidget {
               children: [
                 InkWell(
                   onTap: () {
-                    if (!isHome ?? false) {
+                    if (!isHome) {
                       Navigator.pushAndRemoveUntil(context,
                           MaterialPageRoute(builder: (_) {
                         return HomePage(
@@ -65,7 +64,7 @@ class DrawerMenuRight extends StatelessWidget {
             onTap: () {
               if (currenPage != 'perfil') {
                 Navigator.of(context).pop();
-                if (isHome ?? false) {
+                if (isHome) {
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
                     return PerfilPage(
                       user: user,
@@ -79,8 +78,6 @@ class DrawerMenuRight extends StatelessWidget {
                     );
                   }));
                 }
-
-                // Navigator.pop(context);
               }
               return null;
             },
@@ -91,7 +88,7 @@ class DrawerMenuRight extends StatelessWidget {
             onTap: () {
               if (currenPage != 'logros') {
                 Navigator.of(context).pop();
-                if (isHome ?? false) {
+                if (isHome) {
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
                     return PageLogros(
                       user: user,
@@ -105,8 +102,6 @@ class DrawerMenuRight extends StatelessWidget {
                     );
                   }));
                 }
-
-                // Navigator.pop(context);
               }
               return null;
             },
@@ -117,7 +112,7 @@ class DrawerMenuRight extends StatelessWidget {
             onTap: () {
               if (currenPage != 'ranking') {
                 Navigator.of(context).pop();
-                if (isHome ?? false) {
+                if (isHome) {
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
                     return PageRanking(
                       user: user,
@@ -131,13 +126,9 @@ class DrawerMenuRight extends StatelessWidget {
                     );
                   }));
                 }
-
-                // Navigator.pop(context);
               }
               return null;
             },
-
-            //
           ),
           ListTile(
             onTap: () {

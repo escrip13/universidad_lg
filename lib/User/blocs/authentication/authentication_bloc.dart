@@ -34,6 +34,7 @@ class AuthenticationBloc
 
   Stream<AuthenticationState> _mapAppLoadedToState(AppLoaded event) async* {
     yield AuthenticationLoading();
+
     try {
       final currentUser = await _authenticationService.getCurrentUser();
       if (currentUser != null) {

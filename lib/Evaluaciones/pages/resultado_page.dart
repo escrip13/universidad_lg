@@ -110,6 +110,7 @@ class ItemRespuetas extends StatelessWidget {
   Widget build(BuildContext context) {
     // TODO: implement build
     return Container(
+      alignment: Alignment.topLeft,
       margin: EdgeInsets.only(bottom: 20.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

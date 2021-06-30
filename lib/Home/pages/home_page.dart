@@ -8,6 +8,7 @@ import 'package:flutter_html/shims/dart_ui_real.dart';
 import 'package:universidad_lg/Biblioteca/pages/biblioteca_page.dart';
 import 'package:universidad_lg/Entrenamiento/pages/cursopreview_page.dart';
 import 'package:universidad_lg/Entrenamiento/pages/entrenamiento_page.dart';
+import 'package:universidad_lg/Evaluaciones/pages/evaluacion_page.dart';
 import 'package:universidad_lg/Home/blocs/home/home_bloc.dart';
 import 'package:universidad_lg/Home/models/models.dart';
 import 'package:universidad_lg/Noticias/pages/noticias_single_page.dart';
@@ -19,7 +20,6 @@ import 'package:universidad_lg/widgets/background_image.dart';
 import 'package:universidad_lg/widgets/drawer_menu_left.dart';
 import 'package:universidad_lg/widgets/drawer_menu_right.dart';
 import 'package:universidad_lg/Home/pages/globals.dart' as globals;
-
 import '../../constants.dart';
 
 class HomePage extends StatelessWidget {
@@ -150,9 +150,23 @@ class __HomeContent extends State<_HomeContent> {
     OneSignal.shared.setNotificationOpenedHandler((openedResult) {
       var data = openedResult.notification.payload.additionalData;
       print(data);
-      globals.appNavigator.currentState.push(MaterialPageRoute(
-          builder: (context) => CursoPreviewPage(
-              user: widget.user, nid: data["curso"].toString())));
+
+      Navigator.push(context, MaterialPageRoute(builder: (context) {
+        if (data["type"] == 'curso') {
+          return CursoPreviewPage(
+              user: widget.user, nid: data["nid"].toString());
+        }
+        if (data["type"] == 'evaluacion') {
+          return EvaluacionPage(user: widget.user);
+        }
+        if (data["type"] == 'biblioteca') {
+          return BibliotecaPage(
+            user: widget.user,
+          );
+        }
+
+        return null;
+      }));
     });
   }
 }

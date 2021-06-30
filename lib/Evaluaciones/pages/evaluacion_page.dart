@@ -104,19 +104,24 @@ class __EvaluacionContent extends State<_EvaluacionContent> {
 
   @override
   Widget build(BuildContext context) {
-    // final authBloc = BlocProvider.of<AuthenticationBloc>(context);
     if (load) {
-      return Container(
-          // padding: EdgeInsets.all(0),
-          child: SingleChildScrollView(
-        child: Column(
-          children: [
-            _ContentEvaluacion(
-                evaluacionInfo: evaluacionInfo.status.evaluaciones,
-                user: widget.user),
-          ],
-        ),
-      ));
+      return RefreshIndicator(
+        onRefresh: () async {
+          load = false;
+          loadData();
+        },
+        child: Container(
+            // padding: EdgeInsets.all(0),
+            child: SingleChildScrollView(
+          child: Column(
+            children: [
+              _ContentEvaluacion(
+                  evaluacionInfo: evaluacionInfo.status.evaluaciones,
+                  user: widget.user),
+            ],
+          ),
+        )),
+      );
     }
 
     return Center(

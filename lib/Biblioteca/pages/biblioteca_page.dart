@@ -10,7 +10,6 @@ import 'package:universidad_lg/User/models/user.dart';
 import 'package:universidad_lg/widgets/buttom_main_navigator.dart';
 import 'package:universidad_lg/widgets/drawer_menu_left.dart';
 import 'package:universidad_lg/widgets/drawer_menu_right.dart';
-
 import '../../constants.dart';
 
 class BibliotecaPage extends StatelessWidget {
@@ -77,6 +76,8 @@ class _ContentBibliotecaPage extends StatefulWidget {
 class __ContentBibliotecaPage extends State<_ContentBibliotecaPage> {
   String filtro = 'none';
   String categoria = 'none';
+  TextEditingController searchController = new TextEditingController();
+  String searchTerm = '';
 
   Biblioteca data;
 
@@ -101,156 +102,177 @@ class __ContentBibliotecaPage extends State<_ContentBibliotecaPage> {
           categoria = state.categoria;
         }
       },
-      child: Container(
-        child: BlocBuilder<BibliotecaBloc, BibliotecaState>(
-          builder: (context, state) {
-            final bibliotecaBloc = BlocProvider.of<BibliotecaBloc>(context);
+      child: Stack(
+        children: [
+          Container(
+            margin: EdgeInsets.only(top: 50.0),
+            child: BlocBuilder<BibliotecaBloc, BibliotecaState>(
+              builder: (context, state) {
+                final bibliotecaBloc = BlocProvider.of<BibliotecaBloc>(context);
 
-            if (state is BibliotecaSucess) {
-              data = state.data;
-              return RefreshIndicator(
-                  onRefresh: () async {
-                    filtro = 'none';
-                    bibliotecaBloc.add(GetBibliotecaEvent(
-                        user: widget.user.userId, token: widget.user.token));
-                  },
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        Container(
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(
-                                color: Colors.grey,
-                              ),
-                            ),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 15.0, horizontal: 20.0),
-                          margin: EdgeInsets.only(bottom: 20.0),
-                          child: Text(
-                            state.data.status.message,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 18.0),
-                          ),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          crossAxisAlignment: CrossAxisAlignment.end,
+                if (state is BibliotecaSucess) {
+                  data = state.data;
+                  return RefreshIndicator(
+                      onRefresh: () async {
+                        filtro = 'none';
+                        bibliotecaBloc.add(GetBibliotecaEvent(
+                            user: widget.user.userId,
+                            token: widget.user.token));
+                      },
+                      child: SingleChildScrollView(
+                        child: Column(
                           children: [
                             Container(
-                                width: MediaQuery.of(context).size.width / 3,
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 0, horizontal: 10.0),
-                                decoration: BoxDecoration(
-                                  color: mainColor,
-                                ),
-                                child: _ItemFiltros(
-                                    item: state.data.status.data.filtros)),
-                            Container(
-                              width: MediaQuery.of(context).size.width / 3,
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 0, horizontal: 10.0),
+                              width: double.infinity,
                               decoration: BoxDecoration(
-                                color: mainColor,
+                                border: Border(
+                                  bottom: BorderSide(
+                                    color: Colors.grey,
+                                  ),
+                                ),
                               ),
-                              child: _ItemCategorias(
-                                item: state.data.status.data.filtrosCate,
-                                filtro: filtro,
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 15.0, horizontal: 20.0),
+                              margin: EdgeInsets.only(bottom: 20.0),
+                              child: Text(
+                                state.data.status.message,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontSize: 18.0),
                               ),
                             ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Container(
+                                    width:
+                                        MediaQuery.of(context).size.width / 3,
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 0, horizontal: 10.0),
+                                    decoration: BoxDecoration(
+                                      color: mainColor,
+                                    ),
+                                    child: _ItemFiltros(
+                                        item: state.data.status.data.filtros)),
+                                Container(
+                                  width: MediaQuery.of(context).size.width / 3,
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 0, horizontal: 10.0),
+                                  decoration: BoxDecoration(
+                                    color: mainColor,
+                                  ),
+                                  child: _ItemCategorias(
+                                    item: state.data.status.data.filtrosCate,
+                                    filtro: filtro,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 20.0),
+                            for (var item in state.data.status.data.biblioteca)
+                              if (item.title
+                                  .toLowerCase()
+                                  .contains(searchTerm.toLowerCase()))
+                                _ItemBiblioteca(
+                                  item: item,
+                                  user: widget.user,
+                                  filter: filtro,
+                                  categoria: categoria,
+                                )
                           ],
                         ),
-                        SizedBox(height: 20.0),
-                        for (var item in state.data.status.data.biblioteca)
-                          _ItemBiblioteca(
-                            item: item,
-                            user: widget.user,
-                            filter: filtro,
-                            categoria: categoria,
-                          ),
-                      ],
-                    ),
-                  ));
-            }
+                      ));
+                }
 
-            if (state is BibliotecaChangeFilter ||
-                state is BibliotecaChangeCategoria) {
-              return RefreshIndicator(
-                  onRefresh: () async {
-                    filtro = 'none';
-                    bibliotecaBloc.add(GetBibliotecaEvent(
-                        user: widget.user.userId, token: widget.user.token));
-                  },
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        Container(
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(
-                                color: Colors.grey,
-                              ),
-                            ),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 15.0, horizontal: 20.0),
-                          margin: EdgeInsets.only(bottom: 20.0),
-                          child: Text(
-                            data.status.message,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 18.0),
-                          ),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          crossAxisAlignment: CrossAxisAlignment.end,
+                if (state is BibliotecaChangeFilter ||
+                    state is BibliotecaChangeCategoria) {
+                  return RefreshIndicator(
+                      onRefresh: () async {
+                        filtro = 'none';
+                        bibliotecaBloc.add(GetBibliotecaEvent(
+                            user: widget.user.userId,
+                            token: widget.user.token));
+                      },
+                      child: SingleChildScrollView(
+                        child: Column(
                           children: [
                             Container(
-                                width: MediaQuery.of(context).size.width / 3,
-                                padding: EdgeInsets.symmetric(
-                                    vertical: 0, horizontal: 10.0),
-                                decoration: BoxDecoration(
-                                  color: mainColor,
-                                ),
-                                child: _ItemFiltros(
-                                    item: data.status.data.filtros)),
-                            Container(
-                              width: MediaQuery.of(context).size.width / 3,
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 0, horizontal: 10.0),
+                              width: double.infinity,
                               decoration: BoxDecoration(
-                                color: mainColor,
+                                border: Border(
+                                  bottom: BorderSide(
+                                    color: Colors.grey,
+                                  ),
+                                ),
                               ),
-                              child: _ItemCategorias(
-                                item: data.status.data.filtrosCate,
-                                filtro: filtro,
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 15.0, horizontal: 20.0),
+                              margin: EdgeInsets.only(bottom: 20.0),
+                              child: Text(
+                                data.status.message,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontSize: 18.0),
                               ),
                             ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Container(
+                                    width:
+                                        MediaQuery.of(context).size.width / 3,
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 0, horizontal: 10.0),
+                                    decoration: BoxDecoration(
+                                      color: mainColor,
+                                    ),
+                                    child: _ItemFiltros(
+                                        item: data.status.data.filtros)),
+                                Container(
+                                  width: MediaQuery.of(context).size.width / 3,
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 0, horizontal: 10.0),
+                                  decoration: BoxDecoration(
+                                    color: mainColor,
+                                  ),
+                                  child: _ItemCategorias(
+                                    item: data.status.data.filtrosCate,
+                                    filtro: filtro,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 20.0),
+                            for (var item in data.status.data.biblioteca)
+                              if (item.title
+                                  .toLowerCase()
+                                  .contains(searchTerm.toLowerCase()))
+                                _ItemBiblioteca(
+                                  item: item,
+                                  user: widget.user,
+                                  filter: filtro,
+                                  categoria: categoria,
+                                ),
                           ],
                         ),
-                        SizedBox(height: 20.0),
-                        for (var item in data.status.data.biblioteca)
-                          _ItemBiblioteca(
-                            item: item,
-                            user: widget.user,
-                            filter: filtro,
-                            categoria: categoria,
-                          ),
-                      ],
-                    ),
-                  ));
-            }
+                      ));
+                }
 
-            return Center(
-              child: CircularProgressIndicator(
-                color: mainColor,
-              ),
-            );
-          },
-        ),
+                return Center(
+                  child: CircularProgressIndicator(
+                    color: mainColor,
+                  ),
+                );
+              },
+            ),
+          ),
+          Positioned(
+            top: 0.0,
+            left: 0.0,
+            right: 0.0,
+            child: searchInput(),
+          ),
+        ],
       ),
     );
   }
@@ -260,6 +282,51 @@ class __ContentBibliotecaPage extends State<_ContentBibliotecaPage> {
 
     bibliotecaBloc.add(
         GetBibliotecaEvent(user: widget.user.userId, token: widget.user.token));
+  }
+
+  Widget searchInput() {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(horizontal: 24),
+      decoration: BoxDecoration(
+        color: Color(0xfff6f6f6),
+        boxShadow: <BoxShadow>[
+          BoxShadow(
+            color: Colors.black45,
+            offset: Offset(0.0, 2.0),
+            blurRadius: 2.0,
+          ),
+        ],
+      ),
+      child: Row(
+        children: <Widget>[
+          Expanded(
+              child: TextField(
+            controller: searchController,
+            onChanged: (String value) async {
+              search(value);
+            },
+            decoration: InputDecoration(
+                hintText: "Buscar...",
+                hintStyle: TextStyle(fontSize: 16.0),
+                border: InputBorder.none),
+          )),
+          InkWell(
+              onTap: () {
+                search(searchController.text);
+                // print(searchController.text);
+              },
+              child: Container(child: Icon(Icons.search, color: mainColor)))
+        ],
+      ),
+    );
+  }
+
+  void search(String title) {
+    setState(() {
+      searchTerm = title;
+    });
   }
 }
 

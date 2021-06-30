@@ -1,5 +1,5 @@
-class PerfinException implements Exception {
+class PerfilException implements Exception {
   final String message;
 
-  PerfinException({this.message = 'A ocurrido un error'});
+  PerfilException({this.message = 'A ocurrido un error'});
 }

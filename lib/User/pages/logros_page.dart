@@ -87,6 +87,7 @@ class __ContentLogrosPageState extends State<_ContentLogrosPage> {
     // TODO: implement build
     return Container(
       child: BlocBuilder<LogrosBloc, LogrosState>(builder: (context, state) {
+        final blocLogros = BlocProvider.of<LogrosBloc>(context);
         if (state is LogrosSuccess) {
           data = state.data;
         }
@@ -99,155 +100,164 @@ class __ContentLogrosPageState extends State<_ContentLogrosPage> {
           );
         }
 
-        return Stack(
-          children: [
-            SingleChildScrollView(
-              child: Stack(children: [
-                Column(
-                  children: [
-                    Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        border: Border(
-                          bottom: BorderSide(
-                            color: Colors.grey,
+        return RefreshIndicator(
+          onRefresh: () async {
+            blocLogros
+                .add(GetLogrosEvent(widget.user.userId, widget.user.token));
+          },
+          child: Stack(
+            children: [
+              SingleChildScrollView(
+                child: Stack(children: [
+                  Column(
+                    children: [
+                      Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(
+                              color: Colors.grey,
+                            ),
                           ),
                         ),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 15.0, horizontal: 20.0),
-                      margin: EdgeInsets.only(top: 50.0),
-                      child: Text(
-                        'MIS LOGROS',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 18.0),
-                      ),
-                    ),
-                    if (state is LogrosSuccess)
-                      for (var item in state.data.status.data)
-                        Container(
-                          margin: EdgeInsets.only(bottom: 20.0),
-                          width: double.infinity,
-                          padding: EdgeInsets.symmetric(vertical: 20.0),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.2),
-                                offset: Offset(0, 1.0),
-                                blurRadius: 7.0,
-                              )
-                            ],
-                          ),
-                          child: Column(
-                            children: [
-                              if (item.medalla == 'sin-copa')
-                                Icon(
-                                  Icons.emoji_events_outlined,
-                                  color: Colors.black,
-                                  size: 120.0,
-                                ),
-                              if (item.medalla == 'oro')
-                                Icon(
-                                  Icons.emoji_events,
-                                  color: Color(0xFFfbeb39),
-                                  size: 120.0,
-                                ),
-                              if (item.medalla == 'plata')
-                                Icon(
-                                  Icons.emoji_events,
-                                  color: Color(0xFFe4e4e4),
-                                  size: 120.0,
-                                ),
-                              if (item.medalla == 'bronce')
-                                Icon(
-                                  Icons.emoji_events,
-                                  color: Color(0xFFf8ac2f),
-                                  size: 120.0,
-                                ),
-                              SizedBox(
-                                height: 20.0,
-                              ),
-                              Text('${item.porcentaje} %'),
-                              Text(item.titulo),
-                            ],
-                          ),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 15.0, horizontal: 20.0),
+                        margin: EdgeInsets.only(top: 50.0),
+                        child: Text(
+                          'MIS LOGROS',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 18.0),
                         ),
-
-                    //     for (var item in data.status.data) {
-                    //       if (state.title != null) {
-                    //         var as = RegExp(state.title, caseSensitive: false)
-                    //             .hasMatch(item.titulo);
-                    //         print(as);
-                    //         print(item.titulo);
-                    //       }
-                    //     }
-                    // }
-
-                    if (state is LogrosSearch)
-                      for (var item in data.status.data)
-                        if (state.title != null)
-                          if (RegExp(state.title, caseSensitive: false)
-                              .hasMatch(item.titulo))
-                            Container(
-                              margin: EdgeInsets.only(bottom: 20.0),
-                              width: double.infinity,
-                              padding: EdgeInsets.symmetric(vertical: 20.0),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.2),
-                                    offset: Offset(0, 1.0),
-                                    blurRadius: 7.0,
-                                  )
-                                ],
-                              ),
-                              child: Column(
-                                children: [
-                                  if (item.medalla == 'sin-copa')
-                                    Icon(
-                                      Icons.emoji_events_outlined,
-                                      color: Colors.black,
-                                      size: 120.0,
-                                    ),
-                                  if (item.medalla == 'oro')
-                                    Icon(
-                                      Icons.emoji_events,
-                                      color: Color(0xFFfbeb39),
-                                      size: 120.0,
-                                    ),
-                                  if (item.medalla == 'plata')
-                                    Icon(
-                                      Icons.emoji_events,
-                                      color: Color(0xFFe4e4e4),
-                                      size: 120.0,
-                                    ),
-                                  if (item.medalla == 'bronce')
-                                    Icon(
-                                      Icons.emoji_events,
-                                      color: Color(0xFFf8ac2f),
-                                      size: 120.0,
-                                    ),
-                                  SizedBox(
-                                    height: 20.0,
+                      ),
+                      if (state is LogrosSuccess)
+                        for (var item in state.data.status.data)
+                          Container(
+                            margin: EdgeInsets.only(bottom: 20.0),
+                            width: double.infinity,
+                            padding: EdgeInsets.symmetric(
+                                vertical: 20.0, horizontal: 20.0),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.2),
+                                  offset: Offset(0, 1.0),
+                                  blurRadius: 7.0,
+                                )
+                              ],
+                            ),
+                            child: Column(
+                              children: [
+                                if (item.medalla == 'sin-copa')
+                                  Icon(
+                                    Icons.emoji_events_outlined,
+                                    color: Colors.black,
+                                    size: 120.0,
                                   ),
-                                  Text('${item.porcentaje} %'),
-                                  Text(item.titulo),
-                                ],
-                              ),
-                            )
-                  ],
-                ),
-              ]),
-            ),
-            Positioned(
-              top: 0.0,
-              left: 0.0,
-              right: 0.0,
-              child: searchInput(),
-            ),
-          ],
+                                if (item.medalla == 'oro')
+                                  Icon(
+                                    Icons.emoji_events,
+                                    color: Color(0xFFfbeb39),
+                                    size: 120.0,
+                                  ),
+                                if (item.medalla == 'plata')
+                                  Icon(
+                                    Icons.emoji_events,
+                                    color: Color(0xFFe4e4e4),
+                                    size: 120.0,
+                                  ),
+                                if (item.medalla == 'bronce')
+                                  Icon(
+                                    Icons.emoji_events,
+                                    color: Color(0xFFf8ac2f),
+                                    size: 120.0,
+                                  ),
+                                SizedBox(
+                                  height: 20.0,
+                                ),
+                                Text('${item.porcentaje} %'),
+                                Text(item.titulo),
+                              ],
+                            ),
+                          ),
+
+                      //     for (var item in data.status.data) {
+                      //       if (state.title != null) {
+                      //         var as = RegExp(state.title, caseSensitive: false)
+                      //             .hasMatch(item.titulo);
+                      //         print(as);
+                      //         print(item.titulo);
+                      //       }
+                      //     }
+                      // }
+
+                      if (state is LogrosSearch)
+                        for (var item in data.status.data)
+                          if (state.title != null)
+                            if (item.titulo
+                                .toLowerCase()
+                                .contains(state.title.toLowerCase()))
+                              Container(
+                                margin: EdgeInsets.only(bottom: 20.0),
+                                width: double.infinity,
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 20.0, horizontal: 20.0),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.2),
+                                      offset: Offset(0, 1.0),
+                                      blurRadius: 7.0,
+                                    )
+                                  ],
+                                ),
+                                child: Column(
+                                  children: [
+                                    if (item.medalla == 'sin-copa')
+                                      Icon(
+                                        Icons.emoji_events_outlined,
+                                        color: Colors.black,
+                                        size: 120.0,
+                                      ),
+                                    if (item.medalla == 'oro')
+                                      Icon(
+                                        Icons.emoji_events,
+                                        color: Color(0xFFfbeb39),
+                                        size: 120.0,
+                                      ),
+                                    if (item.medalla == 'plata')
+                                      Icon(
+                                        Icons.emoji_events,
+                                        color: Color(0xFFe4e4e4),
+                                        size: 120.0,
+                                      ),
+                                    if (item.medalla == 'bronce')
+                                      Icon(
+                                        Icons.emoji_events,
+                                        color: Color(0xFFf8ac2f),
+                                        size: 120.0,
+                                      ),
+                                    SizedBox(
+                                      height: 20.0,
+                                    ),
+                                    Text('${item.porcentaje} %'),
+                                    Text(item.titulo),
+                                  ],
+                                ),
+                              )
+                    ],
+                  ),
+                ]),
+              ),
+              Positioned(
+                top: 0.0,
+                left: 0.0,
+                right: 0.0,
+                child: searchInput(),
+              ),
+            ],
+          ),
         );
       }),
     );
@@ -282,15 +292,14 @@ class __ContentLogrosPageState extends State<_ContentLogrosPage> {
               search(value);
             },
             decoration: InputDecoration(
-                hintText: "Buscar rutas",
-                hintStyle:
-                    TextStyle(fontFamily: "WorkSansSemiBold", fontSize: 16.0),
+                hintText: "Buscar Logros",
+                hintStyle: TextStyle(fontSize: 16.0),
                 border: InputBorder.none),
           )),
           InkWell(
               onTap: () {
                 search(searchController.text);
-                print(searchController.text);
+                // print(searchController.text);
               },
               child: Container(child: Icon(Icons.search, color: mainColor)))
         ],

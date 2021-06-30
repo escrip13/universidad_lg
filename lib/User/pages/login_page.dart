@@ -233,7 +233,7 @@ class __SignInFormState extends State<_SignInForm> {
                       enabledBorder: UnderlineInputBorder(
                           borderSide: BorderSide(color: mainColor)),
                       icon: Icon(
-                        Icons.security,
+                        Icons.lock,
                         color: Colors.white,
                       ),
                       suffixIcon: IconButton(

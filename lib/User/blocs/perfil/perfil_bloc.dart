@@ -36,7 +36,7 @@ class PerfilBloc extends Bloc<PerfilEvent, PerfilState> {
       Perfil data = await service.getPerfil(event.user, event.token);
 
       yield PerfilSuccess(data);
-    } on PerfinException catch (e) {
+    } on PerfilException catch (e) {
       yield ErrorPerfil(e.message);
     }
   }
@@ -55,7 +55,7 @@ class PerfilBloc extends Bloc<PerfilEvent, PerfilState> {
       yield PerfilSend(message);
       // Perfil data = await service.getPerfil(event.user, event.token);
       // yield PerfilSuccess(data);
-    } on PerfinException catch (e) {
+    } on PerfilException catch (e) {
       yield ErrorPerfil(e.message);
     }
 
@@ -63,7 +63,7 @@ class PerfilBloc extends Bloc<PerfilEvent, PerfilState> {
       Perfil data = await service.getPerfil(event.user, event.token);
 
       yield PerfilSuccess(data);
-    } on PerfinException catch (e) {
+    } on PerfilException catch (e) {
       yield ErrorPerfil(e.message);
     }
   }

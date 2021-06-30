@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/shims/dart_ui_real.dart';
+import 'package:rainbow_color/rainbow_color.dart';
 import 'package:universidad_lg/Entrenamiento/models/sendtestentrada_model.dart';
-import 'package:universidad_lg/Entrenamiento/pages/entrenamiento_page.dart';
+import 'package:universidad_lg/Entrenamiento/pages/cursopreview_page.dart';
 import '../../constants.dart';
 
 import 'package:universidad_lg/Entrenamiento/models/testentrada_model.dart';
@@ -13,22 +14,22 @@ import 'package:flutter_countdown_timer/index.dart';
 
 import 'package:universidad_lg/Entrenamiento/blocs/entrenamiento_bloc.dart';
 
-import 'package:universidad_lg/Home/pages/home_page.dart';
-
-import 'cursopreview_page.dart';
-
 Map preguntasList = {};
 CountdownTimerController controllerTime;
+final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
 class TestEntradaPage extends StatefulWidget {
+  final String parent;
   final User user;
   final String curso;
   final String leccion;
+
   const TestEntradaPage({
     Key key,
     @required this.user,
     @required this.curso,
     @required this.leccion,
+    this.parent,
   }) : super(key: key);
 
   @override
@@ -45,6 +46,7 @@ class _TestEntradaPageState extends State<TestEntradaPage> {
         return _onBackPressed();
       },
       child: Scaffold(
+          key: _scaffoldKey,
           // backgroundColor: Colors.transparent,
           appBar: AppBar(
             backgroundColor: mainColor,
@@ -83,7 +85,11 @@ class _TestEntradaPageState extends State<TestEntradaPage> {
           // ),
           // endDrawer: DrawerMenuRight(),
           body: _TestEntradaContent(
-              user: widget.user, curso: widget.curso, leccion: widget.leccion)
+            user: widget.user,
+            curso: widget.curso,
+            leccion: widget.leccion,
+            parent: widget.parent,
+          )
 
           // otherwise show login page
 
@@ -135,7 +141,8 @@ class _TestEntradaPageState extends State<TestEntradaPage> {
                         context: context,
                         res: respuesta.status.dataTest,
                         user: widget.user,
-                        id: widget.curso);
+                        id: widget.curso,
+                        parent: widget.parent);
                   });
                 },
                 child: const Text(
@@ -155,10 +162,11 @@ class _TestEntradaPageState extends State<TestEntradaPage> {
 }
 
 class _TestEntradaContent extends StatefulWidget {
-  User user;
-  String curso;
-  String leccion;
-  _TestEntradaContent({this.user, this.curso, this.leccion});
+  final User user;
+  final String curso;
+  final String leccion;
+  final String parent;
+  _TestEntradaContent({this.user, this.curso, this.leccion, this.parent});
   @override
   __TestEntradaContentState createState() => __TestEntradaContentState();
 }
@@ -210,6 +218,7 @@ class __TestEntradaContentState extends State<_TestEntradaContent> {
           user: widget.user,
           curso: widget.curso,
           leccion: widget.leccion,
+          parent: widget.parent,
         ),
       );
     }
@@ -224,13 +233,19 @@ class __TestEntradaContentState extends State<_TestEntradaContent> {
 
 class _ContentTestEntrada extends StatefulWidget {
   final TestEntrada testEntradaInfo;
-  int time;
-  User user;
-  String curso;
-  String leccion;
+  final int time;
+  final User user;
+  final String curso;
+  final String leccion;
+  final String parent;
 
   _ContentTestEntrada(
-      {this.testEntradaInfo, this.time, this.user, this.curso, this.leccion});
+      {this.testEntradaInfo,
+      this.time,
+      this.user,
+      this.curso,
+      this.leccion,
+      this.parent});
 
   @override
   __ContentTestEntradaState createState() => __ContentTestEntradaState();
@@ -248,14 +263,23 @@ class __ContentTestEntradaState extends State<_ContentTestEntrada>
   bool _autoValidate = false;
   // SendEvaluacion respuesta;
 
+  Animatable<double> bgValue = Tween<double>(begin: 0.0, end: 10.0);
+
+  Rainbow rb = Rainbow(rangeStart: 0.0, rangeEnd: 10.0, spectrum: [
+    Colors.green,
+    Colors.yellow,
+    mainColor,
+  ]);
+
   AnimationController controllerAnimation;
+  Animation<double> _anim;
   int endTime = 0;
 
   @override
   void initState() {
     super.initState();
     //crear los steps/////
-    listSteps(context);
+    listSteps();
 
     //  inicion de contador
     endTime = DateTime.now().millisecondsSinceEpoch + 1000 * (widget.time * 60);
@@ -267,17 +291,14 @@ class __ContentTestEntradaState extends State<_ContentTestEntrada>
       vsync: this,
       duration: Duration(minutes: widget.time),
     )..addListener(() {
-        setState(() {});
+        setState(() {
+          // col
+        });
       });
+
     controllerAnimation.repeat(max: 1);
     controllerAnimation.forward();
-  }
-
-  @override
-  void dispose() {
-    // detroy de la animacion
-    controllerAnimation.dispose();
-    super.dispose();
+    _anim = bgValue.animate(controllerAnimation);
   }
 
   @override
@@ -316,8 +337,8 @@ class __ContentTestEntradaState extends State<_ContentTestEntrada>
                 LinearProgressIndicator(
                   value: controllerAnimation.value,
                   color: mainColor,
-                  backgroundColor: secondColor,
-                  minHeight: 25.0,
+                  backgroundColor: rb[_anim.value],
+                  minHeight: 30.0,
                 ),
                 CountdownTimer(
                   controller: controllerTime,
@@ -330,10 +351,22 @@ class __ContentTestEntradaState extends State<_ContentTestEntrada>
                         style: TextStyle(color: Colors.white),
                       );
                     }
-                    return Text(
-                      '${time.min == null ? 0 : time.min} : ${time.sec}',
-                      style: TextStyle(
-                          fontWeight: FontWeight.w600, color: Colors.white),
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.timer,
+                          color: Colors.white,
+                        ),
+                        SizedBox(
+                          width: 4.0,
+                        ),
+                        Text(
+                          '${time.min == null ? 0 : time.min} : ${time.sec}',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w600, color: Colors.white),
+                        ),
+                      ],
                     );
                   },
                 ),
@@ -347,7 +380,7 @@ class __ContentTestEntradaState extends State<_ContentTestEntrada>
 
   ////////////////////  llenar los steps/////////////////
 
-  List listSteps(context) {
+  void listSteps() {
     int cont = 1;
     for (var item in widget.testEntradaInfo.status.preguntas) {
       // List<Respuesta> repustas = item.respuestas;
@@ -368,7 +401,7 @@ class __ContentTestEntradaState extends State<_ContentTestEntrada>
               RadioButtonFormField(
                 toggleable: true,
                 padding: EdgeInsets.all(8),
-                context: context,
+                context: this.context,
                 value: 'value',
                 display: 'display',
                 data: data,
@@ -395,7 +428,7 @@ class __ContentTestEntradaState extends State<_ContentTestEntrada>
           });
 
           if (!_key.currentState.validate()) {
-            ScaffoldMessenger.of(context).showSnackBar(
+            ScaffoldMessenger.of(_scaffoldKey.currentContext).showSnackBar(
               SnackBar(
                 content: Text('Marca una casilla para continuar'),
                 backgroundColor: mainColor,
@@ -412,7 +445,7 @@ class __ContentTestEntradaState extends State<_ContentTestEntrada>
       ));
       cont++;
     }
-    return steps;
+    // return steps;
   }
 
   ///////////////  finalizavion de los steps //////////
@@ -462,7 +495,8 @@ class __ContentTestEntradaState extends State<_ContentTestEntrada>
                         context: context,
                         res: respuesta.status.dataTest,
                         user: widget.user,
-                        id: widget.curso);
+                        id: widget.curso,
+                        parent: widget.parent);
                   });
 
                   // Navigator.pushReplacement(
@@ -516,10 +550,12 @@ class __ContentTestEntradaState extends State<_ContentTestEntrada>
                   SendTestEntrada respuesta = value;
 
                   _result(
-                      context: context,
-                      res: respuesta.status.dataTest,
-                      user: widget.user,
-                      id: widget.curso);
+                    context: context,
+                    res: respuesta.status.dataTest,
+                    user: widget.user,
+                    id: widget.curso,
+                    parent: widget.parent,
+                  );
                 });
               },
               child: const Text(
@@ -533,10 +569,15 @@ class __ContentTestEntradaState extends State<_ContentTestEntrada>
     );
   }
 
-  /// resivir el resultado ///
+  @override
+  void dispose() {
+    // detroy de la animacion
+    super.dispose();
+    controllerAnimation.dispose();
+  }
 }
 
-_result({DataTest res, User user, context, String id}) {
+_result({DataTest res, User user, context, String id, String parent}) {
   // destroy del contador
   controllerTime.disposeTimer();
   String title = res.titulo;
@@ -608,17 +649,16 @@ _result({DataTest res, User user, context, String id}) {
             children: [
               TextButton(
                 onPressed: () {
-                  Navigator.pop(context);
-                  Navigator.pop(context);
-                  Navigator.pop(context);
+                  // Navigator.pop(context);
+                  // Navigator.pop(context);
+                  // Navigator.pop(context);
 
                   // debe haber un forma de retocedder el nav hasta un  punto
                   Navigator.pushReplacement(
                       context,
                       MaterialPageRoute<void>(
-                          builder: (BuildContext context) => EntrenamientoPage(
-                                user: user,
-                              )));
+                          builder: (BuildContext context) =>
+                              CursoPreviewPage(user: user, nid: parent)));
                 },
                 child: const Text(
                   'CONTINUAR',

@@ -44,7 +44,6 @@ class MyApp extends StatelessWidget {
       navigatorKey: globals.appNavigator,
       home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
         builder: (context, state) {
-          // print(state);
           if (state is AuthenticationAuthenticated) {
             // show home page
             return HomePage(

@@ -77,6 +77,7 @@ class __ContentFormAyuda extends State<_ContentFormAyuda> {
     // TODO: implement build
     return BlocListener<FormularioayudaBloc, FormularioayudaState>(
       listener: (context, state) {
+        print(state);
         if (state is FormularioayudaSuccess) {
           _showResponse(state.message);
         }

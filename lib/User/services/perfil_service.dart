@@ -32,10 +32,10 @@ class IsPerfilService extends PerfilService {
         Perfil perfil = Perfil.fromJson(json.decode(response.body));
         return perfil;
       } else {
-        throw PerfinException(message: _request['status']['message']);
+        throw PerfilException(message: _request['status']['message']);
       }
     } else {
-      throw PerfinException(message: 'ocurrio un problema de conexion');
+      throw PerfilException(message: 'ocurrio un problema de conexion');
     }
   }
 
@@ -65,10 +65,10 @@ class IsPerfilService extends PerfilService {
 
         return _request['status']['message'];
       } else {
-        throw PerfinException(message: _request['status']['message']);
+        throw PerfilException(message: _request['status']['message']);
       }
     } else {
-      throw PerfinException(message: 'ocurrio un problema de conexion');
+      throw PerfilException(message: 'ocurrio un problema de conexion');
     }
   }
 }

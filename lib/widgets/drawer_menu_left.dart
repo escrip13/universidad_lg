@@ -18,7 +18,7 @@ class DrawerMenuLeft extends StatelessWidget {
     Key key,
     @required this.user,
     this.currenPage,
-    this.isHome,
+    this.isHome = false,
   }) : super(key: key);
 
   @override
@@ -40,7 +40,7 @@ class DrawerMenuLeft extends StatelessWidget {
                 children: [
                   InkWell(
                     onTap: () {
-                      if (!isHome ?? false) {
+                      if (!isHome) {
                         Navigator.pushAndRemoveUntil(context,
                             MaterialPageRoute(builder: (_) {
                           return HomePage(
@@ -54,10 +54,6 @@ class DrawerMenuLeft extends StatelessWidget {
                       height: 40,
                     ),
                   ),
-                  // Text(
-                  //   user.name,
-                  //   style: TextStyle(color: Colors.white),
-                  // ),
                 ],
               ),
             ),
@@ -68,7 +64,7 @@ class DrawerMenuLeft extends StatelessWidget {
               onTap: () {
                 if (currenPage != 'entrenamiento') {
                   Navigator.of(context).pop();
-                  if (isHome ?? false) {
+                  if (isHome) {
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) {
                       return EntrenamientoPage(user: user);
@@ -79,8 +75,6 @@ class DrawerMenuLeft extends StatelessWidget {
                       return EntrenamientoPage(user: user);
                     }));
                   }
-
-                  // Navigator.pop(context);
                 }
                 return null;
               }),
@@ -90,7 +84,7 @@ class DrawerMenuLeft extends StatelessWidget {
             onTap: () {
               if (currenPage != 'evaluaciones') {
                 Navigator.of(context).pop();
-                if (isHome ?? false) {
+                if (isHome) {
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
                     return EvaluacionPage(user: user);
                   }));
@@ -100,8 +94,6 @@ class DrawerMenuLeft extends StatelessWidget {
                     return EvaluacionPage(user: user);
                   }));
                 }
-
-                // Navigator.pop(context);
               }
               return null;
             },
@@ -112,7 +104,7 @@ class DrawerMenuLeft extends StatelessWidget {
               onTap: () {
                 if (currenPage != 'biblioteca') {
                   Navigator.of(context).pop();
-                  if (isHome ?? false) {
+                  if (isHome) {
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) {
                       return BibliotecaPage(user: user);
@@ -123,8 +115,6 @@ class DrawerMenuLeft extends StatelessWidget {
                       return BibliotecaPage(user: user);
                     }));
                   }
-
-                  // Navigator.pop(context);
                 }
                 return null;
               }),
@@ -134,7 +124,7 @@ class DrawerMenuLeft extends StatelessWidget {
               onTap: () {
                 if (currenPage != 'noticias') {
                   Navigator.of(context).pop();
-                  if (isHome ?? false) {
+                  if (isHome) {
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) {
                       return NoticiasPage(user: user);
@@ -145,7 +135,6 @@ class DrawerMenuLeft extends StatelessWidget {
                       return NoticiasPage(user: user);
                     }));
                   }
-                  // Navigator.pop(context);
                 }
                 return null;
               }),
@@ -155,7 +144,7 @@ class DrawerMenuLeft extends StatelessWidget {
               onTap: () {
                 if (currenPage != 'streaming') {
                   Navigator.of(context).pop();
-                  if (isHome ?? false) {
+                  if (isHome) {
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) {
                       return StreamingPage(user: user);
@@ -175,7 +164,7 @@ class DrawerMenuLeft extends StatelessWidget {
               onTap: () {
                 if (currenPage != 'ayuda') {
                   Navigator.of(context).pop();
-                  if (isHome ?? false) {
+                  if (isHome) {
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) {
                       return AyudaPage(user: user);
@@ -186,8 +175,6 @@ class DrawerMenuLeft extends StatelessWidget {
                       return AyudaPage(user: user);
                     }));
                   }
-
-                  // Navigator.pop(context);
                 }
                 return null;
               }),

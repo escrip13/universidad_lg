@@ -167,7 +167,9 @@ class __EntrenamientoContent extends State<_EntrenamientoContent> {
                 getFilterEntreteniminto(
                     context: context, data: entrenamientoInfo.status.filtros);
               },
-              child: const Icon(Icons.settings),
+              child: const Icon(
+                Icons.filter_alt,
+              ),
               backgroundColor: mainColor,
             ),
           )
@@ -195,53 +197,121 @@ class _ContentEntrenamiento extends StatefulWidget {
 }
 
 class __ContentEntrenamientoState extends State<_ContentEntrenamiento> {
+  TextEditingController searchController = new TextEditingController();
+
+  String searchTerm = "";
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return Column(
+    return Stack(
       children: [
-        Expanded(
-          child: DefaultTabController(
-            length: 3,
-            child: Column(
-              children: [
-                TabBar(
-                  unselectedLabelColor: mainColor,
-                  labelColor: Colors.black54,
-                  indicatorColor: mainColor,
-                  tabs: [
-                    Tab(text: 'BÁSICO'),
-                    Tab(text: 'INTERMEDIO'),
-                    Tab(text: 'AVANZADO'),
-                  ],
-                ),
-                Expanded(
-                  child: TabBarView(
-                    children: <Widget>[
-                      _ContentEntrenamintoType(
-                        data: widget.entrenamientoInfo.status.cursos.basico,
-                        filtro: widget.filtro,
-                        user: widget.user,
+        Container(
+          margin: EdgeInsets.only(top: 50.0),
+          child: Column(
+            children: [
+              Expanded(
+                child: DefaultTabController(
+                  length: 3,
+                  child: Column(
+                    children: [
+                      TabBar(
+                        unselectedLabelColor: mainColor,
+                        labelColor: Colors.black54,
+                        indicatorColor: mainColor,
+                        tabs: [
+                          Tab(text: 'BÁSICO'),
+                          Tab(text: 'INTERMEDIO'),
+                          Tab(text: 'AVANZADO'),
+                        ],
                       ),
-                      //
-                      _ContentEntrenamintoType(
-                        data: widget.entrenamientoInfo.status.cursos.intermedio,
-                        filtro: widget.filtro,
-                        user: widget.user,
-                      ),
-                      _ContentEntrenamintoType(
-                        data: widget.entrenamientoInfo.status.cursos.avanzado,
-                        filtro: widget.filtro,
+                      Expanded(
+                        child: TabBarView(
+                          children: <Widget>[
+                            _ContentEntrenamintoType(
+                              data:
+                                  widget.entrenamientoInfo.status.cursos.basico,
+                              filtro: widget.filtro,
+                              user: widget.user,
+                              searchTerm: searchTerm,
+                            ),
+                            //
+                            _ContentEntrenamintoType(
+                              data: widget
+                                  .entrenamientoInfo.status.cursos.intermedio,
+                              filtro: widget.filtro,
+                              user: widget.user,
+                              searchTerm: searchTerm,
+                            ),
+                            _ContentEntrenamintoType(
+                              data: widget
+                                  .entrenamientoInfo.status.cursos.avanzado,
+                              filtro: widget.filtro,
+                              searchTerm: searchTerm,
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
+        ),
+        Positioned(
+          top: 0.0,
+          left: 0.0,
+          right: 0.0,
+          child: searchInput(),
         ),
       ],
     );
+  }
+
+  Widget searchInput() {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(horizontal: 24),
+      decoration: BoxDecoration(
+        color: Color(0xfff6f6f6),
+        boxShadow: <BoxShadow>[
+          BoxShadow(
+            color: Colors.black45,
+            offset: Offset(0.0, 1.0),
+            blurRadius: 2.0,
+          ),
+        ],
+      ),
+      child: Row(
+        children: <Widget>[
+          Expanded(
+              child: TextField(
+            controller: searchController,
+            onChanged: (String value) async {
+              search(value);
+            },
+            decoration: InputDecoration(
+                hintText: "Buscar...",
+                hintStyle: TextStyle(fontSize: 16.0),
+                border: InputBorder.none),
+          )),
+          InkWell(
+              onTap: () {
+                search(searchController.text);
+                // print(searchController.text);
+              },
+              child: Container(child: Icon(Icons.search, color: mainColor)))
+        ],
+      ),
+    );
+  }
+
+  void search(String value) {
+    setState(() {
+      searchTerm = value;
+    });
   }
 }
 
@@ -249,9 +319,12 @@ class _ContentEntrenamintoType extends StatelessWidget {
   final Map<String, TipoCurso> data;
   final int filtro;
   final User user;
-  _ContentEntrenamintoType({this.data, this.filtro, this.user});
+  final String searchTerm;
+  _ContentEntrenamintoType(
+      {this.data, this.filtro, this.user, this.searchTerm});
   @override
   Widget build(BuildContext context) {
+    print(searchTerm.isNotEmpty);
     return Container(
       child: SingleChildScrollView(
         child: Column(
@@ -264,11 +337,18 @@ class _ContentEntrenamintoType extends StatelessWidget {
               ),
             ),
             for (var curso in data.values)
-              _ItemCurso(
-                curso: curso,
-                filtro: filtro,
-                user: user,
-              )
+              if (curso.title.toLowerCase().contains(searchTerm.toLowerCase()))
+                _ItemCurso(
+                  curso: curso,
+                  filtro: filtro,
+                  user: user,
+                )
+            // else
+            //   _ItemCurso(
+            //     curso: curso,
+            //     filtro: filtro,
+            //     user: user,
+            //   ),
           ],
         ),
       ),

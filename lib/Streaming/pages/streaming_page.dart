@@ -173,12 +173,16 @@ class _ItemStreaming extends StatelessWidget {
       child: Column(
         children: [
           Stack(alignment: AlignmentDirectional.bottomStart, children: [
-            CachedNetworkImage(
-              imageUrl: item.uri,
-              placeholder: (context, url) => CircularProgressIndicator(
-                color: mainColor,
+            Container(
+              alignment: Alignment.center,
+              child: CachedNetworkImage(
+                // width: double.infinity,
+                imageUrl: item.uri,
+                placeholder: (context, url) => CircularProgressIndicator(
+                  color: mainColor,
+                ),
+                errorWidget: (context, url, error) => Icon(Icons.error),
               ),
-              errorWidget: (context, url, error) => Icon(Icons.error),
             ),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10.0),

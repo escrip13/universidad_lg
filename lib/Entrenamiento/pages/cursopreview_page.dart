@@ -12,6 +12,7 @@ import 'package:universidad_lg/User/blocs/authentication/authentication_bloc.dar
 import 'package:universidad_lg/User/blocs/authentication/authentication_state.dart';
 import 'package:universidad_lg/User/models/user.dart';
 import 'package:universidad_lg/User/pages/login_page.dart';
+import 'package:video_player/video_player.dart';
 
 import '../../constants.dart';
 
@@ -134,20 +135,24 @@ class __CursoPreviewContentState extends State<_CursoPreviewContent> {
   Widget build(BuildContext context) {
     // TODO: implement build
     if (load) {
+      print(cursoPreview.status.data.curso.video);
       return Container(
           child: SingleChildScrollView(
         child: Column(
           children: [
-            Container(
-              margin: const EdgeInsets.fromLTRB(50.0, 10.0, 50.0, 0.8),
-              child: CachedNetworkImage(
-                imageUrl: cursoPreview.status.data.curso.uri,
-                placeholder: (context, url) => CircularProgressIndicator(
-                  color: mainColor,
+            if (cursoPreview.status.data.curso.video.isEmpty)
+              Container(
+                margin: const EdgeInsets.fromLTRB(50.0, 10.0, 50.0, 0.8),
+                child: CachedNetworkImage(
+                  imageUrl: cursoPreview.status.data.curso.uri,
+                  placeholder: (context, url) => CircularProgressIndicator(
+                    color: mainColor,
+                  ),
+                  errorWidget: (context, url, error) => Icon(Icons.error),
                 ),
-                errorWidget: (context, url, error) => Icon(Icons.error),
-              ),
-            ),
+              )
+            else
+              _VideoPlayerLeccion(cursoPreview.status.data.curso.video),
             Container(
               padding: const EdgeInsets.all(15.0),
               child: Column(
@@ -207,7 +212,7 @@ class __CursoPreviewContentState extends State<_CursoPreviewContent> {
 
                       _viewLeccion(_textTestEntrada, acceso);
                     },
-                    child: const Text('TOMAR LECCIÓN'),
+                    child: const Text('VER CURSO'),
                   ),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
@@ -239,7 +244,7 @@ class __CursoPreviewContentState extends State<_CursoPreviewContent> {
                           cursoPreview.status.data.verCurso == 0) {
                         acceso = false;
                         _textTestEntrada =
-                            'Primero debes terminar el Test de Entrada y luego tomar la Lección del curso para tomar este Test de Salida.';
+                            'Primero debes terminar el Test de Entrada y luego ver el curso para tomar este Test de Salida.';
                       }
 
                       if ((cursoPreview.status.data.testEntrada == 1 &&
@@ -248,7 +253,7 @@ class __CursoPreviewContentState extends State<_CursoPreviewContent> {
                           cursoPreview.status.data.verCurso == 0) {
                         acceso = false;
                         _textTestEntrada =
-                            'Debes tomar la Lección del curso para tomar este Test de Salida.';
+                            'Debes ver el curso para tomar este Test de Salida.';
                       }
 
                       _viewTestSalida(_textTestEntrada, acceso);
@@ -294,6 +299,7 @@ class __CursoPreviewContentState extends State<_CursoPreviewContent> {
                         context,
                         MaterialPageRoute(
                             builder: (context) => TestEntradaPage(
+                                parent: widget.nid,
                                 user: widget.user,
                                 curso: cursoPreview.status.data.curso.nid,
                                 leccion: cursoPreview.status.data.leccionId)));
@@ -313,15 +319,19 @@ class __CursoPreviewContentState extends State<_CursoPreviewContent> {
     );
   }
 
-  _viewLeccion(String textDinamic, bool acceso) {
+  _viewLeccion(String textDinamic, bool acceso) async {
     if (acceso) {
       Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => LeccionPage(
-                  user: widget.user,
-                  curso: cursoPreview.status.data.curso.nid,
-                  leccion: cursoPreview.status.data.leccionId)));
+        context,
+        MaterialPageRoute(
+          builder: (context) => LeccionPage(
+            user: widget.user,
+            curso: cursoPreview.status.data.curso.nid,
+            leccion: cursoPreview.status.data.leccionId,
+            parent: widget.nid,
+          ),
+        ),
+      );
     } else {
       showDialog<String>(
         context: context,
@@ -400,5 +410,81 @@ class __CursoPreviewContentState extends State<_CursoPreviewContent> {
         ],
       ),
     );
+  }
+}
+
+class _VideoPlayerLeccion extends StatefulWidget {
+  final String video;
+  _VideoPlayerLeccion(this.video);
+  @override
+  __VideoPlayerLeccion createState() => __VideoPlayerLeccion();
+}
+
+class __VideoPlayerLeccion extends State<_VideoPlayerLeccion>
+    with TickerProviderStateMixin {
+  VideoPlayerController _controller;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _controller = VideoPlayerController.network(widget.video)
+      ..initialize().then((_) {
+        // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
+        setState(() {});
+      });
+
+    // _controller.value.duration;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return Container(
+      padding: const EdgeInsets.all(10.5),
+      child: Column(
+        children: [
+          _controller.value.isInitialized
+              ? AspectRatio(
+                  aspectRatio: _controller.value.aspectRatio,
+                  child: VideoPlayer(_controller),
+                )
+              : Container(),
+          VideoProgressIndicator(
+            _controller,
+            allowScrubbing: true,
+            padding: EdgeInsets.all(0),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              primary: mainColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.zero,
+              ),
+            ),
+            onPressed: () {
+              setState(() {
+                // Si el vídeo se está reproduciendo, pausalo.
+                if (_controller.value.isPlaying) {
+                  _controller.pause();
+                } else {
+                  // Si el vídeo está pausado, reprodúcelo
+                  _controller.play();
+                }
+              });
+            },
+            child: Icon(
+              _controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller.dispose();
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/shims/dart_ui_real.dart';
+import 'package:rainbow_color/rainbow_color.dart';
 import 'package:universidad_lg/Entrenamiento/pages/entrenamiento_page.dart';
 import 'package:universidad_lg/Entrenamiento/pages/respuestastestsalida_page.dart';
 import '../../constants.dart';
@@ -14,10 +15,9 @@ import 'package:flutter_countdown_timer/index.dart';
 
 import 'package:universidad_lg/Entrenamiento/blocs/entrenamiento_bloc.dart';
 
-import 'package:universidad_lg/Home/pages/home_page.dart';
-
 Map preguntasList = {};
 CountdownTimerController controllerTime;
+final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
 class TestSalidaPage extends StatefulWidget {
   final User user;
@@ -45,6 +45,7 @@ class _TestSalidaPageState extends State<TestSalidaPage> {
       },
       child: Scaffold(
           // backgroundColor: Colors.transparent,
+          key: _scaffoldKey,
           appBar: AppBar(
             backgroundColor: mainColor,
             title: Center(
@@ -248,13 +249,22 @@ class __ContentTestSalidaState extends State<_ContentTestSalida>
   // SendEvaluacion respuesta;
 
   AnimationController controllerAnimation;
+  Animation<double> _anim;
   int endTime = 0;
+
+  Animatable<double> bgValue = Tween<double>(begin: 0.0, end: 10.0);
+
+  Rainbow rb = Rainbow(rangeStart: 0.0, rangeEnd: 10.0, spectrum: [
+    Colors.green,
+    Colors.yellow,
+    mainColor,
+  ]);
 
   @override
   void initState() {
     super.initState();
     //crear los steps/////
-    listSteps(context);
+    listSteps();
 
     //  inicion de contador
     endTime = DateTime.now().millisecondsSinceEpoch + 1000 * (widget.time * 60);
@@ -266,10 +276,14 @@ class __ContentTestSalidaState extends State<_ContentTestSalida>
       vsync: this,
       duration: Duration(minutes: widget.time),
     )..addListener(() {
-        setState(() {});
+        setState(() {
+          // col
+        });
       });
+
     controllerAnimation.repeat(max: 1);
     controllerAnimation.forward();
+    _anim = bgValue.animate(controllerAnimation);
   }
 
   @override
@@ -315,8 +329,8 @@ class __ContentTestSalidaState extends State<_ContentTestSalida>
                 LinearProgressIndicator(
                   value: controllerAnimation.value,
                   color: mainColor,
-                  backgroundColor: secondColor,
-                  minHeight: 25.0,
+                  backgroundColor: rb[_anim.value],
+                  minHeight: 30.0,
                 ),
                 CountdownTimer(
                   controller: controllerTime,
@@ -329,10 +343,22 @@ class __ContentTestSalidaState extends State<_ContentTestSalida>
                         style: TextStyle(color: Colors.white),
                       );
                     }
-                    return Text(
-                      '${time.min == null ? 0 : time.min} : ${time.sec}',
-                      style: TextStyle(
-                          fontWeight: FontWeight.w600, color: Colors.white),
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.timer,
+                          color: Colors.white,
+                        ),
+                        SizedBox(
+                          width: 4.0,
+                        ),
+                        Text(
+                          '${time.min == null ? 0 : time.min} : ${time.sec}',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w600, color: Colors.white),
+                        ),
+                      ],
                     );
                   },
                 ),
@@ -346,7 +372,7 @@ class __ContentTestSalidaState extends State<_ContentTestSalida>
 
   ////////////////////  llenar los steps/////////////////
 
-  List listSteps(context) {
+  void listSteps() {
     int cont = 1;
     for (var item in widget.testSalidaInfo.status.preguntas) {
       // List<Respuesta> repustas = item.respuestas;
@@ -394,7 +420,7 @@ class __ContentTestSalidaState extends State<_ContentTestSalida>
           });
 
           if (!_key.currentState.validate()) {
-            ScaffoldMessenger.of(context).showSnackBar(
+            ScaffoldMessenger.of(_scaffoldKey.currentContext).showSnackBar(
               SnackBar(
                 content: Text('Marca una casilla para continuar'),
                 backgroundColor: mainColor,
@@ -411,7 +437,6 @@ class __ContentTestSalidaState extends State<_ContentTestSalida>
       ));
       cont++;
     }
-    return steps;
   }
 
   ///////////////  finalizavion de los steps //////////
@@ -617,9 +642,9 @@ _result({DataTest res, User user, context, String id}) {
               ),
               TextButton(
                 onPressed: () {
-                  Navigator.pop(context);
-                  Navigator.pop(context);
-                  Navigator.pop(context);
+                  // Navigator.pop(context);
+                  // Navigator.pop(context);
+                  // Navigator.pop(context);
 
                   // debe haber un forma de retocedder el nav hasta un  punto
                   Navigator.pushReplacement(
