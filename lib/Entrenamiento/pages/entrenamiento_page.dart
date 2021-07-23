@@ -73,7 +73,7 @@ class __EntrenamientoContent extends State<_EntrenamientoContent> {
   Entrenamiento entrenamientoInfo;
   bool load = false;
   EntrenamientoBloc entrenamientoBloc = EntrenamientoBloc();
-  int filtro = 0;
+  // int filtro = 0;
 
   @override
   void initState() {
@@ -89,52 +89,41 @@ class __EntrenamientoContent extends State<_EntrenamientoContent> {
     }
   }
 
-  void _changeFilter(value) {
-    if (mounted) {
-      setState(() {
-        filtro = value;
-      });
-    }
-  }
+  // void _changeFilter(value) {
+  //   if (mounted) {
+  //     setState(() {
+  //       filtro = value;
+  //     });
+  //   }
+  // }
 
-  void getFilterEntreteniminto({context, List<Filtro> data}) {
-    showModalBottomSheet(
-        context: context,
-        builder: (BuildContext bc) {
-          return Container(
-            child: Wrap(
-              children: <Widget>[
-                ListTile(
-                    tileColor: filtro == 0 ? mainColor : null,
-                    title: Text(
-                      'TOODAS LAS CATEGORIAS',
-                      style:
-                          TextStyle(color: filtro == 0 ? Colors.white : null),
-                    ),
-                    onTap: () {
-                      _changeFilter(0);
-                      Navigator.pop(context);
-                    }),
-                for (var fil in data)
-                  ListTile(
-                      tileColor:
-                          filtro == int.parse(fil.tid) ? mainColor : null,
-                      title: Text(
-                        fil.name,
-                        style: TextStyle(
-                            color: filtro == int.parse(fil.tid)
-                                ? Colors.white
-                                : null),
-                      ),
-                      onTap: () {
-                        _changeFilter(int.parse(fil.tid));
-                        Navigator.pop(context);
-                      }),
-              ],
-            ),
-          );
-        });
-  }
+  // void getFilterEntreteniminto({context, List<Filtro> data}) {
+  //   showModalBottomSheet(
+  //       context: context,
+  //       builder: (BuildContext bc) {
+  //         return Container(
+  //           child: Wrap(
+  //             children: <Widget>[
+  //               for (var fil in data)
+  //                 ListTile(
+  //                     tileColor:
+  //                         filtro == int.parse(fil.tid) ? mainColor : null,
+  //                     title: Text(
+  //                       fil.name,
+  //                       style: TextStyle(
+  //                           color: filtro == int.parse(fil.tid)
+  //                               ? Colors.white
+  //                               : null),
+  //                     ),
+  //                     onTap: () {
+  //                       _changeFilter(int.parse(fil.tid));
+  //                       Navigator.pop(context);
+  //                     }),
+  //             ],
+  //           ),
+  //         );
+  //       });
+  // }
 
   void loadData() {
     entrenamientoBloc
@@ -151,30 +140,27 @@ class __EntrenamientoContent extends State<_EntrenamientoContent> {
     // final authBloc = BlocProvider.of<AuthenticationBloc>(context);
     if (load) {
       return Container(
-          // padding: EdgeInsets.all(0),
-          child: Stack(
-        children: [
-          _ContentEntrenamiento(
-            user: widget.user,
-            entrenamientoInfo: entrenamientoInfo,
-            filtro: filtro,
-          ),
-          Positioned(
-            bottom: 10.0,
-            right: 10.0,
-            child: FloatingActionButton(
-              onPressed: () {
-                getFilterEntreteniminto(
-                    context: context, data: entrenamientoInfo.status.filtros);
-              },
-              child: const Icon(
-                Icons.filter_alt,
-              ),
-              backgroundColor: mainColor,
-            ),
-          )
-        ],
-      ));
+        // padding: EdgeInsets.all(0),
+        child: _ContentEntrenamiento(
+          user: widget.user,
+          entrenamientoInfo: entrenamientoInfo,
+          // filtro: filtro,
+        ),
+        // Positioned(
+        //   bottom: 10.0,
+        //   right: 10.0,
+        //   child: FloatingActionButton(
+        //     onPressed: () {
+        //       getFilterEntreteniminto(
+        //           context: context, data: entrenamientoInfo.status.filtros);
+        //     },
+        //     child: const Icon(
+        //       Icons.filter_alt,
+        //     ),
+        //     backgroundColor: mainColor,
+        //   ),
+        // )
+      );
     }
 
     return Center(
@@ -188,9 +174,8 @@ class __EntrenamientoContent extends State<_EntrenamientoContent> {
 class _ContentEntrenamiento extends StatefulWidget {
   final User user;
   final Entrenamiento entrenamientoInfo;
-  final int filtro;
 
-  _ContentEntrenamiento({this.entrenamientoInfo, this.filtro, this.user});
+  _ContentEntrenamiento({this.entrenamientoInfo, this.user});
 
   @override
   __ContentEntrenamientoState createState() => __ContentEntrenamientoState();
@@ -200,6 +185,16 @@ class __ContentEntrenamientoState extends State<_ContentEntrenamiento> {
   TextEditingController searchController = new TextEditingController();
 
   String searchTerm = "";
+  int filtro = 0;
+
+  String dropdownValue;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    dropdownValue = widget.entrenamientoInfo.status.filtros[0].tid;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -210,6 +205,13 @@ class __ContentEntrenamientoState extends State<_ContentEntrenamiento> {
           margin: EdgeInsets.only(top: 50.0),
           child: Column(
             children: [
+              Container(
+                margin: EdgeInsets.symmetric(vertical: 5.0),
+                child: Text(
+                  'ENTRENAMIENTO',
+                  style: TextStyle(fontSize: 18.0),
+                ),
+              ),
               Expanded(
                 child: DefaultTabController(
                   length: 3,
@@ -225,13 +227,54 @@ class __ContentEntrenamientoState extends State<_ContentEntrenamiento> {
                           Tab(text: 'AVANZADO'),
                         ],
                       ),
+                      Container(
+                        margin: EdgeInsets.only(top: 5.0),
+                        decoration: BoxDecoration(color: mainColor),
+                        width: double.infinity,
+                        child: DropdownButtonFormField<String>(
+                          value: dropdownValue,
+                          isExpanded: true,
+                          elevation: 16,
+                          icon: Icon(
+                            Icons.arrow_drop_down,
+                            color: Colors.white,
+                          ),
+                          dropdownColor: mainColor,
+                          onChanged: (String newValue) {
+                            setState(() {
+                              dropdownValue = newValue;
+
+                              filtro = int.parse(newValue);
+                            });
+                          },
+                          decoration: InputDecoration(
+                            contentPadding:
+                                EdgeInsets.symmetric(horizontal: 20),
+                            enabledBorder: UnderlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: mainColor, width: 0),
+                            ),
+                            // hintText: Text('sss');
+                          ),
+                          items:
+                              widget.entrenamientoInfo.status.filtros.map((e) {
+                            return DropdownMenuItem<String>(
+                              value: e.tid,
+                              child: Text(
+                                e.name,
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
                       Expanded(
                         child: TabBarView(
                           children: <Widget>[
                             _ContentEntrenamintoType(
                               data:
                                   widget.entrenamientoInfo.status.cursos.basico,
-                              filtro: widget.filtro,
+                              filtro: filtro,
                               user: widget.user,
                               searchTerm: searchTerm,
                             ),
@@ -239,14 +282,14 @@ class __ContentEntrenamientoState extends State<_ContentEntrenamiento> {
                             _ContentEntrenamintoType(
                               data: widget
                                   .entrenamientoInfo.status.cursos.intermedio,
-                              filtro: widget.filtro,
+                              filtro: filtro,
                               user: widget.user,
                               searchTerm: searchTerm,
                             ),
                             _ContentEntrenamintoType(
                               data: widget
                                   .entrenamientoInfo.status.cursos.avanzado,
-                              filtro: widget.filtro,
+                              filtro: filtro,
                               searchTerm: searchTerm,
                             ),
                           ],
@@ -322,6 +365,7 @@ class _ContentEntrenamintoType extends StatelessWidget {
   final String searchTerm;
   _ContentEntrenamintoType(
       {this.data, this.filtro, this.user, this.searchTerm});
+
   @override
   Widget build(BuildContext context) {
     print(searchTerm.isNotEmpty);
@@ -329,26 +373,27 @@ class _ContentEntrenamintoType extends StatelessWidget {
       child: SingleChildScrollView(
         child: Column(
           children: [
-            Container(
-              margin: EdgeInsets.symmetric(vertical: 20.0),
-              child: Text(
-                'ENTRENAMIENTO',
-                style: TextStyle(fontSize: 18.0),
-              ),
-            ),
-            for (var curso in data.values)
-              if (curso.title.toLowerCase().contains(searchTerm.toLowerCase()))
-                _ItemCurso(
-                  curso: curso,
-                  filtro: filtro,
-                  user: user,
-                )
-            // else
-            //   _ItemCurso(
-            //     curso: curso,
-            //     filtro: filtro,
-            //     user: user,
-            //   ),
+            FutureBuilder(
+                future: Future.value(data.values),
+                builder: (BuildContext context,
+                    AsyncSnapshot<Iterable<TipoCurso>> snapshot) {
+                  if (snapshot.hasData) {
+                    return Column(
+                      children: [
+                        for (var curso in snapshot.data)
+                          if (curso.title
+                              .toLowerCase()
+                              .contains(searchTerm.toLowerCase()))
+                            _ItemCurso(
+                              curso: curso,
+                              filtro: filtro,
+                              user: user,
+                            )
+                      ],
+                    );
+                  }
+                  return Container();
+                }),
           ],
         ),
       ),
