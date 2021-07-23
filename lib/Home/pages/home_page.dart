@@ -184,13 +184,12 @@ class __CarrucelHomeState extends State<_CarrucelHome> {
   int _current = 0;
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: AlignmentDirectional.bottomCenter,
+    return Column(
       children: [
         CarouselSlider(
           options: CarouselOptions(
-              // height: 211.5,
-              viewportFraction: 1.0,
+              height: 200,
+              viewportFraction: 1,
               onPageChanged: (index, reason) {
                 setState(() {
                   _current = index;
@@ -199,21 +198,16 @@ class __CarrucelHomeState extends State<_CarrucelHome> {
           items: widget.dataCarrucel.map((i) {
             return Builder(
               builder: (BuildContext context) {
-                return Container(
-                    // padding: EdgeInsets.all(0),
-                    width: MediaQuery.of(context).size.width,
-                    child: CachedNetworkImage(
-                      fit: BoxFit.cover,
-                      imageUrl: i.imagen,
-                      placeholder: (context, url) => Center(
-                        child: CircularProgressIndicator(
-                          color: mainColor,
-                        ),
-                      ),
-                      errorWidget: (context, url, error) => Icon(Icons.error),
-                    )
-                    // Image.network(i.imagen, fit: BoxFit.cover, width: 1000),
-                    );
+                return CachedNetworkImage(
+                  alignment: Alignment.topCenter,
+                  imageUrl: i.imagen,
+                  placeholder: (context, url) => Center(
+                    child: CircularProgressIndicator(
+                      color: mainColor,
+                    ),
+                  ),
+                  errorWidget: (context, url, error) => Icon(Icons.error),
+                );
               },
             );
           }).toList(),
@@ -227,6 +221,8 @@ class __CarrucelHomeState extends State<_CarrucelHome> {
               height: 8.0,
               margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
               decoration: BoxDecoration(
+                border: Border.fromBorderSide(
+                    BorderSide(color: mainColor, width: 1)),
                 shape: BoxShape.circle,
                 color: _current == index ? mainColor : Colors.white,
               ),
