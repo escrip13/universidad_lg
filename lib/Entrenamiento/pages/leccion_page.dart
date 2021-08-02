@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_countdown_timer/index.dart';
 import 'package:universidad_lg/Entrenamiento/models/activetestsalida_model.dart';
 import 'package:universidad_lg/Entrenamiento/pages/cursopreview_page.dart';
+import 'package:flick_video_player/flick_video_player.dart';
 import 'package:video_player/video_player.dart';
 import 'package:flutter/material.dart';
 
@@ -279,17 +280,22 @@ class _VideoPlayerLeccion extends StatefulWidget {
 class __VideoPlayerLeccion extends State<_VideoPlayerLeccion>
     with TickerProviderStateMixin {
   VideoPlayerController _controller;
+  FlickManager flickManager;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
 
-    _controller =
-        VideoPlayerController.network(widget.leccion.status.data.curso.datos)
-          ..initialize().then((_) {
-            setState(() {});
-          });
+    flickManager = FlickManager(
+      videoPlayerController:
+          VideoPlayerController.network(widget.leccion.status.data.curso.datos),
+    );
+    // _controller =
+    //     VideoPlayerController.network(widget.leccion.status.data.curso.datos)
+    //       ..initialize().then((_) {
+    //         setState(() {});
+    //       });
   }
 
   @override
@@ -297,49 +303,14 @@ class __VideoPlayerLeccion extends State<_VideoPlayerLeccion>
     // TODO: implement build
     return Container(
       padding: const EdgeInsets.all(10.5),
-      child: Column(
-        children: [
-          _controller.value.isInitialized
-              ? AspectRatio(
-                  aspectRatio: _controller.value.aspectRatio,
-                  child: VideoPlayer(_controller),
-                )
-              : Container(),
-          VideoProgressIndicator(
-            _controller,
-            allowScrubbing: true,
-            padding: EdgeInsets.all(0),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              primary: mainColor,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.zero,
-              ),
-            ),
-            onPressed: () {
-              setState(() {
-                // Si el vídeo se está reproduciendo, pausalo.
-                if (_controller.value.isPlaying) {
-                  _controller.pause();
-                } else {
-                  // Si el vídeo está pausado, reprodúcelo
-                  _controller.play();
-                }
-              });
-            },
-            child: Icon(
-              _controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
-            ),
-          ),
-        ],
-      ),
+      child: FlickVideoPlayer(flickManager: flickManager),
     );
   }
 
   @override
   void dispose() {
     super.dispose();
+    flickManager.dispose();
     _controller.dispose();
   }
 }

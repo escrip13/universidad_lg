@@ -12,6 +12,7 @@ import 'package:universidad_lg/User/blocs/authentication/authentication_bloc.dar
 import 'package:universidad_lg/User/blocs/authentication/authentication_state.dart';
 import 'package:universidad_lg/User/models/user.dart';
 import 'package:universidad_lg/User/pages/login_page.dart';
+import 'package:flick_video_player/flick_video_player.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../constants.dart';
@@ -202,7 +203,7 @@ class __CursoPreviewContentState extends State<_CursoPreviewContent> {
                     onPressed: () {
                       if (cursoPreview.status.data.testEntrada == 1 ||
                           cursoPreview.status.data.testEntrada == 2) {
-                        _textTestEntrada = 'Contiuar';
+                        _textTestEntrada = 'Continuar';
                         acceso = true;
                       } else {
                         _textTestEntrada =
@@ -423,16 +424,20 @@ class _VideoPlayerLeccion extends StatefulWidget {
 class __VideoPlayerLeccion extends State<_VideoPlayerLeccion>
     with TickerProviderStateMixin {
   VideoPlayerController _controller;
+  FlickManager flickManager;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _controller = VideoPlayerController.network(widget.video)
-      ..initialize().then((_) {
-        // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
-        setState(() {});
-      });
+    // _controller = VideoPlayerController.network(widget.video)
+    //   ..initialize().then((_) {
+    //     // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
+    //     setState(() {});
+    //   });
+    flickManager = FlickManager(
+      videoPlayerController: VideoPlayerController.network(widget.video),
+    );
 
     // _controller.value.duration;
   }
@@ -442,49 +447,14 @@ class __VideoPlayerLeccion extends State<_VideoPlayerLeccion>
     // TODO: implement build
     return Container(
       padding: const EdgeInsets.all(10.5),
-      child: Column(
-        children: [
-          _controller.value.isInitialized
-              ? AspectRatio(
-                  aspectRatio: _controller.value.aspectRatio,
-                  child: VideoPlayer(_controller),
-                )
-              : Container(),
-          VideoProgressIndicator(
-            _controller,
-            allowScrubbing: true,
-            padding: EdgeInsets.all(0),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              primary: mainColor,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.zero,
-              ),
-            ),
-            onPressed: () {
-              setState(() {
-                // Si el vídeo se está reproduciendo, pausalo.
-                if (_controller.value.isPlaying) {
-                  _controller.pause();
-                } else {
-                  // Si el vídeo está pausado, reprodúcelo
-                  _controller.play();
-                }
-              });
-            },
-            child: Icon(
-              _controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
-            ),
-          ),
-        ],
-      ),
+      child: FlickVideoPlayer(flickManager: flickManager),
     );
   }
 
   @override
   void dispose() {
     super.dispose();
+    flickManager.dispose();
     _controller.dispose();
   }
 }
