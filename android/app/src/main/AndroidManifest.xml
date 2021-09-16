@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.pe.universidadlg" >
    <application
-        android:label="universidadlg"
+        android:label="Universidad LG"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

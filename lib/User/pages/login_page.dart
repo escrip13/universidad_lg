@@ -78,7 +78,7 @@ class _AuthForm extends StatelessWidget {
           // border: Border
           ),
       child: Image(
-        image: AssetImage('assets/img/logo.png'),
+        image: AssetImage('assets/img/logo-new.png'),
       ),
     );
 

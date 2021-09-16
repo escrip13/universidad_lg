@@ -324,7 +324,7 @@ class ContentBody extends StatelessWidget {
             height: 20.0,
           ),
           ButtomMain(
-            text: 'RANKIG',
+            text: 'RANKING',
             // onpress: StreamingSinglePage(
             //   user: user,
             //   nid: item.nid,
