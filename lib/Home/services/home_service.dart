@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:universidad_lg/Home/models/home_model.dart';
+import 'package:universidad_lg/User/exceptions/authentication_exception.dart';
 import 'package:universidad_lg/User/pages/login_page.dart';
 
 import '../../constants.dart';
@@ -27,7 +28,8 @@ class HomeService {
       } else {
         throw _request['status']['message'];
       }
-      // throw AuthenticationException(message: 'Wrong username or password');
-    } else {}
+    } else {
+      throw AuthenticationException(message: 'Sin internet');
+    }
   }
 }

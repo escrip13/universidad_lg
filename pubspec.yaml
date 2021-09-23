@@ -42,7 +42,7 @@ dependencies:
   radio_button_form_field: ^0.0.4
   video_player: ^2.1.6
   image_picker: ^0.8.0+4
-  onesignal_flutter: ^2.6.3
+  onesignal_flutter: ^3.2.3
   rainbow_color: ^2.0.1
   flick_video_player: ^0.3.1
 

@@ -1,5 +1,5 @@
 // @dart=2.9
-import 'dart:ffi';
+// import 'dart:ffi';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
@@ -19,7 +19,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:universidad_lg/widgets/background_image.dart';
 import 'package:universidad_lg/widgets/drawer_menu_left.dart';
 import 'package:universidad_lg/widgets/drawer_menu_right.dart';
-import 'package:universidad_lg/Home/pages/globals.dart' as globals;
+// import 'package:universidad_lg/Home/pages/globals.dart' as globals;
 import '../../constants.dart';
 
 class HomePage extends StatelessWidget {
@@ -82,7 +82,7 @@ class _HomeContent extends StatefulWidget {
 }
 
 class __HomeContent extends State<_HomeContent> {
-  static final String oneSignalAppId = "a1ea5f8a-4412-4e90-8fd0-8ac42aa31921";
+  // static final String oneSignalAppId = "a1ea5f8a-4412-4e90-8fd0-8ac42aa31921";
   Home homeInfo;
   bool load = false;
   HomeBloc homeBloc = HomeBloc();
@@ -110,6 +110,7 @@ class __HomeContent extends State<_HomeContent> {
     super.initState();
     _loader();
     initPlatformState();
+    print('fff');
   }
 
   @override
@@ -140,34 +141,49 @@ class __HomeContent extends State<_HomeContent> {
   }
 
   Future<void> initPlatformState() async {
-    OneSignal.shared.init(
-      oneSignalAppId,
-    );
+    if (!mounted) return;
+    OneSignal.shared.setLogLevel(OSLogLevel.verbose, OSLogLevel.none);
+    await OneSignal.shared.setAppId("a1ea5f8a-4412-4e90-8fd0-8ac42aa31921");
 
     OneSignal.shared
-        .setInFocusDisplayType(OSNotificationDisplayType.notification);
+        .setNotificationOpenedHandler((OSNotificationOpenedResult result) {
+      String tipoRespuesta = result.notification.additionalData['type'];
 
-    OneSignal.shared.setNotificationOpenedHandler((openedResult) {
-      var data = openedResult.notification.payload.additionalData;
-      print(data);
-
-      Navigator.push(context, MaterialPageRoute(builder: (context) {
-        if (data["type"] == 'curso') {
-          return CursoPreviewPage(
-              user: widget.user, nid: data["nid"].toString());
-        }
-        if (data["type"] == 'evaluacion') {
-          return EvaluacionPage(user: widget.user);
-        }
-        if (data["type"] == 'biblioteca') {
-          return BibliotecaPage(
-            user: widget.user,
-          );
-        }
-
-        return null;
-      }));
+      if (tipoRespuesta.isNotEmpty) {
+        Navigator.push(context, MaterialPageRoute(builder: (context) {
+          if (tipoRespuesta == 'curso') {
+            String id = result.notification.additionalData['nid'].toString();
+            return CursoPreviewPage(user: widget.user, nid: id);
+          }
+          if (tipoRespuesta == 'evaluacion') {
+            return EvaluacionPage(user: widget.user);
+          }
+          if (tipoRespuesta == 'biblioteca') {
+            return BibliotecaPage(
+              user: widget.user,
+            );
+          }
+          return null;
+        }));
+      }
     });
+
+    //   OneSignal.shared.init(
+    //     oneSignalAppId,
+    //   );
+
+    //   OneSignal.shared
+    //       .setInFocusDisplayType(OSNotificationDisplayType.notification);
+
+    //   OneSignal.shared.setNotificationOpenedHandler((openedResult) {
+    //     var data = openedResult.notification.payload.additionalData;
+
+    //     Navigator.push(context, MaterialPageRoute(builder: (context) {
+    //       // print(data);
+
+    //       return null;
+    //     }));
+    //   });
   }
 }
 
