@@ -138,26 +138,26 @@ class DrawerMenuLeft extends StatelessWidget {
                 }
                 return null;
               }),
-          ListTile(
-              leading: Icon(Icons.cast_for_education),
-              title: Text('Streamings'),
-              onTap: () {
-                if (currenPage != 'streaming') {
-                  Navigator.of(context).pop();
-                  if (isHome) {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) {
-                      return StreamingPage(user: user);
-                    }));
-                  } else {
-                    Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (context) {
-                      return StreamingPage(user: user);
-                    }));
-                  }
-                }
-                return null;
-              }),
+          // ListTile(
+          //     leading: Icon(Icons.cast_for_education),
+          //     title: Text('Streamings'),
+          //     onTap: () {
+          //       if (currenPage != 'streaming') {
+          //         Navigator.of(context).pop();
+          //         if (isHome) {
+          //           Navigator.push(context,
+          //               MaterialPageRoute(builder: (context) {
+          //             return StreamingPage(user: user);
+          //           }));
+          //         } else {
+          //           Navigator.pushReplacement(context,
+          //               MaterialPageRoute(builder: (context) {
+          //             return StreamingPage(user: user);
+          //           }));
+          //         }
+          //       }
+          //       return null;
+          //     }),
           ListTile(
               leading: Icon(Icons.help),
               title: Text('Ayuda'),
